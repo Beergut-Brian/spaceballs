@@ -54,6 +54,10 @@ func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void
 			Run.Phase.keys()[Run.phase], str(kicked), str(k1.global_position if k1 else null),
 			str(k2.global_position if k2 else null), Engine.physics_ticks_per_second, Engine.time_scale,
 			RenderingServer.get_current_rendering_method()])
+		print("[main_flow] paused=%s game_state=%s players=%s" % [get_tree().paused, Game.State.keys()[Game.state], str(Players.active_players())])
+		for k in [k1, k2]:
+			if k:
+				print("[main_flow] %s class=%s state=%s physics_on=%s vel=%s t=%s auto=%s since=%s floor=%s" % [k.name, k.get_class(), str(k.get("state")), k.is_physics_processing(), str(k.get("velocity")), str(k.get("_time")), str(k.get("_auto")), str(k.get("_since_progress")), str(k.is_on_floor() if k.has_method("is_on_floor") else "-")])
 		for b in get_tree().get_nodes_in_group("balls"):
 			print("[main_flow] ball %s pos=%s sleeping=%s" % [b.name, b.global_position, b.get("sleeping")])
 	assert_bool(reached).is_true()
