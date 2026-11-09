@@ -46,7 +46,17 @@ func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.KICK_P1, 3.0)).is_true()
 	assert_bool(_main.get_node("UI/Title").visible).is_false()
 	assert_bool(_main.get_node("UI/HUD").visible).is_true()
-	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.PICK, 20.0)).is_true()
+	var reached := await _wait_for(func(): return Run.phase == Run.Phase.PICK, 20.0)
+	if not reached:   # diagnostics for CI, where this has failed while passing locally
+		var k1 = _main.find_child("Jeff", true, false)
+		var k2 = _main.find_child("Chuck", true, false)
+		print("[main_flow] stuck: phase=%s kicked=%s jeff=%s chuck=%s physics_fps=%d time_scale=%.1f renderer=%s" % [
+			Run.Phase.keys()[Run.phase], str(kicked), str(k1.global_position if k1 else null),
+			str(k2.global_position if k2 else null), Engine.physics_ticks_per_second, Engine.time_scale,
+			RenderingServer.get_current_rendering_method()])
+		for b in get_tree().get_nodes_in_group("balls"):
+			print("[main_flow] ball %s pos=%s sleeping=%s" % [b.name, b.global_position, b.get("sleeping")])
+	assert_bool(reached).is_true()
 	assert_array(kicked).is_equal([Players.P1, Players.P2])
 	var pick: Control = _main.get_node("UI/UpgradePick")
 	assert_bool(pick.visible).is_true()
