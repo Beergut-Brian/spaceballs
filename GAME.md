@@ -1,4 +1,4 @@
-# <Game name>
+# Spaceballs
 
 > Design doc and source of truth for this game. Hermes owns this file. Lanes read it before
 > starting and quote it in PRs. If the game drifts from this doc, fix the doc or fix the game.
