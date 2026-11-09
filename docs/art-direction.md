@@ -25,12 +25,12 @@ New characters are proposed in the design sprint and approved by Kaden before an
 
 ## This game
 
-- Technique:
-- Palette (file in `art/`):
-- Reference feel:
-- Characters used:
-- Tile or model scale:
-- Outline weight / rim light:
+- Technique: clean smooth-shaded 3D, bright TV-sports look (Kaden 2026-11-09: Wii Sports as the visual reference); soft sun, soft shadows, rim light instead of outlines.
+- Palette (file in `art/`): Open Jar master palette, C Cool Arcade provisional until Kaden's pick (D36).
+- Reference feel: Wii Sports / Wii Sports Resort, Kerbal Space Program, Katamari. Vibe only.
+- Characters used: Jeff (P1), Chuck (P2) and generic crowd as Jarlings (`openjar-characters/avatar/`).
+- Tile or model scale: 1 unit = 1 m; a Jarling is about 1.2 m tall with a head about 0.45 m across.
+- Outline weight / rim light: no outlines; a soft rim light on characters and balls.
 
 ## Asset pipeline
 

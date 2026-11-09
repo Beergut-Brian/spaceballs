@@ -1,86 +1,183 @@
 # Spaceballs
 
-> Design doc and source of truth for this game. Hermes owns this file. Lanes read it before
-> starting and quote it in PRs. If the game drifts from this doc, fix the doc or fix the game.
+> Design doc and source of truth for this game. Gary (producer, the maker profile) owns this file.
+> Lanes read it before starting and quote it in PRs. If the game drifts from this doc, fix the doc or fix the game.
+> Source: Kaden's "Spaceballs — Game Design & Build Plan" (2026-11-09) plus his art direction in chat the same day. Where they differ, the chat direction wins (see Art direction).
 
 ## Pitch
 
-One or two sentences. What is it, why is it funny, why will a 5-year-old want to play it again.
+Two goofballs each have a ball and one goal: kick it into space. Walk your character up to the ball and he winds up like a lunatic and boots it as hard as he can, **automatically**. It goes nowhere. Then each of you picks a ridiculous upgrade (rocket boots, super strength, a cannon for a leg) and kicks again, higher. Ten to twelve rounds later, if your picks were good and you didn't kiss the frog, your ball is in orbit.
+
+Kerbal Space Program energy with none of the engineering, dressed like a sunny TV sports game. Co-op, not versus: both balls climb the same ladder.
+
+**Kaden's north star (verbatim):** Kerbal Space Project inspired. We each have a ball we are trying to kick into space. Walk a funny-looking character up to the ball and they kick it automatically. The kicker should walk crazily up to the ball and try to kick it as hard as possible. Easy: no kick button, automatically kicks when close. Starts wimpy. After every kick, choose from some incredibly wacky upgrades: rocket boots, super strength, crazy stuff. Every upgrade lets you kick higher until you can kick it into space. Probably 10 to 12 rounds to get it into space with a normal upgrade path. Some upgrades should be better than others. Some, like kissing a frog, turn you into a frog for that round and you lose all your upgrades for that round. Keep it humorous. Camera: full screen for kicks (players kick one after the other), split screen for the upgrade pick. P1 is Jeff, P2 is Chuck.
 
 ## Players
 
 - 2 players, co-op, couch, one TV.
-- P1 (green): <character or "any universal character">
-- P2 (red): <character or "any universal character">
-- Drop-in / drop-out for P2 at any time.
+- P1 (green `#3CC24A`): **Jeff** (player-locked, from `openjar-characters`). Loose, flailing barefoot run, arms windmilling, chicken costume flapping.
+- P2 (red `#E4393C`): **Chuck** (player-locked). Stiff stomping trucker run; hat flies off on every kick and lands back on his head.
+- Drop-in / drop-out: with one pad active, the other character sits on a lawn chair at the side and cheers. Any button on the second pad stands him up and gives him a ball at the start of the next round.
+- **Auto-kick:** no kick button. Steer with the stick; entering kicking range fires the kick. The approach is deliberately silly and partly out of the player's control. One small skill element: a straight, fast run-up gives up to +20 % power (run-up quality 0.8 to 1.2); a wobbly one still launches.
+- **Frog form:** on a curse, the character is a frog for that round (keeps his green or red accents: tiny chicken-costume frog, frog in a trucker hat), hops, and the "kick" is a flop or a tongue-boop. The ball goes a few feet. Upgrades return next round.
 
 ## Controls
 
-Three buttons matter at most. Everything else does something harmless and funny or nothing.
+| Input | Kick phase | Upgrade pick | Anywhere |
+| --- | --- | --- | --- |
+| Left stick | Steer toward the ball | Move between the three cards | |
+| A (action) | Not needed; shout + little hop (harmless, funny) | Pick the highlighted card | Skip the end card |
+| B (jump) | Hop (toy); a hop in the run-up gives a tiny power bonus | Nothing | |
+| Start | Pause | Pause | Pause |
+| Select | Restart the run (two presses within 1 s) | | |
 
-| Input | Does |
-| --- | --- |
-| Left stick | Move |
-| A (south) | Action |
-| B (east) | Jump / secondary (or unused) |
-| Start | Pause |
-| Select | Restart round |
+The whole game can be played with the stick alone.
 
 ## Core loop
 
-One paragraph. What happens in a round, how long a round lasts (target: 2 to 5 minutes),
-what the natural stopping point is.
+A run is 10 to 12 rounds, 8 to 12 minutes; a round is under a minute. No losing.
 
-## Progression
+1. **Kick, Jeff.** Full screen. Steer to the tee, auto-kick, camera follows the ball up the height ladder until it stops; landmarks whoosh past, height strip ticks. Chuck cheers at the side.
+2. **Kick, Chuck.** Same. Jeff cheers.
+3. **Upgrade pick.** Vertical split (green left, red right). Each half: three big icon cards, no text. Stick to highlight, A to pick; the item animates onto the character. Both pick at once; the round waits for the slower player with a gentle bounce, never a timer.
+4. **Repeat.** Round counter is a stack of balls on the HUD, not a number. Balls return to the tee with a comedy drop from the sky.
+5. **Space.** A ball crossing the space line ends that player's run: ball floats, victory dance, a satellite or alien waves. The other keeps kicking; the finished character cheers from a cloud. End card: both in space suits, confetti, restart.
 
-How the game changes over time, if at all. Rounds, tiers, upgrades, growth. If the game is a
-pure sandbox, say so and delete the rest of this section.
+**Catch-up:** a player two or more tiers behind gets only above-average cards on their next pick.
+
+## Progression: the height ladder
+
+Eight tiers, about one per round on a normal run. Sky colour steps per tier and is the main progress signal. Tiers are data (`data/tiers.tres`): threshold height, landmark scene, sky gradient, `tier_up` gag cue.
+
+1. Backyard (fence, washing line) · 2. Rooftops (chimney, a startled cat) · 3. Treetops and birds · 4. Kite and hot-air balloon height · 5. Clouds (a plane drones past) · 6. Thin air (jet, a lost party balloon) · 7. Edge of space (aurora, a satellite) · 8. Space (stars, the Moon, an alien who waves).
+
+Landmarks are where local jokes go, but **this repo is public**: no real addresses, house photos or town names here. Personal landmarks, if Kaden wants them, go in a private content pack later (open question below).
+
+## Upgrades
+
+Data, not code: one `UpgradeData` `.tres` per upgrade in `data/upgrades/`. Fields: `id` (snake_case, stable), `name` (release notes and end card only), `icon` (Texture2D, no text), `tier` (1 to 3: rounds 1-4, 5-8, 9+), `kind` (`normal|strong|joke|curse`), `power_mult` (float; curses < 1.0), `visual` (PackedScene attached to the character), `windup_anim` (StringName, optional), `kick_sfx` (StringName, optional), `scene_override` (PackedScene, for round-takeover curses like the frog), `description` (one line).
+
+| Kind | Odds per card | Power | Examples |
+| --- | --- | --- | --- |
+| normal | 60 % | x1.6 to x1.9 | Big Boot, Spring Shoes, Rocket Boots, Super Strength, Running Start, Lucky Sock, Trampoline Tee, Helium Ball, Coach's Whistle, Giant Foot |
+| strong | 20 % | x2.3 to x2.8 | Cannon Leg, Jetpack, Pogo Legs, Tornado Spin, Dad Strength, Moon Gravity (that kick only), Slingshot Buddy (the other character helps) |
+| joke | 12 % | x1.0 to x1.3, very funny | Tiny Hat, Extra Shoes (now four), Confetti Kick, Balloon Animal Ball, Mustache, Honk Horn Shoes, Opera Kick |
+| curse | 8 % | x0.1 to x0.3 + special scene | Kiss the Frog, Banana Peel, Sneeze, Shoelaces Tied, Too Much Lunch, Butterfly |
+
+- Median 11 rounds to space; two strong picks in a row can do it in 7 or 8; three curses stretch to 14 or 15. After round 14 the pool is strong-only, so no run passes round 15.
+- Every draw has at least one `normal` card. Curses are a choice and look tempting (sparkly frog).
+- Upgrades stack visually: by round 10 the character is a walking pile of boots, hats and jetpacks.
+- Some upgrades are plainly better, and the game doesn't hide it.
+- `data/BALANCE.md` holds the target curve; Content updates it whenever odds or multipliers change.
 
 ## Camera
 
-Shared full-screen, split, or mixed. State when it switches and why.
+| Phase | Layout | Camera |
+| --- | --- | --- |
+| Approach and kick | Full screen | TV-sports framing: side-on 3D, slightly behind and above the kicker, tee and character in frame, the waiting character cheering at the edge |
+| Flight | Full screen | Follows the ball up; zooms out as speed rises; landmarks pass; height strip on the right edge |
+| Landing / stop | Full screen | Holds on the peak for a beat, a stamp shows the tier reached (icon), quick comedy drop back to the tee |
+| Upgrade pick | Vertical split, green left, red right | Each half frames its character with three floating cards |
+| Space | Full screen | Slow orbit around the floating ball and the celebrating character |
+
+Height strip: vertical, landmark pictures, no numbers; the best-ever height per profile is a little flag on it.
 
 ## Art direction
 
-- Technique: <pixel art 16 to 32 px tiles / low-poly flat-shaded 3D / flat vector>
-- Palette: <name of the chosen palette file in `art/`>
-- Reference feel: <two or three existing games or shows, for vibe only>
-- Characters from the library: <list>
-- New characters proposed: <list, or none>
+**Kaden, 2026-11-09 (chat), supersedes the plan doc's low-poly/flat-shaded/outline section:** "a 3d style, Wii bowling inspired game. Let's get our own version of 'Miis' set up for the style ... use those Wii sports games as the visual reference and inspiration."
+
+- Technique: clean, smooth-shaded 3D in a bright TV-sports look: soft sunlight, soft shadows, gentle rim light instead of outlines (the house style allows rim light), simple rounded shapes, squash-and-stretch on everything that moves.
+- Characters: **Jarlings**, our own original avatar system (working name), built in `openjar-characters/avatar/`: big round heads with swappable face parts, simple bodies, mitten hands, chunky shoes. Jeff and Chuck are Jarlings in their costumes from their look sheets; generic Jarlings fill the crowd. Original designs only: no Nintendo assets, no shapes copied from Miis, no Nintendo names anywhere.
+- Kicker animation: authored actions (idle, run, kick, cheer) with procedural wobble and per-upgrade overrides. The plan doc's ragdoll flail is optional polish, not v0.1.0.
+- Palette: the Open Jar master palette Kaden picks (D36; **C Cool Arcade provisional**). The sky ramp must step clearly through the eight tiers. Nothing else in the scene is pure player green or player red.
+- Reference feel: Wii Sports / Wii Sports Resort (look and TV-sports presentation), Kerbal Space Program (escalation), Katamari (joyful scale). Vibe only.
+- Characters from the library: Jeff (P1), Chuck (P2), generic Jarlings (crowd). New characters proposed: none. The frog, the alien and the satellite are game content (a class of thing), not library characters.
+- Props: tee, two balls with reacting faces, lawn chair, landmarks, upgrade attachments.
+- Juice: screen shake scaled to power, dust puff, speed lines, star burst at tier boundaries, half-second slow-motion on the strongest kicks.
+- Store art: grid (600x900) both characters mid-wind-up with a ball leaving frame; hero (920x430) the two balls in orbit with the planet below.
 
 ## Audio
 
-- Music: <one loop, mood>
-- Signature sounds: <the three or four cues that define the game's feel>
-- Voices: <which library characters speak, which stock barks are used>
+Sound on every action. SFX synthesised locally until Soundbox is reachable; Chatterbox barks for Jeff and Chuck once D37 is approved and the voice service exists; music loop by the Audio lane (ElevenLabs only with Kaden's yes, it costs money).
+
+| Cue | Plays when |
+| --- | --- |
+| `windup` | run-up starts (rising whistle, footsteps that match the silly run) |
+| `kick_1..4` | kick lands, variant by power tier (thwack, cannon, sonic boom) |
+| `whoosh` | ball in flight, pitch rises with speed |
+| `tier_up` | ball crosses a tier (sparkle + landmark gag) |
+| `land` | ball stops |
+| `card_move`, `card_pick` | upgrade UI |
+| `upgrade_on` | item attaches |
+| `curse`, `frog` | curse chosen; frog round |
+| `space` | ball reaches space |
+| `cheer` | waiting character reacts (bark pack) |
+
+Music: one upbeat loop that gains a layer per height tier and drops to a sparse pad in space.
+
+## Technical plan
+
+Godot 4.7.2 from `openjar-template`, 3D, Jolt physics, content in `.tres`. C# only if profiling demands it.
+
+- Ball: `RigidBody3D`. Kick impulse = base × product of upgrade multipliers × run-up quality (0.8 to 1.2). Simulate the first seconds, then hand off to a scripted, deterministic arc once above the clouds so very high kicks stay stable.
+- Kicker: `CharacterBody3D`, steering, auto-kick trigger (`Area3D` around the ball), wind-up state machine (`AnimationTree`), attach points for upgrade visuals, frog variant.
+- Scenes: `scenes/main.tscn` (Systems), `scenes/levels/field.tscn` (Gameplay), `scenes/players/kicker.tscn` (Systems), `scenes/players/jeff.tscn` / `chuck.tscn` (Art, inherit kicker), `scenes/ball.tscn` (Gameplay), `scenes/levels/height_ladder.tscn` (Gameplay), `scenes/ui/upgrade_pick.tscn` (Systems structure, Art theme), `scenes/ui/hud.tscn` (Systems), `scenes/curses/frog.tscn` (Gameplay).
+- Game-specific contract (goes in `docs/contracts.md`):
+
+```gdscript
+signal kick_started(player: int)
+signal kicked(player: int, power: float)
+signal ball_tier_reached(player: int, tier: int)
+signal ball_stopped(player: int, height: float, tier: int)
+signal upgrade_picked(player: int, upgrade_id: StringName)
+signal reached_space(player: int)
+func Run.power_of(player: int) -> float
+func Run.upgrades_of(player: int) -> Array[UpgradeData]
+```
+
+- Save (per profile): best height, runs completed, upgrades ever seen (for the end card's collection).
 
 ## Lanes for this game
 
 | Lane | Active | Definition of done for this game |
 | --- | --- | --- |
-| Systems | yes | |
-| Gameplay | yes | |
-| Design / Art | yes | |
-| Content | | |
-| Audio | yes | |
-| Reviewer | yes | |
+| Systems | yes | Grey-box first, alone: two capsule kickers steer and auto-kick spheres, height counts, round loop, split-screen pick with three blank cards, every action beeps; then HUD, save, drop-in, `Run` autoload, contracts |
+| Gameplay | yes | Field, tiers, flight hand-off, frog scene, camera phases, catch-up rule |
+| Design / Art | yes | Jarling Jeff and Chuck in-game (from `openjar-characters`), props, landmarks, sky ramp, juice, upgrade visuals, store art |
+| Content | yes | 40+ upgrades, `tiers.tres`, `BALANCE.md` hitting 10 to 12 rounds median |
+| Audio | yes | All cues above, tiered music loop, barks once available |
+| Reviewer | yes | Template checklist + this game's kid-design checks |
 
 ## First playable
 
-The smallest build Kaden should sit down and play with his son. Usually: two players move,
-one interaction works, a round ends and restarts, one sound and one visual on every action.
-Tag it `v0.1.0`.
+Both characters complete a run to space in 10 to 12 rounds, the frog curse works, every action has a sound and a visual, nothing on the kid-design checklist is red. Art may be boxes. Tag `v0.1.0`.
+
+### Kid-design checks specific to this game
+- A player who only wiggles the stick still kicks every round.
+- A curse is never the only choice; every draw has a normal card.
+- No run lasts past round 15.
+- The waiting player always has something to look at and something to do (their character cheers on a button press).
+- The upgrade pick never times out.
+- Catch-up keeps the two balls within two tiers after round 6.
+- Height is shown with pictures, not numbers.
+- The frog round reads as a joke: both characters laugh, upgrades return next round.
 
 ## Out of scope
 
-Things that sound fun and are not in this game. Keep the list; it stops scope creep in PRs.
+Versus or scoring between players; aiming the kick (it always goes up); online, more than two players, custom characters; persistent upgrades across runs (every run starts wimpy, that's the joke).
 
 ## Decisions made without Kaden
 
-Dated. Hermes logs choices here that did not need Kaden. He can override any of them later.
-
-- YYYY-MM-DD: 
+- 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.
+- 2026-11-09: the avatar system's working name is "Jarlings". Rename any time.
+- 2026-11-09: authored animations plus procedural wobble for the kicker in v0.1.0; physics ragdoll flail is later polish if it's still wanted. Fits the clean TV-sports look and keeps every run-up readable.
+- 2026-11-09: generic landmarks only in this public repo (no real places).
+- 2026-11-09: the repo is pushed from the producer's local copy of the template (shared history), so Kaden creates it empty instead of with "Use this template".
 
 ## Open questions
 
-- 
+- Chuck's personality and both voices: D37 on Docket.
+- Palette: D36 (C provisional).
+- The Jarling style itself: Kaden approves from the style mock (Docket, once the renders are in).
+- Personal landmarks (house, shop, water tower): only in a private add-on pack, if wanted. Ask after the first playable.
+- Name: Spaceballs is fine while private; pick another if it ever goes public.
