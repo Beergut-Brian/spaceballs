@@ -63,8 +63,9 @@ func wipe() -> void
 ### `Audio` (`scripts/autoload/Audio.gd`)
 
 ```gdscript
-func play(cue: String, position = null) -> void   # cue = file stem in assets/audio/sfx/
-func music(track: String, fade: float = 0.5) -> void
+func play(cue: String, position = null, pitch: float = 1.0) -> void   # cue = file stem in assets/audio/sfx/
+func music(track: String, fade: float = 0.5) -> void   # no-op if that track is already playing
+func music_level(level: int, fade: float = 1.0) -> void   # layered tracks: layers 1..level audible
 func stop_music(fade: float = 0.5) -> void
 func stop_all() -> void                 # await: stop everything, let the audio thread release it
 func silence() -> void                  # await: stop_all() and ignore play() from now on (quit)
