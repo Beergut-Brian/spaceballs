@@ -6,9 +6,9 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vrq3w"]
 render_priority = 0
 shader = ExtResource("1_iuiwy")
-shader_parameter/color_low = null
-shader_parameter/color_high = null
-shader_parameter/strength = null
+shader_parameter/color_low = Color(0.1, 1, 0.6, 1)
+shader_parameter/color_high = Color(0.6, 0.35, 1, 1)
+shader_parameter/strength = 0.55
 
 [sub_resource type="QuadMesh" id="QuadMesh_6vfa1"]
 size = Vector2(55, 24)
@@ -93,34 +93,34 @@ height = 0.14
 radial_segments = 32
 rings = 16
 
-[node name="Edge" type="Node3D" unique_id=1761411328]
+[node name="Edge" type="Node3D" unique_id=115251673]
 metadata/_art = "Tier landmark edge (art/tools/build_scenes.gd)."
 
-[node name="Aurora0" type="MeshInstance3D" parent="." unique_id=1764175072]
+[node name="Aurora0" type="MeshInstance3D" parent="." unique_id=190249845]
 transform = Transform3D(0.64278764, 0, 0.76604444, 0, 1, 0, -0.76604444, 0, 0.64278764, -61.283554, 34, -51.423008)
 material_override = SubResource("ShaderMaterial_vrq3w")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_6vfa1")
 
-[node name="Aurora1" type="MeshInstance3D" parent="." unique_id=725365022]
+[node name="Aurora1" type="MeshInstance3D" parent="." unique_id=1036182470]
 transform = Transform3D(0.22495104, 0, 0.97437006, 0, 1, 0, -0.97437006, 0, 0.22495104, -77.94961, 42, -17.996084)
 material_override = SubResource("ShaderMaterial_vrq3w")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_6vfa1")
 
-[node name="Aurora2" type="MeshInstance3D" parent="." unique_id=2116030472]
+[node name="Aurora2" type="MeshInstance3D" parent="." unique_id=1114986084]
 transform = Transform3D(-0.24192187, 0, 0.9702957, 0, 1, 0, -0.9702957, 0, -0.24192187, -77.62366, 34, 19.353752)
 material_override = SubResource("ShaderMaterial_vrq3w")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_6vfa1")
 
-[node name="Aurora3" type="MeshInstance3D" parent="." unique_id=287595995]
+[node name="Aurora3" type="MeshInstance3D" parent="." unique_id=818369729]
 transform = Transform3D(-0.65605897, 0, 0.7547096, 0, 1, 0, -0.7547096, 0, -0.65605897, -60.376766, 42, 52.484722)
 material_override = SubResource("ShaderMaterial_vrq3w")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_6vfa1")
 
-[node name="Satellite" type="Node3D" parent="." unique_id=1043698537]
+[node name="Satellite" type="Node3D" parent="." unique_id=758785966]
 transform = Transform3D(2.4064667, -0.1825188, 0.9672664, 0.49346974, 2.434363, -0.7683525, -0.8517071, 0.89474297, 2.2878, -14, 7, -7)
 script = ExtResource("2_d78ep")
 mode = 1
@@ -128,75 +128,75 @@ amount = 0.0
 speed = 0.05
 axis = Vector3(0.3, 1, 0.2)
 
-[node name="Body" type="MeshInstance3D" parent="Satellite" unique_id=708032283]
+[node name="Body" type="MeshInstance3D" parent="Satellite" unique_id=783514758]
 material_override = SubResource("StandardMaterial3D_jjtxx")
 mesh = SubResource("BoxMesh_wdkwr")
 
-[node name="Band" type="MeshInstance3D" parent="Satellite" unique_id=2064716739]
+[node name="Band" type="MeshInstance3D" parent="Satellite" unique_id=1198588180]
 material_override = SubResource("StandardMaterial3D_60p3b")
 mesh = SubResource("BoxMesh_oiqoa")
 
-[node name="Arm-1" type="MeshInstance3D" parent="Satellite" unique_id=477304617]
+[node name="Arm-1" type="MeshInstance3D" parent="Satellite" unique_id=299142489]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.9, 0, 0)
 material_override = SubResource("StandardMaterial3D_60p3b")
 mesh = SubResource("CylinderMesh_aq2rs")
 
-[node name="Panel-1" type="MeshInstance3D" parent="Satellite" unique_id=1746981961]
+[node name="Panel-1" type="MeshInstance3D" parent="Satellite" unique_id=536200805]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 0, 0)
 material_override = SubResource("StandardMaterial3D_cnnur")
 mesh = SubResource("BoxMesh_28cwn")
 
-[node name="Grid0" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=2085147303]
+[node name="Grid0" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=1361864202]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Grid1" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=2048238318]
+[node name="Grid1" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=1837069464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Grid2" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=826083012]
+[node name="Grid2" type="MeshInstance3D" parent="Satellite/Panel-1" unique_id=1336864430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Arm1" type="MeshInstance3D" parent="Satellite" unique_id=1526200388]
+[node name="Arm1" type="MeshInstance3D" parent="Satellite" unique_id=341704179]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.9, 0, 0)
 material_override = SubResource("StandardMaterial3D_60p3b")
 mesh = SubResource("CylinderMesh_aq2rs")
 
-[node name="Panel1" type="MeshInstance3D" parent="Satellite" unique_id=1982790313]
+[node name="Panel1" type="MeshInstance3D" parent="Satellite" unique_id=1593932772]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 0)
 material_override = SubResource("StandardMaterial3D_cnnur")
 mesh = SubResource("BoxMesh_28cwn")
 
-[node name="Grid0" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=2056059719]
+[node name="Grid0" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=1854666479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Grid1" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=342219049]
+[node name="Grid1" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=1301918331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Grid2" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=2041467052]
+[node name="Grid2" type="MeshInstance3D" parent="Satellite/Panel1" unique_id=1789705708]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_mh54x")
 
-[node name="Dish" type="MeshInstance3D" parent="Satellite" unique_id=829231240]
+[node name="Dish" type="MeshInstance3D" parent="Satellite" unique_id=734195748]
 transform = Transform3D(1, 0, 0, 0, -0.5, 8.742278e-08, 0, -4.371139e-08, -1, 0, 0.75, 0)
 material_override = SubResource("StandardMaterial3D_tut34")
 mesh = SubResource("SphereMesh_61wp5")
 
-[node name="Antenna" type="MeshInstance3D" parent="Satellite" unique_id=1234396615]
+[node name="Antenna" type="MeshInstance3D" parent="Satellite" unique_id=1388579700]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 material_override = SubResource("StandardMaterial3D_60p3b")
 mesh = SubResource("CylinderMesh_xy8rj")
 
-[node name="Blink" type="MeshInstance3D" parent="Satellite" unique_id=1793841630]
+[node name="Blink" type="MeshInstance3D" parent="Satellite" unique_id=2014742482]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.42, 0)
 material_override = SubResource("StandardMaterial3D_5sf7w")
 mesh = SubResource("SphereMesh_j6na0")

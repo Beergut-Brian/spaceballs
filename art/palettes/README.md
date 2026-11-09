@@ -8,4 +8,4 @@ blended by `art/scripts/sky_ramp.gd`) and its accents for props, landmarks and j
 Jeff, Chuck, their balls, their ground rings and the frog's hood / hat.
 
 If D36 picks another palette, swap the constants at the top of `art/tools/build_scenes.gd` and the
-sky gradients in `data/tiers.tres`, then re-run `godot --headless --path . -s art/tools/build_scenes.gd`.
+sky gradients in `data/tiers.tres`, then re-run `godot-render --path . -s art/tools/build_scenes.gd` (a real renderer; headless loses MultiMesh buffers).

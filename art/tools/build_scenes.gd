@@ -1,6 +1,6 @@
 ## Builds the Art lane's prop scenes from Godot primitives (smooth-shaded, flat colours, rim light):
 ## field dressing, the frog and the tier landmarks. Re-run after editing:
-##   godot --headless --path . -s art/tools/build_scenes.gd
+##   godot-render --path . -s art/tools/build_scenes.gd     (needs a real renderer: headless drops MultiMesh data)
 ## Every value here is the source of truth for those scenes; hand edits in the .tscn get overwritten.
 extends SceneTree
 
@@ -452,6 +452,7 @@ func _dress_backyard(d: Node3D) -> void:
 	flags.multimesh = mm
 	var fm := StandardMaterial3D.new()
 	fm.vertex_color_use_as_albedo = true
+	fm.vertex_color_is_srgb = true
 	fm.roughness = 0.8
 	fm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	flags.material_override = fm
@@ -459,7 +460,7 @@ func _dress_backyard(d: Node3D) -> void:
 
 
 func _dress_trees(d: Node3D) -> void:
-	var trees := node(d, "Trees")
+	# Two MultiMeshes (trunks, canopy blobs) for all lawn trees: 2 draw calls instead of ~70.
 	var spots := [
 		[Vector3(-17, 0, -9), 6.0], [Vector3(-20, 0, 1), 7.0], [Vector3(-16, 0, 10), 5.5],
 		[Vector3(-26, 0, -3), 8.0], [Vector3(-24, 0, 14), 6.5], [Vector3(-12, 0, -16), 5.0],
@@ -468,8 +469,45 @@ func _dress_trees(d: Node3D) -> void:
 		[Vector3(-30, 0, -16), 7.0], [Vector3(-34, 0, 8), 8.0],
 	]
 	var leaves := [LEAF_A, LEAF_B, LEAF_C]
+	var trunks := MultiMesh.new()
+	trunks.transform_format = MultiMesh.TRANSFORM_3D
+	trunks.mesh = _mesh("cyl", 0.75, 1.1, 1.0)
+	trunks.instance_count = spots.size()
+	var crowns := MultiMesh.new()
+	crowns.transform_format = MultiMesh.TRANSFORM_3D
+	crowns.use_colors = true
+	crowns.mesh = _mesh("sphere", 1.0, 32)
+	crowns.instance_count = spots.size() * 4
 	for i in spots.size():
-		tree(trees, "Tree%02d" % i, spots[i][0], spots[i][1], leaves[i % 3], i)
+		var p: Vector3 = spots[i][0]
+		var h: float = spots[i][1]
+		var tr := 0.09 * sqrt(h)
+		trunks.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(tr, h * 0.7, tr)), p + Vector3(0, h * 0.35, 0)))
+		var r := h * 0.32
+		var leaf: Color = leaves[i % 3]
+		var blobs := [[Vector3(0, h * 0.75, 0), r, leaf], [Vector3(r * 0.6, h * 0.62, r * 0.2), r * 0.7, leaf.lightened(0.08)],
+			[Vector3(-r * 0.5, h * 0.66, -r * 0.3), r * 0.75, leaf.darkened(0.06)], [Vector3(r * 0.1 * sin(i * 2.3), h * 0.98, 0), r * 0.6, leaf.lightened(0.12)]]
+		for k in 4:
+			crowns.set_instance_transform(i * 4 + k, Transform3D(Basis.from_scale(Vector3.ONE * blobs[k][1]), p + blobs[k][0]))
+			crowns.set_instance_color(i * 4 + k, blobs[k][2])
+	var trees := node(d, "Trees")
+	var t1 := MultiMeshInstance3D.new()
+	t1.name = "Trunks"
+	t1.multimesh = trunks
+	t1.material_override = mat(BARK)
+	trees.add_child(t1)
+	var t2 := MultiMeshInstance3D.new()
+	t2.name = "Crowns"
+	t2.multimesh = crowns
+	var cm := StandardMaterial3D.new()
+	cm.vertex_color_use_as_albedo = true
+	cm.vertex_color_is_srgb = true
+	cm.roughness = 0.7
+	cm.rim_enabled = true
+	cm.rim = 0.35
+	cm.rim_tint = 0.3
+	t2.material_override = cm
+	trees.add_child(t2)
 
 
 func _dress_horizon(d: Node3D) -> void:
@@ -483,14 +521,28 @@ func _dress_horizon(d: Node3D) -> void:
 	for i in spots.size():
 		mi(hills, "Hill%d" % i, _mesh("sphere", 1.0, 32), hill_m if i % 2 == 0 else hill_m2, spots[i][0], Vector3.ZERO,
 				Vector3(spots[i][1], spots[i][1] * 0.32, spots[i][1] * 0.8), false)
-	var sky := node(d, "SkyClouds")
 	var cspots := [Vector3(-80, 26, -40), Vector3(-95, 34, 25), Vector3(-70, 22, 60), Vector3(-30, 30, -80),
 		Vector3(30, 28, 80), Vector3(60, 32, -60)]
+	var puffs := MultiMesh.new()
+	puffs.transform_format = MultiMesh.TRANSFORM_3D
+	puffs.mesh = _mesh("sphere", 1.0, 24)
+	puffs.instance_count = cspots.size() * 5
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 40
 	for i in cspots.size():
-		var c := cloud(sky, "Cloud%d" % i, cspots[i], 6.0 + (i % 3) * 1.5, 40 + i)
-		c.look_at_from_position(cspots[i], Vector3(0, cspots[i].y, 0))
-		for m in c.get_children():
-			(m as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var size := 6.0 + (i % 3) * 1.5
+		var facing := Basis.looking_at(Vector3(-cspots[i].x, 0, -cspots[i].z).normalized())
+		for k in 5:
+			var x := (float(k) / 4.0 - 0.5) * 2.2 * size
+			var r := size * (0.55 + 0.35 * sin(PI * float(k) / 4.0)) * rng.randf_range(0.85, 1.1)
+			var local := Vector3(x, r * 0.25, rng.randf_range(-0.2, 0.2) * size)
+			puffs.set_instance_transform(i * 5 + k, Transform3D(facing * Basis.from_scale(Vector3(r, r * 0.8, r * 0.9)), cspots[i] + facing * local))
+	var sky := MultiMeshInstance3D.new()
+	sky.name = "SkyClouds"
+	sky.multimesh = puffs
+	sky.material_override = mat(Color("bccadc"), 1.0, 0.35)
+	sky.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	d.add_child(sky)
 
 
 func _dress_crowd(d: Node3D) -> void:

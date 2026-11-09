@@ -98,10 +98,10 @@ height = 0.7
 radial_segments = 24
 rings = 1
 
-[node name="ThinAir" type="Node3D" unique_id=1383149350]
+[node name="ThinAir" type="Node3D" unique_id=2055876189]
 metadata/_art = "Tier landmark thin_air (art/tools/build_scenes.gd)."
 
-[node name="JetPath" type="Node3D" parent="." unique_id=726621869]
+[node name="JetPath" type="Node3D" parent="." unique_id=1874746112]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 8, 0)
 script = ExtResource("1_loyqw")
 mode = 3
@@ -109,87 +109,87 @@ amount = 90.0
 speed = 0.05
 axis = Vector3(0, 0, -1)
 
-[node name="Jet" type="Node3D" parent="JetPath" unique_id=2007625704]
+[node name="Jet" type="Node3D" parent="JetPath" unique_id=117390262]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
 
-[node name="Body" type="MeshInstance3D" parent="JetPath/Jet" unique_id=273884599]
+[node name="Body" type="MeshInstance3D" parent="JetPath/Jet" unique_id=571355939]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CapsuleMesh_82ahh")
 
-[node name="Wings" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1387025759]
+[node name="Wings" type="MeshInstance3D" parent="JetPath/Jet" unique_id=732092439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.1)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_q5dxl")
 
-[node name="Fin" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1436524560]
+[node name="Fin" type="MeshInstance3D" parent="JetPath/Jet" unique_id=283732466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -1.3)
 material_override = SubResource("StandardMaterial3D_28i4c")
 mesh = SubResource("BoxMesh_i8d31")
 
-[node name="Tail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1767505652]
+[node name="Tail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=777650219]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -1.35)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("BoxMesh_uq63y")
 
-[node name="Window" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1452943073]
+[node name="Window" type="MeshInstance3D" parent="JetPath/Jet" unique_id=145445411]
 transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 1.4, 0, 0.15, 1.1)
 material_override = SubResource("StandardMaterial3D_owsj4")
 mesh = SubResource("SphereMesh_lh13e")
 
-[node name="Contrail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=609883160]
+[node name="Contrail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1575246763]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8.5)
 material_override = SubResource("StandardMaterial3D_d6rb0")
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_4sd5s")
 
-[node name="PartyBalloon" type="Node3D" parent="." unique_id=960112699]
+[node name="PartyBalloon" type="Node3D" parent="." unique_id=1967713627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.5, -5)
 script = ExtResource("1_loyqw")
 amount = 0.8
 speed = 0.2
 
-[node name="Balloon" type="MeshInstance3D" parent="PartyBalloon" unique_id=278057908]
+[node name="Balloon" type="MeshInstance3D" parent="PartyBalloon" unique_id=1906108757]
 transform = Transform3D(1.6, 0, 0, 0, 1.9, 0, 0, 0, 1.6, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_dgnkt")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Shine" type="MeshInstance3D" parent="PartyBalloon" unique_id=790328673]
+[node name="Shine" type="MeshInstance3D" parent="PartyBalloon" unique_id=1825303010]
 transform = Transform3D(0.8, 0, 0, 0, 1.2, 0, 0, 0, 0.5, -0.6, 0.7, 0.9)
 material_override = SubResource("StandardMaterial3D_lmhbb")
 mesh = SubResource("SphereMesh_5y45c")
 
-[node name="Knot" type="MeshInstance3D" parent="PartyBalloon" unique_id=1266771244]
+[node name="Knot" type="MeshInstance3D" parent="PartyBalloon" unique_id=1134927678]
 transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, -1.95, 0)
 material_override = SubResource("StandardMaterial3D_5sf7w")
 mesh = SubResource("PrismMesh_l34e3")
 
-[node name="String0" type="MeshInstance3D" parent="PartyBalloon" unique_id=777663789]
+[node name="String0" type="MeshInstance3D" parent="PartyBalloon" unique_id=515335709]
 transform = Transform3D(0.97468776, -0.22357053, 0, 0.22357053, 0.97468776, 0, 0, 0, 1, 0, -2.4, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
 
-[node name="String1" type="MeshInstance3D" parent="PartyBalloon" unique_id=1781520600]
+[node name="String1" type="MeshInstance3D" parent="PartyBalloon" unique_id=1755406699]
 transform = Transform3D(0.95470685, -0.297548, 0, 0.297548, 0.95470685, 0, 0, 0, 1, 0.17738095, -3, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
 
-[node name="String2" type="MeshInstance3D" parent="PartyBalloon" unique_id=1749825583]
+[node name="String2" type="MeshInstance3D" parent="PartyBalloon" unique_id=1038131899]
 transform = Transform3D(0.9924727, 0.12246592, 0, -0.12246592, 0.9924727, 0, 0, 0, 1, 0.060297865, -3.6, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
 
-[node name="String3" type="MeshInstance3D" parent="PartyBalloon" unique_id=88908576]
+[node name="String3" type="MeshInstance3D" parent="PartyBalloon" unique_id=524047999]
 transform = Transform3D(0.9414609, 0.33712214, 0, -0.33712214, 0.9414609, 0, 0, 0, 1, -0.15688364, -4.2, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
 
-[node name="String4" type="MeshInstance3D" parent="PartyBalloon" unique_id=190801047]
+[node name="String4" type="MeshInstance3D" parent="PartyBalloon" unique_id=954355419]
 transform = Transform3D(0.99998266, -0.0058848313, 0, 0.0058848313, 0.99998266, 0, 0, 0, 1, -0.11362799, -4.8, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
 
-[node name="String5" type="MeshInstance3D" parent="PartyBalloon" unique_id=284413999]
+[node name="String5" type="MeshInstance3D" parent="PartyBalloon" unique_id=696474523]
 transform = Transform3D(0.94078463, -0.3390048, 0, 0.3390048, 0.94078463, 0, 0, 0, 1, 0.11825759, -5.4, 0)
 material_override = SubResource("StandardMaterial3D_dpy74")
 mesh = SubResource("CylinderMesh_m2tyo")
