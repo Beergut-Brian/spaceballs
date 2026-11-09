@@ -3,37 +3,55 @@
 extends Node
 
 const PUFF_TIME := 0.35
+const PUFF_BALLS := 7
+
+var _puff_mesh: SphereMesh
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
-## A sphere that swells and fades: dust puff, star burst, kick flash.
+## A cartoon puff: a little cluster of soft balls that bursts out, swells and fades.
+## Dust on the kick, sparkle at a tier, poof for the frog. (Art lane insides, Systems' call.)
 func puff(where: Vector3, color: Color = Color.WHITE, size: float = 1.0) -> void:
 	var root := get_tree().current_scene
 	if root == null:
 		return
-	var mesh := MeshInstance3D.new()
-	var sphere := SphereMesh.new()
-	sphere.radius = 0.5
-	sphere.height = 1.0
-	sphere.radial_segments = 12
-	sphere.rings = 6
+	if _puff_mesh == null:
+		_puff_mesh = SphereMesh.new()
+		_puff_mesh.radius = 0.5
+		_puff_mesh.height = 1.0
+		_puff_mesh.radial_segments = 16
+		_puff_mesh.rings = 8
 	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.albedo_color = color
-	sphere.material = mat
-	mesh.mesh = sphere
-	mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	root.add_child(mesh)
-	mesh.global_position = where
-	mesh.scale = Vector3.ONE * 0.2 * size
-	var tw := mesh.create_tween().set_parallel()
-	tw.tween_property(mesh, "scale", Vector3.ONE * 1.6 * size, PUFF_TIME).set_ease(Tween.EASE_OUT)
-	tw.tween_property(mat, "albedo_color:a", 0.0, PUFF_TIME)
-	tw.chain().tween_callback(mesh.queue_free)
+	mat.roughness = 1.0
+	mat.rim_enabled = true
+	mat.rim = 0.6
+	mat.emission_enabled = true
+	mat.emission = color * 0.35
+	var n := PUFF_BALLS
+	for i in n:
+		var mesh := MeshInstance3D.new()
+		mesh.mesh = _puff_mesh
+		mesh.material_override = mat
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(mesh)
+		var a := TAU * i / n + randf() * 0.5
+		var dir := Vector3(cos(a), randf_range(0.15, 0.6), sin(a)).normalized()
+		mesh.global_position = where
+		mesh.scale = Vector3.ONE * 0.15 * sqrt(size)
+		var big := randf_range(0.45, 0.8) * sqrt(size)
+		var tw := mesh.create_tween().set_parallel()
+		tw.tween_property(mesh, "global_position", where + dir * 0.75 * size, PUFF_TIME * 1.6).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+		tw.tween_property(mesh, "scale", Vector3.ONE * big, PUFF_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.chain().tween_property(mesh, "scale", Vector3.ONE * big * 0.2, PUFF_TIME)
+		tw.chain().tween_callback(mesh.queue_free)
+	var fade := root.create_tween()
+	fade.tween_interval(PUFF_TIME * 0.8)
+	fade.tween_property(mat, "albedo_color:a", 0.0, PUFF_TIME * 1.2)
 
 
 ## A quick white blink on a Control or Node2D.

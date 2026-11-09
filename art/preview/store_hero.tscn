@@ -1,0 +1,89 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://art/preview/store.gd" id="1_store"]
+[ext_resource type="Shader" path="res://art/shaders/sky.gdshader" id="2_sky"]
+[ext_resource type="Shader" path="res://art/shaders/planet.gdshader" id="3_planet"]
+[ext_resource type="Shader" path="res://art/shaders/atmosphere.gdshader" id="4_atmo"]
+
+[sub_resource type="ShaderMaterial" id="sky_mat"]
+shader = ExtResource("2_sky")
+shader_parameter/top_color = Color(0.027, 0.024, 0.06, 1)
+shader_parameter/horizon_color = Color(0.165, 0.07, 0.41, 1)
+shader_parameter/ground_color = Color(0.165, 0.07, 0.41, 1)
+shader_parameter/stars = 1.0
+shader_parameter/sun_glow = 0.1
+shader_parameter/planet = 0.0
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+radiance_size = 1
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.5, 0.75, 1)
+ambient_light_energy = 0.5
+glow_enabled = true
+glow_intensity = 0.4
+glow_bloom = 0.0
+glow_hdr_threshold = 1.2
+
+[sub_resource type="SphereMesh" id="planet_mesh"]
+radius = 30.0
+height = 60.0
+radial_segments = 128
+rings = 64
+
+[sub_resource type="ShaderMaterial" id="planet_mat"]
+shader = ExtResource("3_planet")
+
+[sub_resource type="SphereMesh" id="atmo_mesh"]
+radius = 30.6
+height = 61.2
+radial_segments = 128
+rings = 64
+
+[sub_resource type="ShaderMaterial" id="atmo_mat"]
+shader = ExtResource("4_atmo")
+
+[sub_resource type="SphereMesh" id="moon_mesh"]
+radius = 2.4
+height = 4.8
+
+[sub_resource type="StandardMaterial3D" id="moon_mat"]
+albedo_color = Color(0.79, 0.82, 0.9, 1)
+roughness = 1.0
+rim_enabled = true
+rim = 0.4
+
+[node name="StoreHero" type="Node3D"]
+script = ExtResource("1_store")
+kind = "hero"
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.7071, -0.5, 0.5, 0, 0.7071, 0.7071, -0.7071, -0.5, 0.5, 0, 10, 0)
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 1.1
+
+[node name="Planet" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -31.5, 0)
+mesh = SubResource("planet_mesh")
+surface_material_override/0 = SubResource("planet_mat")
+
+[node name="Atmosphere" type="MeshInstance3D" parent="Planet"]
+mesh = SubResource("atmo_mesh")
+surface_material_override/0 = SubResource("atmo_mat")
+
+[node name="Moon" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 6.2, -30)
+mesh = SubResource("moon_mesh")
+surface_material_override/0 = SubResource("moon_mat")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9925, 0.1219, 0, -0.1219, 0.9925, 0, 2.0, 7.6)
+current = true
+fov = 45.0

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/ball.gd" id="1_ball"]
+[ext_resource type="Script" path="res://art/scripts/ball_look.gd" id="2_look"]
 
 [sub_resource type="SphereShape3D" id="ball_shape"]
 radius = 0.3
@@ -8,6 +9,8 @@ radius = 0.3
 [sub_resource type="SphereMesh" id="ball_mesh"]
 radius = 0.3
 height = 0.6
+radial_segments = 48
+rings = 24
 
 [sub_resource type="SphereShape3D" id="zone_shape"]
 radius = 1.1
@@ -34,3 +37,6 @@ collision_mask = 2
 
 [node name="Shape" type="CollisionShape3D" parent="KickZone"]
 shape = SubResource("zone_shape")
+
+[node name="Look" type="Node3D" parent="."]
+script = ExtResource("2_look")

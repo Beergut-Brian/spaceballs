@@ -1,0 +1,24 @@
+GIMP Palette
+Name: Open Jar C Cool Arcade
+Columns: 5
+#
+ 10  10  20	Midnight Ink (ink)
+238 248 255	Ice (neutral)
+142 156 192	Slate (neutral)
+134 246 255	Aqua Glow (sky)
+ 56 198 255	Cyan Beam (sky)
+ 61 139 255	Laser Blue (sky)
+122 108 255	Ultraviolet (sky)
+102  40 255	Electric Indigo (sky)
+ 28 201 166	Teal Turf (ground)
+156  94 158	Plum Dirt (ground)
+255 191 160	Peach Glow (ground)
+255 159  46	Neon Orange (accent)
+255  79 216	Neon Pink (accent)
+ 60 194  74	Player Green (fixed)
+228  57  60	Player Red (fixed)
+255 216  77	Costume Yellow (fixed)
+ 59  91 165	Jeans Blue (fixed)
+138  90  43	Boots Brown (fixed)
+ 43  43  51	Hat Near-Black (fixed)
+ 30  30  38	Shirt Black (fixed)
