@@ -1,5 +1,7 @@
 ## The upgrade pick: vertical split, green left, red right, three icon cards per half.
 ## Stick moves, A picks, waits for both, never times out. Systems owns structure, Art the theme.
+## Solo (playtest): one pad picks for P1, then P2 (the waiting half is dimmed); B on P2's turn
+## goes back to P1's choice. Both picks are emitted together when P2 picks.
 extends Control
 
 signal picked(player: int, upgrade: UpgradeData)
@@ -10,6 +12,7 @@ const P2 := 1
 const STICK_PRESS := 0.6
 const STICK_RELEASE := 0.3
 const DEMO_PICK_AFTER := 0.8
+const WAITING_DIM := Color(0.45, 0.45, 0.45)
 
 var _draws := {}
 var _sel := {P1: 1, P2: 1}
@@ -17,6 +20,9 @@ var _done := {P1: false, P2: false}
 var _latched := {P1: false, P2: false}
 var _demo_t := 0.0
 var _open := false
+## Solo: whose turn it is (-1 = not sequencing) and P1's choice, held until P2 picks.
+var _solo_turn := -1
+var _solo_held: UpgradeData = null
 
 @onready var halves := {P1: $Halves/P1, P2: $Halves/P2}
 
@@ -24,6 +30,7 @@ var _open := false
 func _ready() -> void:
 	visible = false
 	set_process(false)
+	Players.solo_changed.connect(_on_solo_changed)
 
 
 func cards_of(player: int) -> Array:
@@ -59,6 +66,14 @@ func open(draws: Dictionary, shown: Array) -> void:
 			cards[i].set_upgrade(list[i] if i < list.size() else null)
 			cards[i].bounce = false
 		_refresh(p)
+	_solo_held = null
+	_solo_turn = -1
+	if Players.solo:
+		var turn := P1 if draws.has(P1) else P2
+		if draws.has(P1) and draws.has(P2):
+			_solo_turn = P1
+		Players.set_solo_focus(turn)
+	_refresh_halves()
 	visible = true
 	set_process(true)
 
@@ -67,15 +82,23 @@ func close() -> void:
 	if not _open:
 		return
 	_open = false
+	_solo_turn = -1
+	_solo_held = null
+	_refresh_halves()
 	visible = false
 	set_process(false)
 	closed.emit()
 
 
+## Solo: whose turn it is, or -1 when both halves read their own input.
+func solo_turn() -> int:
+	return _solo_turn
+
+
 func _process(delta: float) -> void:
 	_demo_t += delta
 	for p in _draws:
-		if _done[p]:
+		if _done[p] or (_solo_turn != -1 and p != _solo_turn):
 			continue
 		if Run.demo and _demo_t > DEMO_PICK_AFTER:
 			_sel[p] = randi() % _draws[p].size()
@@ -91,6 +114,8 @@ func _process(delta: float) -> void:
 			_move(p, 1 if x > 0.0 else -1)
 		if Input.is_action_just_pressed(Players.action(p, "action")):
 			_pick(p)
+		elif _solo_turn == P2 and Input.is_action_just_pressed(Players.action(p, "jump")):
+			solo_back()
 
 
 func _move(p: int, step: int) -> void:
@@ -115,11 +140,61 @@ func _pick(p: int) -> void:
 		if i != _sel[p]:
 			cards[i].modulate = Color(1, 1, 1, 0.25)
 	Fx.flash(cards[_sel[p]], Players.COLOR[p])
+	if _solo_turn == P1:
+		# Hold P1's choice; the same pad now picks for P2.
+		_solo_held = u
+		_solo_turn = P2
+		_latched[P2] = true
+		_demo_t = 0.0
+		Players.set_solo_focus(P2)
+		_refresh_halves()
+		return
+	if _solo_turn == P2:
+		_solo_turn = -1
+		_refresh_halves()
+		var held := _solo_held
+		_solo_held = null
+		picked.emit(P1, held)
 	for q in _draws:
 		if not _done[q]:
 			for c in cards_of(q):
 				c.bounce = true   # gently nudge the slower side, never a timer
 	picked.emit(p, u)
+
+
+## Solo, P2's turn: B undoes P1's held choice and hands the pad back to P1.
+func solo_back() -> void:
+	if _solo_turn != P2:
+		return
+	_solo_turn = P1
+	_solo_held = null
+	_done[P1] = false
+	_latched[P1] = true
+	for c in cards_of(P1):
+		c.modulate = Color.WHITE
+	Players.set_solo_focus(P1)
+	Audio.play("card_move", null, 0.7)
+	_refresh(P1)
+	_refresh_halves()
+	Fx.flash(cards_of(P1)[_sel[P1]], Players.COLOR[P1])
+
+
+func _on_solo_changed(on: bool) -> void:
+	if on or _solo_turn == -1:
+		return
+	# Solo ended mid-pick: P1's held choice counts, P2 goes back to normal.
+	var held := _solo_held
+	_solo_turn = -1
+	_solo_held = null
+	_refresh_halves()
+	if held != null:
+		picked.emit(P1, held)
+
+
+func _refresh_halves() -> void:
+	for p in [P1, P2]:
+		var waiting: bool = _solo_turn != -1 and p != _solo_turn
+		halves[p].modulate = WAITING_DIM if waiting else Color.WHITE
 
 
 func _refresh(p: int) -> void:
