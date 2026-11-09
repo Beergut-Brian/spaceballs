@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://art/scripts/frog_dress.gd" id="1_ang6r"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t0xpy"]
-albedo_color = Color(0.56078434, 0.81960785, 0.30980393, 1)
+albedo_color = Color(0.6392157, 0.7882353, 0.2901961, 1)
 roughness = 0.55
 rim_enabled = true
 rim = 0.45
@@ -23,7 +23,7 @@ rim = 0.35
 rim_tint = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qusnc"]
-albedo_color = Color(0.56078434, 0.81960785, 0.30980393, 1)
+albedo_color = Color(0.6392157, 0.7882353, 0.2901961, 1)
 roughness = 0.55
 rim_enabled = true
 rim = 0.35
@@ -88,294 +88,280 @@ radial_segments = 32
 rings = 16
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n85sm"]
-albedo_color = Color(0.56078434, 0.81960785, 0.30980393, 1)
+albedo_color = Color(0.6392157, 0.7882353, 0.2901961, 1)
 roughness = 0.7
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mwjgb"]
-albedo_color = Color(0.5159216, 0.7540392, 0.28501964, 1)
+albedo_color = Color(0.58807844, 0.7251765, 0.2669804, 1)
 roughness = 0.7
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8i1la"]
-albedo_color = Color(0.039215688, 0.039215688, 0.078431375, 1)
+albedo_color = Color(0.3529412, 0.09411765, 0.1882353, 1)
 roughness = 0.4
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
 
-[sub_resource type="TorusMesh" id="TorusMesh_lahvr"]
-inner_radius = 0.15
-outer_radius = 0.18
-rings = 32
-ring_segments = 12
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lahvr"]
+albedo_color = Color(1, 0.47843137, 0.6039216, 1)
+roughness = 0.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
 
-[sub_resource type="BoxMesh" id="BoxMesh_5c3e3"]
-size = Vector3(0.4, 0.1, 0.12)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1guqj"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5c3e3"]
 albedo_color = Color(1, 0.84705883, 0.3019608, 1)
 roughness = 0.75
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_yubdg"]
+[sub_resource type="SphereMesh" id="SphereMesh_1guqj"]
 radius = 0.36
 height = 0.36
 radial_segments = 32
 rings = 12
 is_hemisphere = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7j35j"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yubdg"]
 albedo_color = Color(0.23529412, 0.7607843, 0.2901961, 1)
 roughness = 0.6
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="TorusMesh" id="TorusMesh_d3w4i"]
-inner_radius = 0.33
-outer_radius = 0.39
+[sub_resource type="TorusMesh" id="TorusMesh_7j35j"]
+inner_radius = 0.34
+outer_radius = 0.41
 rings = 32
 ring_segments = 12
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r5hen"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d3w4i"]
 albedo_color = Color(0.8392157, 0.2, 0.5176471, 1)
 roughness = 0.7
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_rif0q"]
-radius = 0.07
-height = 0.14
+[sub_resource type="SphereMesh" id="SphereMesh_r5hen"]
+radius = 0.08
+height = 0.16
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0tua0"]
-albedo_color = Color(1, 0.62352943, 0.18039216, 1)
-roughness = 0.5
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="PrismMesh" id="PrismMesh_84ome"]
-size = Vector3(0.16, 0.12, 0.1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7lyki"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjtxx"]
 albedo_color = Color(1, 0.84705883, 0.3019608, 1)
 roughness = 0.7
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_biux0"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rif0q"]
 albedo_color = Color(0.16862746, 0.16862746, 0.2, 1)
 roughness = 0.7
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_j8d7a"]
+[sub_resource type="SphereMesh" id="SphereMesh_84ome"]
 radius = 0.3
 height = 0.3
 radial_segments = 32
 rings = 12
 is_hemisphere = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r001x"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_biux0"]
 albedo_color = Color(0.89411765, 0.22352941, 0.23529412, 1)
 roughness = 0.6
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="TorusMesh" id="TorusMesh_hc7jh"]
+[sub_resource type="TorusMesh" id="TorusMesh_j8d7a"]
 inner_radius = 0.285
 outer_radius = 0.315
 rings = 32
 ring_segments = 12
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_037b4"]
-top_radius = 0.2
-bottom_radius = 0.2
+[sub_resource type="CylinderMesh" id="CylinderMesh_r001x"]
+top_radius = 0.17
+bottom_radius = 0.17
 height = 0.025
 radial_segments = 24
 rings = 1
 
-[sub_resource type="BoxMesh" id="BoxMesh_bumu0"]
-size = Vector3(0.22, 0.13, 0.02)
+[sub_resource type="BoxMesh" id="BoxMesh_hc7jh"]
+size = Vector3(0.2, 0.12, 0.02)
 
-[node name="Frog" type="Node3D" unique_id=2019437763 groups=["frog"]]
+[node name="Frog" type="Node3D" unique_id=1138101207 groups=["frog"]]
 script = ExtResource("1_ang6r")
 metadata/_art = "Art lane frog (art/tools/build_scenes.gd). Jarling-style, faces -Z like the kicker. JeffHood / ChuckHat carry the exact player accents."
 
-[node name="Skin" type="MeshInstance3D" parent="." unique_id=1478007987]
+[node name="Skin" type="MeshInstance3D" parent="." unique_id=970081960]
 transform = Transform3D(0.48, 0, 0, 0, 0.36, 0, 0, 0, 0.44, 0, 0.36, 0)
 material_override = SubResource("StandardMaterial3D_t0xpy")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Belly" type="MeshInstance3D" parent="." unique_id=2066340492]
+[node name="Belly" type="MeshInstance3D" parent="." unique_id=1113532975]
 transform = Transform3D(0.36, 0, 0, 0, 0.26, 0, 0, 0, 0.28, 0, 0.3, -0.2)
 material_override = SubResource("StandardMaterial3D_isaat")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="Node3D" parent="." unique_id=1493805586]
+[node name="Head" type="Node3D" parent="." unique_id=579612048]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, -0.08)
 
-[node name="EyeL" type="Node3D" parent="Head" unique_id=1716305071]
+[node name="EyeL" type="Node3D" parent="Head" unique_id=1826274262]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.08, -0.06)
 
-[node name="Bump" type="MeshInstance3D" parent="Head/EyeL" unique_id=543713798]
+[node name="Bump" type="MeshInstance3D" parent="Head/EyeL" unique_id=1264529580]
 material_override = SubResource("StandardMaterial3D_qusnc")
 mesh = SubResource("SphereMesh_i0aes")
 
-[node name="White" type="MeshInstance3D" parent="Head/EyeL" unique_id=2022805624]
+[node name="White" type="MeshInstance3D" parent="Head/EyeL" unique_id=879919193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.08)
 material_override = SubResource("StandardMaterial3D_kpkni")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Pupil" type="MeshInstance3D" parent="Head/EyeL" unique_id=4539432]
+[node name="Pupil" type="MeshInstance3D" parent="Head/EyeL" unique_id=272725187]
 transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 0.6, 0, 0.02, -0.17)
 material_override = SubResource("StandardMaterial3D_mq8i0")
 mesh = SubResource("SphereMesh_55svp")
 
-[node name="Shine" type="MeshInstance3D" parent="Head/EyeL" unique_id=2011309130]
+[node name="Shine" type="MeshInstance3D" parent="Head/EyeL" unique_id=1186550761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 0.06, -0.205)
 material_override = SubResource("StandardMaterial3D_1dma2")
 mesh = SubResource("SphereMesh_eyb2k")
 
-[node name="EyeR" type="Node3D" parent="Head" unique_id=1643045943]
+[node name="EyeR" type="Node3D" parent="Head" unique_id=1195267158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.08, -0.06)
 
-[node name="Bump" type="MeshInstance3D" parent="Head/EyeR" unique_id=2086372913]
+[node name="Bump" type="MeshInstance3D" parent="Head/EyeR" unique_id=1878954648]
 material_override = SubResource("StandardMaterial3D_qusnc")
 mesh = SubResource("SphereMesh_i0aes")
 
-[node name="White" type="MeshInstance3D" parent="Head/EyeR" unique_id=1405933576]
+[node name="White" type="MeshInstance3D" parent="Head/EyeR" unique_id=1231445706]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.08)
 material_override = SubResource("StandardMaterial3D_kpkni")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Pupil" type="MeshInstance3D" parent="Head/EyeR" unique_id=1416055086]
+[node name="Pupil" type="MeshInstance3D" parent="Head/EyeR" unique_id=1314618734]
 transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 0.6, 0, 0.02, -0.17)
 material_override = SubResource("StandardMaterial3D_mq8i0")
 mesh = SubResource("SphereMesh_55svp")
 
-[node name="Shine" type="MeshInstance3D" parent="Head/EyeR" unique_id=629145923]
+[node name="Shine" type="MeshInstance3D" parent="Head/EyeR" unique_id=2069233780]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.06, -0.205)
 material_override = SubResource("StandardMaterial3D_1dma2")
 mesh = SubResource("SphereMesh_eyb2k")
 
-[node name="Cheek-1" type="MeshInstance3D" parent="." unique_id=1871488020]
+[node name="Cheek-1" type="MeshInstance3D" parent="." unique_id=2075652523]
 transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 0.4, -0.3, 0.38, -0.32)
 material_override = SubResource("StandardMaterial3D_6gu3h")
 mesh = SubResource("SphereMesh_6m80t")
 
-[node name="Thigh-1" type="MeshInstance3D" parent="." unique_id=735251581]
+[node name="Thigh-1" type="MeshInstance3D" parent="." unique_id=1028183329]
 transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.24, -0.38, 0.2, 0.12)
 material_override = SubResource("StandardMaterial3D_n85sm")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Foot-1" type="MeshInstance3D" parent="." unique_id=1872975042]
+[node name="Foot-1" type="MeshInstance3D" parent="." unique_id=115222711]
 transform = Transform3D(0.12, 0, 0, 0, 0.04, 0, 0, 0, 0.18, -0.42, 0.04, -0.12)
 material_override = SubResource("StandardMaterial3D_mwjgb")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Mitt-1" type="MeshInstance3D" parent="." unique_id=195299037]
+[node name="Mitt-1" type="MeshInstance3D" parent="." unique_id=1929681668]
 transform = Transform3D(0.09, 0, 0, 0, 0.05, 0, 0, 0, 0.1, -0.2, 0.05, -0.36)
 material_override = SubResource("StandardMaterial3D_mwjgb")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Cheek1" type="MeshInstance3D" parent="." unique_id=620405285]
+[node name="Cheek1" type="MeshInstance3D" parent="." unique_id=862841978]
 transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 0.4, 0.3, 0.38, -0.32)
 material_override = SubResource("StandardMaterial3D_6gu3h")
 mesh = SubResource("SphereMesh_6m80t")
 
-[node name="Thigh1" type="MeshInstance3D" parent="." unique_id=2060907447]
+[node name="Thigh1" type="MeshInstance3D" parent="." unique_id=1621956522]
 transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.24, 0.38, 0.2, 0.12)
 material_override = SubResource("StandardMaterial3D_n85sm")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Foot1" type="MeshInstance3D" parent="." unique_id=674536353]
+[node name="Foot1" type="MeshInstance3D" parent="." unique_id=1313075705]
 transform = Transform3D(0.12, 0, 0, 0, 0.04, 0, 0, 0, 0.18, 0.42, 0.04, -0.12)
 material_override = SubResource("StandardMaterial3D_mwjgb")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Mitt1" type="MeshInstance3D" parent="." unique_id=1316896905]
+[node name="Mitt1" type="MeshInstance3D" parent="." unique_id=1199825384]
 transform = Transform3D(0.09, 0, 0, 0, 0.05, 0, 0, 0, 0.1, 0.2, 0.05, -0.36)
 material_override = SubResource("StandardMaterial3D_mwjgb")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Smile" type="MeshInstance3D" parent="." unique_id=596750822]
-transform = Transform3D(1, 0, 0, 0, 0.17364822, -0.5908847, 0, 0.9848077, 0.10418894, 0, 0.42, -0.36)
+[node name="Mouth" type="MeshInstance3D" parent="." unique_id=1744851879]
+transform = Transform3D(0.14, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0.5, -0.4)
 material_override = SubResource("StandardMaterial3D_8i1la")
-mesh = SubResource("TorusMesh_lahvr")
-
-[node name="SmileCover" type="MeshInstance3D" parent="." unique_id=1685669545]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, -0.37)
-material_override = SubResource("StandardMaterial3D_n85sm")
-mesh = SubResource("BoxMesh_5c3e3")
-
-[node name="JeffHood" type="Node3D" parent="." unique_id=1940366401]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.06)
-
-[node name="Hood" type="MeshInstance3D" parent="JeffHood" unique_id=14196679]
-transform = Transform3D(1.05, 0, 0, 0, 0.84572333, 0.34202012, 0, -0.3078181, 0.9396926, 0, 0.02, 0.04)
-material_override = SubResource("StandardMaterial3D_1guqj")
-mesh = SubResource("SphereMesh_yubdg")
-
-[node name="Headband" type="MeshInstance3D" parent="JeffHood" unique_id=2100696968]
-transform = Transform3D(1.05, 0, 0, 0, 0.5638156, 0.34202012, 0, -0.20521209, 0.9396926, 0, 0.04, 0.03)
-material_override = SubResource("StandardMaterial3D_7j35j")
-mesh = SubResource("TorusMesh_d3w4i")
-
-[node name="Comb0" type="MeshInstance3D" parent="JeffHood" unique_id=1024360080]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31, -0.08)
-material_override = SubResource("StandardMaterial3D_r5hen")
-mesh = SubResource("SphereMesh_rif0q")
-
-[node name="Comb1" type="MeshInstance3D" parent="JeffHood" unique_id=327637327]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0.02)
-material_override = SubResource("StandardMaterial3D_r5hen")
-mesh = SubResource("SphereMesh_rif0q")
-
-[node name="Comb2" type="MeshInstance3D" parent="JeffHood" unique_id=1231665284]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31, 0.12)
-material_override = SubResource("StandardMaterial3D_r5hen")
-mesh = SubResource("SphereMesh_rif0q")
-
-[node name="Beak" type="MeshInstance3D" parent="JeffHood" unique_id=1516298156]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.24, -0.3)
-material_override = SubResource("StandardMaterial3D_0tua0")
-mesh = SubResource("PrismMesh_84ome")
-
-[node name="TailFeather" type="MeshInstance3D" parent="JeffHood" unique_id=830099971]
-transform = Transform3D(0.06, 0, 0, 0, 0.14, 0, 0, 0, 0.06, 0, 0, 0.42)
-material_override = SubResource("StandardMaterial3D_7lyki")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="ChuckHat" type="Node3D" parent="." unique_id=1233814863]
-transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 0.78, 0)
+[node name="Tongue" type="MeshInstance3D" parent="." unique_id=1989899690]
+transform = Transform3D(0.075, 0, 0, 0, 0.025, 0, 0, 0, 0.03, 0, 0.485, -0.425)
+material_override = SubResource("StandardMaterial3D_lahvr")
+mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crown" type="MeshInstance3D" parent="ChuckHat" unique_id=569148982]
-transform = Transform3D(1, 0, 0, 0, 0.85, 0, 0, 0, 1, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_biux0")
-mesh = SubResource("SphereMesh_j8d7a")
+[node name="JeffHood" type="Node3D" parent="." unique_id=1788540093]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, -0.02)
 
-[node name="Piping" type="MeshInstance3D" parent="ChuckHat" unique_id=228228690]
+[node name="Hood" type="MeshInstance3D" parent="JeffHood" unique_id=812147407]
+transform = Transform3D(1.15, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 0, 0.1)
+material_override = SubResource("StandardMaterial3D_5c3e3")
+mesh = SubResource("SphereMesh_1guqj")
+
+[node name="Headband" type="MeshInstance3D" parent="JeffHood" unique_id=1294044272]
+transform = Transform3D(1.12, 0, 0, 0, 1.4500924, 0.42261827, 0, -0.67618924, 0.90630776, 0, 0.06, 0.02)
+material_override = SubResource("StandardMaterial3D_yubdg")
+mesh = SubResource("TorusMesh_7j35j")
+
+[node name="Comb0" type="MeshInstance3D" parent="JeffHood" unique_id=1319318145]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.05)
+material_override = SubResource("StandardMaterial3D_d3w4i")
+mesh = SubResource("SphereMesh_r5hen")
+
+[node name="Comb1" type="MeshInstance3D" parent="JeffHood" unique_id=1330261982]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0.06)
+material_override = SubResource("StandardMaterial3D_d3w4i")
+mesh = SubResource("SphereMesh_r5hen")
+
+[node name="Comb2" type="MeshInstance3D" parent="JeffHood" unique_id=123064766]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.17)
+material_override = SubResource("StandardMaterial3D_d3w4i")
+mesh = SubResource("SphereMesh_r5hen")
+
+[node name="TailFeather" type="MeshInstance3D" parent="JeffHood" unique_id=113570918]
+transform = Transform3D(0.07, 0, 0, 0, 0.16, 0, 0, 0, 0.07, 0, -0.1, 0.42)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="ChuckHat" type="Node3D" parent="." unique_id=1111116417]
+transform = Transform3D(1, 0, 0, 0, 0.9702957, 0.2419219, 0, -0.2419219, 0.9702957, 0, 0.86, 0.1)
+
+[node name="Crown" type="MeshInstance3D" parent="ChuckHat" unique_id=494920728]
+transform = Transform3D(1, 0, 0, 0, 0.95, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_rif0q")
+mesh = SubResource("SphereMesh_84ome")
+
+[node name="Piping" type="MeshInstance3D" parent="ChuckHat" unique_id=732413948]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0.01, 0)
-material_override = SubResource("StandardMaterial3D_r001x")
-mesh = SubResource("TorusMesh_hc7jh")
+material_override = SubResource("StandardMaterial3D_biux0")
+mesh = SubResource("TorusMesh_j8d7a")
 
-[node name="Brim" type="MeshInstance3D" parent="ChuckHat" unique_id=1435231697]
-transform = Transform3D(1.25, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0, 0, -0.32)
-material_override = SubResource("StandardMaterial3D_r001x")
-mesh = SubResource("CylinderMesh_037b4")
+[node name="Brim" type="MeshInstance3D" parent="ChuckHat" unique_id=951466811]
+transform = Transform3D(1.2, 0, 0, 0, 0.9781476, -0.18712053, 0, 0.2079117, 0.8803328, 0, 0.02, -0.33)
+material_override = SubResource("StandardMaterial3D_biux0")
+mesh = SubResource("CylinderMesh_r001x")
 
-[node name="Patch" type="MeshInstance3D" parent="ChuckHat" unique_id=850361383]
-transform = Transform3D(1, 0, 0, 0, 0.81915206, 0.57357645, 0, -0.57357645, 0.81915206, 0, 0.13, -0.24)
-material_override = SubResource("StandardMaterial3D_7lyki")
-mesh = SubResource("BoxMesh_bumu0")
+[node name="Patch" type="MeshInstance3D" parent="ChuckHat" unique_id=301649614]
+transform = Transform3D(1, 0, 0, 0, 0.7880108, 0.6156615, 0, -0.6156615, 0.7880108, 0, 0.15, -0.23)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("BoxMesh_hc7jh")

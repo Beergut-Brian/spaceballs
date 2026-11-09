@@ -29,7 +29,7 @@ const BARK := Color("8a5a2b")
 const LEAF_A := Color("4cb86a")
 const LEAF_B := Color("2fa38a")
 const LEAF_C := Color("7ccf5b")
-const FROG := Color("8fd14f")
+const FROG := Color("a3c94a")
 const FROG_BELLY := Color("eaf6b8")
 
 var _mats := {}
@@ -214,7 +214,7 @@ func cloud(parent: Node, n: String, pos: Vector3, size: float, seed_: int, m: Ma
 	var c := node(parent, n, pos)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_
-	var mm: Material = m if m else mat(Color("e6eef8"), 1.0, 0.3)
+	var mm: Material = m if m else mat(Color("bccadc"), 1.0, 0.35)
 	var count := 5
 	for i in count:
 		var x := (float(i) / (count - 1) - 0.5) * 2.2 * size
@@ -272,7 +272,7 @@ func _build_field() -> void:
 	env.fog_height = 25.0
 	env.fog_height_density = 0.0
 	env.fog_sky_affect = 0.0
-	env.fog_aerial_perspective = 0.1
+	env.fog_aerial_perspective = 0.0
 	env.glow_enabled = true
 	env.glow_intensity = 0.35
 	env.glow_bloom = 0.03
@@ -529,24 +529,24 @@ func _build_frog() -> void:
 		sph(root, "Thigh%s" % s, Vector3(0.38 * s, 0.2, 0.12), 1.0, FROG, Vector3(0.16, 0.16, 0.24))
 		sph(root, "Foot%s" % s, Vector3(0.42 * s, 0.04, -0.12), 1.0, FROG.darkened(0.08), Vector3(0.12, 0.04, 0.18))
 		sph(root, "Mitt%s" % s, Vector3(0.2 * s, 0.05, -0.36), 1.0, FROG.darkened(0.08), Vector3(0.09, 0.05, 0.1))
-	mi(root, "Smile", _mesh("torus", 0.15, 0.18), mat(INK, 0.4, 0.0), Vector3(0, 0.42, -0.36), Vector3(deg_to_rad(80), 0, 0), Vector3(1.0, 1.0, 0.6))
-	box(root, "SmileCover", Vector3(0, 0.47, -0.37), Vector3(0.4, 0.1, 0.12), FROG)
+	# Open happy mouth: a dark squashed ball set into the face, with a pink tongue.
+	sph(root, "Mouth", Vector3(0, 0.5, -0.4), 1.0, Color("5a1830"), Vector3(0.14, 0.05, 0.05), 0.4)
+	sph(root, "Tongue", Vector3(0, 0.485, -0.425), 1.0, Color("ff7a9a"), Vector3(0.075, 0.025, 0.03), 0.5)
 
-	# Jeff: a tiny chicken hood with a pink comb, orange beak brim and the green headband.
-	var hood := node(root, "JeffHood", Vector3(0, 0.6, 0.06))
-	mi(hood, "Hood", _mesh("hemi", 0.36), mat(YELLOW, 0.75), Vector3(0, 0.02, 0.04), Vector3(deg_to_rad(-20), 0, 0), Vector3(1.05, 0.9, 1.0))
-	mi(hood, "Headband", _mesh("torus", 0.33, 0.39), mat(P1_GREEN, 0.6), Vector3(0, 0.04, 0.03), Vector3(deg_to_rad(-20), 0, 0), Vector3(1.05, 0.6, 1.0))
+	# Jeff: a tiny open-faced chicken hood (yellow), pink comb on top, his green headband.
+	var hood := node(root, "JeffHood", Vector3(0, 0.66, -0.02))
+	mi(hood, "Hood", _mesh("hemi", 0.36), mat(YELLOW, 0.75), Vector3(0, 0.0, 0.1), Vector3(deg_to_rad(-70), 0, 0), Vector3(1.15, 1.0, 1.0))
+	mi(hood, "Headband", _mesh("torus", 0.34, 0.41), mat(P1_GREEN, 0.6), Vector3(0, 0.06, 0.02), Vector3(deg_to_rad(-25), 0, 0), Vector3(1.12, 1.6, 1.0))
 	for k in 3:
-		sph(hood, "Comb%d" % k, Vector3(0, 0.36 - abs(k - 1) * 0.05, 0.02 + (k - 1) * 0.1), 0.07, Color("d63384"))
-	mi(hood, "Beak", _mesh("prism", 0.16, 0.12, 0.1), mat(ORANGE, 0.5), Vector3(0, 0.24, -0.3), Vector3(deg_to_rad(-90), 0, 0))
-	sph(hood, "TailFeather", Vector3(0, 0.0, 0.42), 1.0, YELLOW, Vector3(0.06, 0.14, 0.06))
+		sph(hood, "Comb%d" % k, Vector3(0, 0.36 - abs(k - 1) * 0.06, 0.06 + (k - 1) * 0.11), 0.08, Color("d63384"))
+	sph(hood, "TailFeather", Vector3(0, -0.1, 0.42), 1.0, YELLOW, Vector3(0.07, 0.16, 0.07))
 
-	# Chuck: trucker hat (near-black crown, red brim and piping, yellow patch).
-	var hat := node(root, "ChuckHat", Vector3(0, 0.78, 0.0), Vector3(deg_to_rad(-8), 0, 0))
-	mi(hat, "Crown", _mesh("hemi", 0.3), mat(HAT_BLACK, 0.7), Vector3.ZERO, Vector3.ZERO, Vector3(1.0, 0.85, 1.0))
+	# Chuck: trucker hat sitting back on the head (near-black crown, red brim and piping, yellow patch).
+	var hat := node(root, "ChuckHat", Vector3(0, 0.86, 0.1), Vector3(deg_to_rad(-14), 0, 0))
+	mi(hat, "Crown", _mesh("hemi", 0.3), mat(HAT_BLACK, 0.7), Vector3.ZERO, Vector3.ZERO, Vector3(1.0, 0.95, 1.0))
 	mi(hat, "Piping", _mesh("torus", 0.285, 0.315), mat(P2_RED, 0.6), Vector3(0, 0.01, 0), Vector3.ZERO, Vector3(1, 0.5, 1))
-	mi(hat, "Brim", _mesh("cyl", 0.2, 0.2, 0.025), mat(P2_RED, 0.6), Vector3(0, 0.0, -0.32), Vector3(deg_to_rad(-6), 0, 0), Vector3(1.25, 1, 1.0))
-	box(hat, "Patch", Vector3(0, 0.13, -0.24), Vector3(0.22, 0.13, 0.02), YELLOW, Vector3(deg_to_rad(-35), 0, 0))
+	mi(hat, "Brim", _mesh("cyl", 0.17, 0.17, 0.025), mat(P2_RED, 0.6), Vector3(0, 0.02, -0.33), Vector3(deg_to_rad(12), 0, 0), Vector3(1.2, 1, 0.9))
+	box(hat, "Patch", Vector3(0, 0.15, -0.23), Vector3(0.2, 0.12, 0.02), YELLOW, Vector3(deg_to_rad(-38), 0, 0))
 	save(root, "res://scenes/curses/frog.tscn")
 
 
@@ -750,7 +750,7 @@ func _lm_edge() -> void:
 		var pos := Vector3(-80 * cos(a), 34 + (i % 2) * 8, 80 * sin(a))
 		var q := mi(r, "Aurora%d" % i, _mesh("quad", 55.0, 24.0), am, pos, Vector3(0, PI / 2 - a, 0), Vector3.ONE, false)
 		q.rotation.y = atan2(pos.x, pos.z) + PI
-	var sat := node(r, "Satellite", Vector3(-14, 3, -6), Vector3(0.3, 0.4, 0.2), Vector3.ONE * 2.6)
+	var sat := node(r, "Satellite", Vector3(-14, 7, -7), Vector3(0.3, 0.4, 0.2), Vector3.ONE * 2.6)
 	box(sat, "Body", Vector3.ZERO, Vector3(1.0, 1.0, 1.3), YELLOW)
 	box(sat, "Band", Vector3.ZERO, Vector3(1.05, 0.2, 1.35), SLATE)
 	for s in [-1, 1]:
@@ -767,7 +767,7 @@ func _lm_edge() -> void:
 
 func _lm_space() -> void:
 	var r := _landmark("space")
-	var moon := node(r, "Moon", Vector3(-140, 60, 45))
+	var moon := node(r, "Moon", Vector3(-160, 38, 22))
 	sph(moon, "Surface", Vector3.ZERO, 1.0, Color("c9d0e6"), Vector3.ONE * 16.0, 1.0)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 8
@@ -778,7 +778,7 @@ func _lm_space() -> void:
 		cr.look_at_from_position(cr.position, Vector3.ZERO)
 		cr.scale = Vector3(rng.randf_range(1.5, 3.2), rng.randf_range(1.5, 3.2), 0.6)
 	# Saucer with a waving alien (generic: green-teal, three eyes, antennae).
-	var ufo := node(r, "Saucer", Vector3(-16, 3.0, -4), Vector3(0, PI / 2 - 0.25, 0), Vector3.ONE * 4.5)
+	var ufo := node(r, "Saucer", Vector3(-16, 10.0, -7), Vector3(0, PI / 2 - 0.25, 0), Vector3.ONE * 4.5)
 	sph(ufo, "Hull", Vector3.ZERO, 1.0, SLATE.lightened(0.2), Vector3(1.4, 0.32, 1.4), 0.3)
 	mi(ufo, "Ring", _mesh("torus", 1.25, 1.42), mat(SKY4, 0.4), Vector3.ZERO, Vector3.ZERO, Vector3(1, 0.6, 1))
 	for k in 6:

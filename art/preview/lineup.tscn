@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://art/preview/lineup.gd" id="1_lineup"]
+[ext_resource type="PackedScene" path="res://scenes/levels/field.tscn" id="2_field"]
+
+[node name="Lineup" type="Node3D"]
+script = ExtResource("1_lineup")
+
+[node name="Field" parent="." instance=ExtResource("2_field")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+fov = 40.0

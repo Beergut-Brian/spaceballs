@@ -72,4 +72,4 @@ func _apply(h: float) -> void:
 	var below: Color = horizon.lerp(PLANET, planet)
 	env.fog_light_color = below if f > 3.0 else horizon
 	env.fog_density = lerpf(0.0015, 0.0008, smoothstep(3.0, 6.0, f))
-	env.fog_height_density = lerpf(0.0, 0.25, smoothstep(2.6, 4.0, f))
+	env.fog_height_density = lerpf(0.0, 2.0, smoothstep(2.6, 4.0, f))

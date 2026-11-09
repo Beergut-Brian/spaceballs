@@ -13,7 +13,8 @@ const PEAK := 3
 const DROP := 4
 const POPS := [Color("ffd84d"), Color("38c6ff")]   # palette pop panel per player
 const ACCENTS := [Color("3cc24a"), Color("e4393c")]
-const TRAIL_POINTS := 10
+## Seconds of flight the ribbon remembers (time-based, so it looks the same at any frame rate).
+const TRAIL_TIME := 0.22
 
 @export var trail_width := 0.2
 
@@ -23,6 +24,7 @@ var _mat: ShaderMaterial
 var _flight := -1
 var _in_state := 0.0
 var _points: PackedVector3Array = []
+var _ages: PackedFloat32Array = []
 var _trail: MeshInstance3D
 var _imm: ImmediateMesh
 var _tw: Tween
@@ -77,7 +79,7 @@ func _process(delta: float) -> void:
 		DROP:
 			expr = 1.0
 	_mat.set_shader_parameter(&"expr", expr)
-	_update_trail(f == PHYSICS or f == SCRIPTED)
+	_update_trail(f == PHYSICS or f == SCRIPTED, delta)
 
 
 func _on_flight(from: int, to: int) -> void:
@@ -96,13 +98,15 @@ func _pop(a: Vector3, b: Vector3) -> void:
 	_tw.tween_property(_mesh, "scale", Vector3.ONE, 0.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 
-func _update_trail(flying: bool) -> void:
+func _update_trail(flying: bool, delta: float) -> void:
+	for i in _ages.size():
+		_ages[i] += delta
+	while not _ages.is_empty() and _ages[0] > TRAIL_TIME:
+		_ages.remove_at(0)
+		_points.remove_at(0)
 	if flying:
 		_points.append(_ball.global_position)
-		if _points.size() > TRAIL_POINTS:
-			_points.remove_at(0)
-	elif not _points.is_empty():
-		_points.remove_at(0)   # the tail catches up and vanishes
+		_ages.append(0.0)
 	_imm.clear_surfaces()
 	var cam := get_viewport().get_camera_3d()
 	if _points.size() < 2 or cam == null:
