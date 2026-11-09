@@ -26,15 +26,15 @@ func after_test() -> void:
 	await get_tree().physics_frame
 
 
-## Waits in GAME time (scaled deltas), not wall-clock: CI runners render frames far slower
-## than a desktop, so a wall-clock budget failed there while the game itself was fine.
+## Waits in SIMULATED time (physics ticks), not wall-clock or process delta: on slow CI runners
+## frames are long, physics is capped per frame and lags, so both other clocks run ahead of the game.
 func _wait_for(cond: Callable, seconds: float) -> bool:
 	var waited := 0.0
 	while waited < seconds:
 		if cond.call():
 			return true
-		await get_tree().process_frame
-		waited += get_process_delta_time()
+		await get_tree().physics_frame
+		waited += get_physics_process_delta_time()
 	return false
 
 
