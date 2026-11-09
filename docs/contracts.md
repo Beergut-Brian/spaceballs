@@ -117,6 +117,39 @@ func pop(node: Node3D, amount: float = 1.3) -> void                             
 Physics layers (3D): 1 `world`, 2 `players`, 3 `pickups`, 4 `hazards`, 5 `balls`.
 Kickers collide with `world`. Balls collide with `world` only. The ball's `KickZone` masks `players`.
 
+### Solo mode (Players, Systems, 2026-11-09): playtest only
+
+One pad (or the keyboard) plays both P1 and P2. Never on by default.
+
+```gdscript
+# Players
+signal solo_changed(on: bool)         # emitted before the player_joined / player_left it causes
+const SOLO_HOLD := 2.0                # seconds of Select (Back/View) + Start held together, real time
+var solo := false
+var solo_focus: int                   # P1 or P2: the player the solo device drives right now
+func set_solo(on: bool, device: int = VIRTUAL) -> void   # VIRTUAL = keyboard + any pad (the --solo flag)
+func set_solo_focus(player: int) -> void
+func hold_step(device: int, both_down: bool, delta: float) -> bool   # the 2 s hold rule; true = toggled
+static func solo_from_args(args: PackedStringArray) -> bool          # "--solo" after --
+func reset() -> void                  # tests: solo off, nobody joined, InputMap as in project.godot
+```
+
+- Turn on with `-- --solo`, or by holding Select + Start together for 2 s on any pad; the same hold
+  turns it off. A short press or a single button never toggles. Toggling plays `player_join`
+  (pitched up for on, down for off) and pops a small two-heads icon in the bottom-right corner,
+  which stays while solo is on. A Start press that paused the game as part of the hold is undone.
+- While on: both players are active and `device_of` both is the solo device. Only the focused
+  player's `p1_*` / `p2_*` actions have events (the solo pad, plus WASD and arrows, Space and Enter,
+  Shift and Ctrl), so `Input.*(Players.action(p, ...))` and `move_vector(p)` keep working unchanged
+  and the unfocused player reads nothing. Esc still pauses. Focus defaults to P1.
+- Turning it off restores the InputMap; P1 keeps the solo device and P2 leaves (`player_left`), so
+  P2 drops in again with the normal rules.
+- Spaceballs: `main.gd` focuses the kicker whose turn it is (`KICK_P1` -> P1, `KICK_P2` -> P2).
+  The pick takes P1 first, then P2 (the waiting half is dimmed); B on P2's turn goes back to P1's
+  choice. Both `picked` signals are emitted when P2 picks. Turning solo on during round 1 before
+  P1's kick restarts the run so both play from round 1. A player who leaves during their own
+  `KICK_Px` is skipped (`Run`), so the round never waits on a pad that is gone.
+
 ### `Run` (`scripts/autoload/Run.gd`): one run of Spaceballs
 
 Owns the per-player run state and the round phase machine. Scenes report events to it with the
@@ -303,5 +336,5 @@ signal mode_changed(mode: Mode)
 
 ### Debug / CLI (after `--`)
 
-`--screenshot-after=<s>` (template), `--demo` (two virtual players, auto-picks, auto-restarts: the game
+`--screenshot-after=<s>` (template), `--solo` (one pad plays both, see Solo mode), `--demo` (two virtual players, auto-picks, auto-restarts: the game
 plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heights, picks).
