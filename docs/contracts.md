@@ -136,7 +136,7 @@ func reset() -> void                  # tests: solo off, nobody joined, InputMap
 
 - Turn on with `-- --solo`, or by holding Select + Start together for 2 s on any pad; the same hold
   turns it off. A short press or a single button never toggles. Toggling plays `player_join`
-  (pitched up for on, down for off) and pops a small two-heads icon in the bottom-right corner,
+  (pitched up for on, down for off) and pops a small two-heads icon in the top-left corner,
   which stays while solo is on. A Start press that paused the game as part of the hold is undone.
 - While on: both players are active and `device_of` both is the solo device. Only the focused
   player's `p1_*` / `p2_*` actions have events (the solo pad, plus WASD and arrows, Space and Enter,
