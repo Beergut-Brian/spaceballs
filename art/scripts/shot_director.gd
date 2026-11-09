@@ -43,7 +43,10 @@ func _shot(tag: String, delay: float) -> void:
 	var img := get_viewport().get_texture().get_image()
 	var path := "%s/%s.png" % [_dir, tag]
 	img.save_png(path)
-	print("artshot: ", path)
+	print("artshot: %s  draws=%d prims=%d objects=%d" % [path,
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME)])
 
 
 func _kicker(p: int) -> Node:
