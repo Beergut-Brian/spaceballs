@@ -23,6 +23,7 @@ var _title_t := 0.0
 func _ready() -> void:
 	Players.player_joined.connect(_on_player_joined)
 	Players.player_left.connect(_on_player_left)
+	Players.solo_changed.connect(_on_solo_changed)
 	Game.state_changed.connect(_on_state_changed)
 	Run.phase_changed.connect(_on_phase_changed)
 	Run.run_started.connect(_on_run_started)
@@ -71,6 +72,13 @@ func _on_player_joined(player: int, _device: int) -> void:
 		Fx.puff(kickers[P2].global_position + Vector3.UP, Players.COLOR[P2], 1.5)
 
 
+## Solo (playtest): turned on before P1's first kick, restart so both play from round 1.
+func _on_solo_changed(on: bool) -> void:
+	if on and Game.state != Game.State.TITLE and Run.round_index <= 1 \
+			and Run.phase == Run.Phase.KICK_P1 and not Run.in_run(P2):
+		Run.start_run()
+
+
 func _on_player_left(player: int) -> void:
 	if player == P2 and not Run.in_run(P2):
 		_bench(P2)
@@ -105,6 +113,7 @@ func _on_phase_changed(from: int, to: int) -> void:
 
 
 func _begin_kick(p: int) -> void:
+	Players.set_solo_focus(p)
 	var tee := _marker("Tees", p)
 	for q in [P1, P2]:
 		var k: Kicker = kickers[q]

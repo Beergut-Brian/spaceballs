@@ -381,8 +381,10 @@ func _on_player_left(player: int) -> void:
 	_join_next[player] = false
 	if player != P1 and in_run(player) and not in_space(player):
 		_in_run[player] = false
-		# Never leave the pick waiting on a pad that is gone.
-		if phase == Phase.PICK and pickers().all(has_picked) and not pickers().is_empty():
+		# Never leave the round waiting on a pad that is gone.
+		if phase == KICK_PHASE[player]:
+			_go_next_after(player)
+		elif phase == Phase.PICK and pickers().all(has_picked) and not pickers().is_empty():
 			_advance_round()
 
 
