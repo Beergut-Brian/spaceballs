@@ -26,17 +26,18 @@ func _ready() -> void:
 	add_child(_music)
 
 
-func play(cue: String, _position = null) -> void:
+func play(cue: String, _position = null, pitch: float = 1.0) -> void:
 	var stream := _resolve(SFX_DIR, cue)
 	if stream == null:
 		return
 	for p in _pool:
 		if not p.playing:
 			p.stream = stream
-			p.pitch_scale = randf_range(0.95, 1.05)
+			p.pitch_scale = pitch * randf_range(0.95, 1.05)
 			p.play()
 			return
 	_pool[0].stream = stream
+	_pool[0].pitch_scale = pitch
 	_pool[0].play()
 
 

@@ -6,9 +6,15 @@ enum State { TITLE, PLAYING, PAUSED, ROUND_END }
 signal state_changed(from: State, to: State)
 signal round_started(round_index: int)
 signal round_ended(round_index: int, result: Dictionary)
+signal restarted()
+signal restart_armed()
+
+## Select restarts the run on two presses within this many seconds (GAME.md Controls).
+const RESTART_WINDOW := 1.0
 
 var state: State = State.TITLE
 var round_index: int = 0
+var _restart_armed_at := -INF
 
 
 func _ready() -> void:
@@ -22,7 +28,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif state == State.PAUSED:
 			resume()
 	elif event.is_action_pressed("restart") and state != State.TITLE:
+		press_restart(Time.get_ticks_msec() / 1000.0)
+
+
+## One Select press arms (a sound and a blink), a second within RESTART_WINDOW restarts.
+func press_restart(now_s: float) -> bool:
+	if now_s - _restart_armed_at <= RESTART_WINDOW:
+		_restart_armed_at = -INF
 		restart()
+		return true
+	_restart_armed_at = now_s
+	Audio.play("restart_arm")
+	restart_armed.emit()
+	return false
 
 
 func start_round() -> void:
@@ -55,6 +73,8 @@ func resume() -> void:
 func restart() -> void:
 	get_tree().paused = false
 	Audio.play("ui_confirm")
+	round_index = 0
+	restarted.emit()
 	start_round()
 
 

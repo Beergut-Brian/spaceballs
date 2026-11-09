@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_h42ja"]
+
+[sub_resource type="Gradient" id="Gradient_u5o7k"]
+colors = PackedColorArray(0.18431373, 0.56078434, 0.6901961, 1, 0.18431373, 0.56078434, 0.6901961, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_4cccs"]
+gradient = SubResource("Gradient_u5o7k")
+
+[resource]
+script = ExtResource("1_h42ja")
+id = &"super_strength"
+name = "Super Strength"
+icon = SubResource("GradientTexture2D_4cccs")
+tier = 2
+power_mult = 1.8
+description = "Muscles on muscles."

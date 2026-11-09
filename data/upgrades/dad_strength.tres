@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_y7lc8"]
+
+[sub_resource type="Gradient" id="Gradient_ct6ev"]
+colors = PackedColorArray(0.79607844, 0.43137255, 0.09019608, 1, 0.79607844, 0.43137255, 0.09019608, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_b51yc"]
+gradient = SubResource("Gradient_ct6ev")
+
+[resource]
+script = ExtResource("1_y7lc8")
+id = &"dad_strength"
+name = "Dad Strength"
+icon = SubResource("GradientTexture2D_b51yc")
+tier = 3
+kind = "strong"
+power_mult = 2.7
+description = "Opens any jar."

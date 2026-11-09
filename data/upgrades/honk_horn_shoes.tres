@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_5rki8"]
+
+[sub_resource type="Gradient" id="Gradient_crtnj"]
+colors = PackedColorArray(0.8392157, 0.30588236, 0.6117647, 1, 0.8392157, 0.30588236, 0.6117647, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jbng3"]
+gradient = SubResource("Gradient_crtnj")
+
+[resource]
+script = ExtResource("1_5rki8")
+id = &"honk_horn_shoes"
+name = "Honk Horn Shoes"
+icon = SubResource("GradientTexture2D_jbng3")
+tier = 2
+kind = "joke"
+power_mult = 1.25
+description = "Every step honks."

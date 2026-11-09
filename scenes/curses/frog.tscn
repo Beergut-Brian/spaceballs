@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://sb_frog_placeholder"]
+
+[sub_resource type="BoxMesh" id="skin_mesh"]
+size = Vector3(0.9, 0.45, 0.8)
+
+[sub_resource type="SphereMesh" id="eye_mesh"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="StandardMaterial3D" id="eye_mat"]
+albedo_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="skin_mat"]
+albedo_color = Color(0.55, 0.75, 0.35, 1)
+
+[node name="Frog" type="Node3D" groups=["frog"]]
+metadata/_placeholder = "PLACEHOLDER (systems grey-box): Gameplay replaces with the real frog. The kicker tints the node named Skin with the player colour."
+
+[node name="Skin" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
+mesh = SubResource("skin_mesh")
+surface_material_override/0 = SubResource("skin_mat")
+
+[node name="EyeL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22, 0.5, -0.3)
+mesh = SubResource("eye_mesh")
+surface_material_override/0 = SubResource("eye_mat")
+
+[node name="EyeR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.5, -0.3)
+mesh = SubResource("eye_mesh")
+surface_material_override/0 = SubResource("eye_mat")

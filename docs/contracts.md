@@ -139,10 +139,10 @@ signal run_finished()                                  # everyone in the run rea
 signal player_benched(player: int)                     # P2 on the lawn chair (not in this round)
 signal player_will_join(player: int)                   # P2 pressed a button; plays from next round
 var phase: Phase
-var round: int                                         # 1-based, mirrors Game.round_index
+var round_index: int                                   # 1-based, mirrors Game.round_index
 const MAX_ROUNDS := 15                                 # the round-15 kick always reaches space
 const STRONG_ONLY_AFTER := 14                          # picks after round 14 are strong-only
-const BASE_POWER := 6.0                                # round-1 kick, m/s at quality 1.0
+const BASE_POWER := 8.0                                # round-1 kick, m/s at quality 1.0
 
 func in_run(player: int) -> bool          # playing this round (P1 always; P2 if active at round start)
 func in_space(player: int) -> bool

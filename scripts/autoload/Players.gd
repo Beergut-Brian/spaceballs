@@ -9,6 +9,8 @@ const P2 := 1
 const COLOR := { P1: Color("3cc24a"), P2: Color("e4393c") }
 const PREFIX := { P1: "p1_", P2: "p2_" }
 const ACTIONS := ["move_left", "move_right", "move_up", "move_down", "action", "jump"]
+## Device id for a keyboard or --demo player: no pad events are rebound.
+const VIRTUAL := -2
 
 signal player_joined(player: int, device: int)
 signal player_left(player: int)
@@ -22,6 +24,9 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		_keyboard_join(event)
+		return
 	if not (event is InputEventJoypadButton and event.pressed):
 		return
 	var device: int = event.device
@@ -59,9 +64,27 @@ func move_vector(player: int) -> Vector2:
 		action(player, "move_up"), action(player, "move_down"))
 
 
+func join_virtual(player: int) -> void:
+	if not is_active(player):
+		_assign(player, VIRTUAL)
+
+
+## Keyboard fallback for development: a P1 key joins P1, a P2 key joins P2.
+func _keyboard_join(event: InputEventKey) -> void:
+	for player in [P1, P2]:
+		if is_active(player):
+			continue
+		for a in ACTIONS:
+			if event.is_action_pressed(action(player, a)):
+				_assign(player, VIRTUAL)
+				return
+
+
 func _assign(player: int, device: int) -> void:
 	_device_of[player] = device
 	for a in ACTIONS:
+		if device == VIRTUAL:
+			break
 		var name := action(player, a)
 		for ev in InputMap.action_get_events(name):
 			if ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
