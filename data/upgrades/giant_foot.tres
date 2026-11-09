@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_i28pr"]
+
+[sub_resource type="Gradient" id="Gradient_djfnb"]
+colors = PackedColorArray(0.12156863, 0.37254903, 0.65882355, 1, 0.12156863, 0.37254903, 0.65882355, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kfsw4"]
+gradient = SubResource("Gradient_djfnb")
+
+[resource]
+script = ExtResource("1_i28pr")
+id = &"giant_foot"
+name = "Giant Foot"
+icon = SubResource("GradientTexture2D_kfsw4")
+tier = 3
+power_mult = 1.9
+description = "One foot is now enormous."

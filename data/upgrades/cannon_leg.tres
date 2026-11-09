@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_pcj1c"]
+
+[sub_resource type="Gradient" id="Gradient_2ljse"]
+colors = PackedColorArray(0.87058824, 0.5686275, 0.11372549, 1, 0.87058824, 0.5686275, 0.11372549, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6t30r"]
+gradient = SubResource("Gradient_2ljse")
+
+[resource]
+script = ExtResource("1_pcj1c")
+id = &"cannon_leg"
+name = "Cannon Leg"
+icon = SubResource("GradientTexture2D_6t30r")
+tier = 2
+kind = "strong"
+power_mult = 2.6
+description = "A cannon where the leg was."

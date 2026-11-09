@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/height_ladder.gd" id="1_ladder"]
+
+[node name="HeightLadder" type="Node3D"]
+script = ExtResource("1_ladder")
+metadata/_placeholder = "PLACEHOLDER (systems grey-box): Gameplay owns this scene."

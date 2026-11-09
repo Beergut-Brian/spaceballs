@@ -12,6 +12,7 @@ var _pool: Array[AudioStreamPlayer] = []
 var _music: AudioStreamPlayer
 var _warned := {}
 var _cache := {}
+var _silenced := false
 
 
 func _ready() -> void:
@@ -26,21 +27,50 @@ func _ready() -> void:
 	add_child(_music)
 
 
-func play(cue: String, _position = null) -> void:
+## A player still playing at quit leaks its stream playback (the audio thread frees it later
+## than the engine checks). Game.quit() awaits this before quitting.
+func silence() -> void:
+	_silenced = true
+	await stop_all()
+
+
+## Stops every player and waits for the audio thread to let go of the playbacks.
+func stop_all() -> void:
+	for p in _pool + [_music]:
+		p.stop()
+		p.stream = null
+	_cache.clear()
+	# Real time, not frames: headless runs uncapped and the mix thread needs a buffer or two.
+	await get_tree().create_timer(0.2, true, false, true).timeout
+
+
+func _exit_tree() -> void:
+	for p in _pool + [_music]:
+		p.stop()
+		p.stream = null
+	_cache.clear()
+
+
+func play(cue: String, _position = null, pitch: float = 1.0) -> void:
+	if _silenced:
+		return
 	var stream := _resolve(SFX_DIR, cue)
 	if stream == null:
 		return
 	for p in _pool:
 		if not p.playing:
 			p.stream = stream
-			p.pitch_scale = randf_range(0.95, 1.05)
+			p.pitch_scale = pitch * randf_range(0.95, 1.05)
 			p.play()
 			return
 	_pool[0].stream = stream
+	_pool[0].pitch_scale = pitch
 	_pool[0].play()
 
 
 func music(track: String, fade: float = 0.5) -> void:
+	if _silenced:
+		return
 	var stream := _resolve(MUSIC_DIR, track)
 	if stream == null:
 		return
@@ -63,6 +93,8 @@ func stop_music(fade: float = 0.5) -> void:
 
 
 func bark(character: String, bark_name: String) -> void:
+	if _silenced:
+		return
 	var stream := _resolve("%s%s/voice/" % [VOICE_DIR, character], bark_name)
 	if stream == null:
 		return

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/players/kicker.tscn" id="1_kicker"]
+
+[sub_resource type="PrismMesh" id="comb_mesh"]
+size = Vector3(0.1, 0.22, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="comb_mat"]
+albedo_color = Color(0.98, 0.62, 0.2, 1)
+
+[node name="Jeff" instance=ExtResource("1_kicker")]
+player = 0
+metadata/_placeholder = "PLACEHOLDER (systems grey-box): Art swaps Body for Jarling Jeff (chicken costume). P1, green."
+
+[node name="Comb" type="MeshInstance3D" parent="Body/Head" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+mesh = SubResource("comb_mesh")
+surface_material_override/0 = SubResource("comb_mat")

@@ -34,6 +34,23 @@ func test_game_round_cycle() -> void:
 	assert_int(Game.state).is_equal(Game.State.ROUND_END)
 
 
+func test_physics_is_jolt_and_display_is_1080p() -> void:
+	assert_str(ProjectSettings.get_setting("physics/3d/physics_engine")).is_equal("Jolt Physics")
+	assert_int(ProjectSettings.get_setting("display/window/size/viewport_width")).is_equal(1920)
+	assert_int(ProjectSettings.get_setting("display/window/size/viewport_height")).is_equal(1080)
+	for a in ["p1_move_left", "p2_move_up"]:
+		assert_float(InputMap.action_get_deadzone(a)).is_equal_approx(0.15, 0.001)
+
+
+func test_every_audio_cue_has_a_file() -> void:
+	for cue in ["windup", "kick_1", "kick_2", "kick_3", "kick_4", "whoosh", "tier_up", "land",
+			"card_move", "card_pick", "upgrade_on", "curse", "frog", "space", "cheer", "hop", "shout",
+			"restart_arm", "ui_move_1", "ui_move_2", "ui_confirm", "player_join", "round_start",
+			"round_end", "pause"]:
+		assert_bool(ResourceLoader.exists("res://assets/audio/sfx/%s.ogg" % cue)) \
+				.override_failure_message("missing cue " + cue).is_true()
+
+
 func test_save_roundtrip() -> void:
 	Save.set_value("smoke", 42)
 	Save.flush()
@@ -47,3 +64,7 @@ func test_profile_from_args_accepts_both_forms() -> void:
 	assert_str(Save.profile_from_args(PackedStringArray(["--", "--profile=kid"]), "p1")).is_equal("kid")
 	assert_str(Save.profile_from_args(PackedStringArray(["--profile=../x"]), "p1")).is_equal("p1")
 	assert_str(Save.profile_from_args(PackedStringArray([]), "p1")).is_equal("p1")
+
+
+func after() -> void:
+	await Audio.stop_all()   # a cue still playing when the runner quits shows up as a leak

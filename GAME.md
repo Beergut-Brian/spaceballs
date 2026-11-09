@@ -174,6 +174,15 @@ Versus or scoring between players; aiming the kick (it always goes up); online, 
 - 2026-11-09: generic landmarks only in this public repo (no real places).
 - 2026-11-09: the repo is pushed from the producer's local copy of the template (shared history), so Kaden creates it empty instead of with "Use this template".
 
+- 2026-11-09 (Systems grey-box): Systems wrote **placeholders** in other lanes' folders so the grey-box runs: `scenes/levels/field.tscn`, `scenes/levels/height_ladder.tscn`, `scenes/ball.tscn`, `scenes/curses/frog.tscn`, `scripts/gameplay/` (`upgrade_data.gd`, `tier_data.gd`, `tier_set.gd`, `camera_rig.gd`, `height_ladder.gd`), `data/tiers.tres`, `data/upgrades/*.tres` (16), `assets/audio/sfx/*.ogg` (beeps). Each is marked `PLACEHOLDER (systems grey-box)` (a `#` comment in scripts, `metadata/_placeholder` in scenes, `data/PLACEHOLDER.md` for `.tres`). The owning lanes replace them; the APIs are in `docs/contracts.md`.
+- 2026-11-09 (Systems): a curse acts on the **next kick only** and never joins the upgrade list; the frog (a curse with `scene_override`) also switches every upgrade off for that kick. A curse therefore costs about one round, which is what makes "three curses stretch to 14 or 15" true.
+- 2026-11-09 (Systems): "no run passes round 15" is guaranteed, not just likely: picks after round 14 are strong-only (as written) **and** the round-15 kick always peaks just over the space line.
+- 2026-11-09 (Systems): catch-up ("only above-average cards") = only `normal` / `strong` cards with `power_mult >= 1.7`, 40 % strong. It compares the tiers of the two balls' last kicks; a ball already in space counts as tier 8.
+- 2026-11-09 (Systems): an upgrade's `tier` (1 to 3) means "available from that band on" (tier <= band), falling back to any tier if a kind has none in the band yet.
+- 2026-11-09 (Systems): height is ballistic, `h = power^2 / 2g`, base power 8 (about 3 m on round 1), space line at 100 km. Above 20 m the scene is log-compressed so a 100 km kick is a few hundred metres of world and stays stable.
+- 2026-11-09 (Systems): P2 joining mid-run starts from zero upgrades at the next round; the catch-up rule pulls P2 up fast. A pad that drops out during the pick no longer blocks it.
+- 2026-11-09 (Systems): the first Select press shows a small spinning marker and beeps; a second within 1 s restarts. Keyboard keys join players for development, and `-- --demo` plays the game by itself.
+
 ## Open questions
 
 - Chuck's personality and both voices: D37 on Docket.

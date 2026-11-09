@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_84h1y"]
+
+[sub_resource type="Gradient" id="Gradient_le3db"]
+colors = PackedColorArray(0.2901961, 0.5647059, 0.8509804, 1, 0.2901961, 0.5647059, 0.8509804, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_c5jcy"]
+gradient = SubResource("Gradient_le3db")
+
+[resource]
+script = ExtResource("1_84h1y")
+id = &"big_boot"
+name = "Big Boot"
+icon = SubResource("GradientTexture2D_c5jcy")
+power_mult = 1.7
+description = "A boot the size of a bathtub."

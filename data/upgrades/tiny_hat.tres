@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_crask"]
+
+[sub_resource type="Gradient" id="Gradient_e0vaw"]
+colors = PackedColorArray(0.9529412, 0.54509807, 0.7882353, 1, 0.9529412, 0.54509807, 0.7882353, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0dj5a"]
+gradient = SubResource("Gradient_e0vaw")
+
+[resource]
+script = ExtResource("1_crask")
+id = &"tiny_hat"
+name = "Tiny Hat"
+icon = SubResource("GradientTexture2D_0dj5a")
+kind = "joke"
+power_mult = 1.1
+description = "A very small hat."
