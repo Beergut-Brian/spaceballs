@@ -82,6 +82,13 @@ godot --headless --path . --export-release "Linux" build/game.x86_64        # ex
 `Debug.gd` adds an FPS overlay (F3) and screenshot-to-disk (F12 → `user://screenshots/`).
 Use screenshots to verify visual work; the Reviewer will ask for them on visual PRs.
 
+**See your own work.** `--headless` has no renderer, so its screenshots are blank. To check visuals,
+take real frames with `scripts/tools/shots.sh [scene] [times] [out_dir]` (for example
+`scripts/tools/shots.sh res://scenes/main.tscn 1,3,6 /tmp/shots`), then look at the PNGs and fix what
+looks wrong before you hand off. On the producer box it renders Forward+ on a software GPU (about
+10 to 20 s per run, frame rate meaningless); on a desktop it uses the real display. Attach the PNGs
+to visual PRs.
+
 ## Players and colours
 
 Player 1 is always **green**, Player 2 is always **red**. The first controller to press a
