@@ -26,16 +26,19 @@ func after_test() -> void:
 	await get_tree().physics_frame
 
 
+## Waits in GAME time (scaled deltas), not wall-clock: CI runners render frames far slower
+## than a desktop, so a wall-clock budget failed there while the game itself was fine.
 func _wait_for(cond: Callable, seconds: float) -> bool:
-	var until := Time.get_ticks_msec() + int(seconds * 1000.0)
-	while Time.get_ticks_msec() < until:
+	var waited := 0.0
+	while waited < seconds:
 		if cond.call():
 			return true
 		await get_tree().process_frame
+		waited += get_process_delta_time()
 	return false
 
 
-func test_round_one_plays_through_pick_into_round_two() -> void:
+func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void:
 	_main = load("res://scenes/main.tscn").instantiate()
 	get_tree().root.add_child(_main)
 	var kicked := []
