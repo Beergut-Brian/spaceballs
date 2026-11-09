@@ -1,0 +1,618 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="1_5m7ed"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v5wn1"]
+albedo_color = Color(0.5411765, 0.3529412, 0.16862746, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8eu1r"]
+top_radius = 0.27830964
+bottom_radius = 0.40818745
+height = 11.9
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lmfuk"]
+albedo_color = Color(0.29803923, 0.72156864, 0.41568628, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_b2iyx"]
+radius = 5.44
+height = 10.88
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0eihe"]
+albedo_color = Color(0.3541961, 0.74384314, 0.46243137, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_85xi5"]
+radius = 3.808
+height = 7.616
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eda0m"]
+albedo_color = Color(0.28015688, 0.6782745, 0.3907451, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_kqldk"]
+radius = 4.08
+height = 8.16
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nh3yv"]
+albedo_color = Color(0.3822745, 0.7549804, 0.48580393, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_s1kgd"]
+radius = 3.264
+height = 6.528
+radial_segments = 32
+rings = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kughv"]
+top_radius = 0.28637823
+bottom_radius = 0.4200214
+height = 12.6
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n2xeq"]
+albedo_color = Color(0.4862745, 0.8117647, 0.35686275, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_sxggd"]
+radius = 5.76
+height = 11.52
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_llnji"]
+albedo_color = Color(0.52737254, 0.82682353, 0.40831372, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_x7v86"]
+radius = 4.032
+height = 8.064
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x66rj"]
+albedo_color = Color(0.45709804, 0.76305884, 0.33545098, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_qka0y"]
+radius = 4.32
+height = 8.64
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8jufy"]
+albedo_color = Color(0.5479216, 0.83435297, 0.43403924, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_ksts3"]
+radius = 3.456
+height = 6.912
+radial_segments = 32
+rings = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_duiky"]
+top_radius = 0.2614264
+bottom_radius = 0.38342535
+height = 10.5
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w1n8t"]
+albedo_color = Color(0.18431373, 0.6392157, 0.5411765, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_j1rjw"]
+radius = 4.8
+height = 9.6
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_42o5w"]
+albedo_color = Color(0.24956864, 0.6680784, 0.57788235, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_m3miy"]
+radius = 3.36
+height = 6.72
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sggax"]
+albedo_color = Color(0.1732549, 0.60086274, 0.5087059, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_tgrru"]
+radius = 3.6
+height = 7.2
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iojly"]
+albedo_color = Color(0.28219607, 0.68250984, 0.59623533, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_ed2xm"]
+radius = 2.88
+height = 5.76
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6rlh"]
+albedo_color = Color(0.21960784, 0.7764706, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_r5v5p"]
+radius = 1.0
+height = 2.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_a8pny"]
+radius = 0.12
+height = 0.24
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3n7eh"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="PrismMesh" id="PrismMesh_6tbna"]
+size = Vector3(0.06, 0.1, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_geted"]
+albedo_color = Color(0.039215688, 0.039215688, 0.078431375, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_68jlc"]
+radius = 0.025
+height = 0.05
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ehi8"]
+albedo_color = Color(0.33666667, 0.81, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7lyki"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qyawk"]
+albedo_color = Color(1, 0.87, 0.40666667, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hd42g"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l1r7h"]
+albedo_color = Color(1, 0.41333336, 0.87, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tw4fv"]
+albedo_color = Color(0.5254902, 0.9647059, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qeqt4"]
+albedo_color = Color(0.5966667, 0.97, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[node name="Treetops" type="Node3D" unique_id=287408706]
+metadata/_art = "Tier landmark treetops (art/tools/build_scenes.gd)."
+
+[node name="TallTree0" type="Node3D" parent="." unique_id=1503206818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, -14, -10)
+
+[node name="Trunk" type="MeshInstance3D" parent="TallTree0" unique_id=1075026651]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.95, 0)
+material_override = SubResource("StandardMaterial3D_v5wn1")
+mesh = SubResource("CylinderMesh_8eu1r")
+
+[node name="Crown" type="MeshInstance3D" parent="TallTree0" unique_id=1294859200]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.75, 0)
+material_override = SubResource("StandardMaterial3D_lmfuk")
+mesh = SubResource("SphereMesh_b2iyx")
+
+[node name="BlobA" type="MeshInstance3D" parent="TallTree0" unique_id=524312953]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.264, 10.54, 1.088)
+material_override = SubResource("StandardMaterial3D_0eihe")
+mesh = SubResource("SphereMesh_85xi5")
+
+[node name="BlobB" type="MeshInstance3D" parent="TallTree0" unique_id=966555730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.72, 11.22, -1.632)
+material_override = SubResource("StandardMaterial3D_eda0m")
+mesh = SubResource("SphereMesh_kqldk")
+
+[node name="Top" type="MeshInstance3D" parent="TallTree0" unique_id=1768206757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.053796392, 16.66, 0)
+material_override = SubResource("StandardMaterial3D_nh3yv")
+mesh = SubResource("SphereMesh_s1kgd")
+
+[node name="TallTree1" type="Node3D" parent="." unique_id=1763664960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, -14, 6)
+
+[node name="Trunk" type="MeshInstance3D" parent="TallTree1" unique_id=1926347322]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.3, 0)
+material_override = SubResource("StandardMaterial3D_v5wn1")
+mesh = SubResource("CylinderMesh_kughv")
+
+[node name="Crown" type="MeshInstance3D" parent="TallTree1" unique_id=1440454749]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.5, 0)
+material_override = SubResource("StandardMaterial3D_n2xeq")
+mesh = SubResource("SphereMesh_sxggd")
+
+[node name="BlobA" type="MeshInstance3D" parent="TallTree1" unique_id=1199942342]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.456, 11.16, 1.152)
+material_override = SubResource("StandardMaterial3D_llnji")
+mesh = SubResource("SphereMesh_x7v86")
+
+[node name="BlobB" type="MeshInstance3D" parent="TallTree1" unique_id=795429540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88, 11.88, -1.728)
+material_override = SubResource("StandardMaterial3D_x66rj")
+mesh = SubResource("SphereMesh_qka0y")
+
+[node name="Top" type="MeshInstance3D" parent="TallTree1" unique_id=1495984615]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5618904, 17.64, 0)
+material_override = SubResource("StandardMaterial3D_8jufy")
+mesh = SubResource("SphereMesh_ksts3")
+
+[node name="TallTree2" type="Node3D" parent="." unique_id=1323388511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -14, 18)
+
+[node name="Trunk" type="MeshInstance3D" parent="TallTree2" unique_id=1931934781]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.25, 0)
+material_override = SubResource("StandardMaterial3D_v5wn1")
+mesh = SubResource("CylinderMesh_duiky")
+
+[node name="Crown" type="MeshInstance3D" parent="TallTree2" unique_id=166783030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.25, 0)
+material_override = SubResource("StandardMaterial3D_w1n8t")
+mesh = SubResource("SphereMesh_j1rjw")
+
+[node name="BlobA" type="MeshInstance3D" parent="TallTree2" unique_id=1528865850]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.88, 9.3, 0.96)
+material_override = SubResource("StandardMaterial3D_42o5w")
+mesh = SubResource("SphereMesh_m3miy")
+
+[node name="BlobB" type="MeshInstance3D" parent="TallTree2" unique_id=1180280678]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 9.9, -1.44)
+material_override = SubResource("StandardMaterial3D_sggax")
+mesh = SubResource("SphereMesh_tgrru")
+
+[node name="Top" type="MeshInstance3D" parent="TallTree2" unique_id=935980482]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.39307314, 14.7, 0)
+material_override = SubResource("StandardMaterial3D_iojly")
+mesh = SubResource("SphereMesh_ed2xm")
+
+[node name="Bird0Orbit" type="Node3D" parent="." unique_id=1983110745]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
+script = ExtResource("1_5m7ed")
+mode = 2
+amount = 0.0
+speed = 0.08
+
+[node name="Bird0" type="Node3D" parent="Bird0Orbit" unique_id=1073600842]
+transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, 4.5, 1, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=1042741240]
+transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Head" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=459368504]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("SphereMesh_a8pny")
+
+[node name="Beak" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=678376563]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("PrismMesh_6tbna")
+
+[node name="Eye-1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=797809378]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing-1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=1398452486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = -0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing-1" unique_id=1395088522]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_3ehi8")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Eye1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=430211805]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=2055553627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing1" unique_id=67204448]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_3ehi8")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Bird1Orbit" type="Node3D" parent="." unique_id=1256518800]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
+script = ExtResource("1_5m7ed")
+mode = 2
+amount = 0.0
+speed = 0.08
+phase = 0.25
+
+[node name="Bird1" type="Node3D" parent="Bird1Orbit" unique_id=1705760250]
+transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, 2.7554554e-16, 2.2, 6)
+
+[node name="Body" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1695354947]
+transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Head" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=788048598]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_a8pny")
+
+[node name="Beak" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=369438941]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("PrismMesh_6tbna")
+
+[node name="Eye-1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1523928293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing-1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=633204778]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = -0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.25
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing-1" unique_id=196272685]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_qyawk")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Eye1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=2076803215]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=202556946]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.25
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing1" unique_id=1833260255]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_qyawk")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Bird2Orbit" type="Node3D" parent="." unique_id=943811976]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
+script = ExtResource("1_5m7ed")
+mode = 2
+amount = 0.0
+speed = 0.08
+phase = 0.5
+
+[node name="Bird2" type="Node3D" parent="Bird2Orbit" unique_id=710528596]
+transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, -4.5, 1, 7.3478806e-16)
+
+[node name="Body" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=101378079]
+transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Head" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=244163300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_a8pny")
+
+[node name="Beak" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1603299943]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("PrismMesh_6tbna")
+
+[node name="Eye-1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1746829461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing-1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=1174932549]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = -0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.5
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing-1" unique_id=764799539]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_l1r7h")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Eye1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1283146070]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=1855756262]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.5
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing1" unique_id=2029957260]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_l1r7h")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Bird3Orbit" type="Node3D" parent="." unique_id=1687241742]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
+script = ExtResource("1_5m7ed")
+mode = 2
+amount = 0.0
+speed = 0.08
+phase = 0.75
+
+[node name="Bird3" type="Node3D" parent="Bird3Orbit" unique_id=381465022]
+transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, -8.266366e-16, 2.2, -6)
+
+[node name="Body" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1766038818]
+transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_tw4fv")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Head" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1843855443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
+material_override = SubResource("StandardMaterial3D_tw4fv")
+mesh = SubResource("SphereMesh_a8pny")
+
+[node name="Beak" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=386433991]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("PrismMesh_6tbna")
+
+[node name="Eye-1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1522858019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing-1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=406118823]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = -0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.75
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing-1" unique_id=51191015]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_qeqt4")
+mesh = SubResource("SphereMesh_r5v5p")
+
+[node name="Eye1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1544210669]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
+material_override = SubResource("StandardMaterial3D_geted")
+mesh = SubResource("SphereMesh_68jlc")
+
+[node name="Wing1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=1752727294]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
+script = ExtResource("1_5m7ed")
+mode = 5
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+phase = 0.75
+
+[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing1" unique_id=1637335237]
+transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
+material_override = SubResource("StandardMaterial3D_qeqt4")
+mesh = SubResource("SphereMesh_r5v5p")

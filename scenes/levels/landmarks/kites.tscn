@@ -1,0 +1,379 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="1_hiqxn"]
+[ext_resource type="Shader" path="res://art/shaders/stripes.gdshader" id="2_rovjf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hd42g"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_d6tjk"]
+size = Vector3(0.5, 0.5, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7lyki"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_i01tc"]
+radius = 0.08
+height = 0.16
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6rlh"]
+albedo_color = Color(0.21960784, 0.7764706, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjtxx"]
+albedo_color = Color(0.93333334, 0.972549, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vnfx8"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 1.8
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qc1cl"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.6)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_i4mc1"]
+top_radius = 0.01
+bottom_radius = 0.01
+height = 6.0
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3n7eh"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x42f1"]
+albedo_color = Color(0.10980392, 0.7882353, 0.6509804, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gbqcr"]
+render_priority = 0
+shader = ExtResource("2_rovjf")
+shader_parameter/color_a = Color(1, 0.62352943, 0.18039216, 1)
+shader_parameter/color_b = Color(1, 0.84705883, 0.3019608, 1)
+shader_parameter/color_c = Color(1, 0.30980393, 0.84705883, 1)
+shader_parameter/gores = null
+
+[sub_resource type="SphereMesh" id="SphereMesh_g7x4d"]
+radius = 1.0
+height = 2.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lcwuk"]
+top_radius = 2.1
+bottom_radius = 1.2
+height = 3.0
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v5wn1"]
+albedo_color = Color(0.5411765, 0.3529412, 0.16862746, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_8sfqc"]
+size = Vector3(2.4, 1.92, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ix3p"]
+albedo_color = Color(0.4329412, 0.28235295, 0.13490197, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_hu183"]
+size = Vector3(2.64, 0.3, 2.64)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_28i4c"]
+albedo_color = Color(0.5568628, 0.6117647, 0.7529412, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_r5h01"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 2.4
+radial_segments = 24
+rings = 1
+
+[node name="Kites" type="Node3D" unique_id=1504880783]
+metadata/_art = "Tier landmark kites (art/tools/build_scenes.gd)."
+
+[node name="KiteA" type="Node3D" parent="." unique_id=1838408177]
+transform = Transform3D(-9.616505e-08, 0, 2.2, 0, 2.2, 0, -2.2, 0, -9.616505e-08, -10, -2, -7)
+script = ExtResource("1_hiqxn")
+mode = 6
+amount = 0.18
+speed = 0.4
+axis = Vector3(1, 0, 0)
+
+[node name="Sail" type="Node3D" parent="KiteA" unique_id=45870457]
+transform = Transform3D(0.70710677, -0.98994946, 0, 0.70710677, 0.98994946, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Q1" type="MeshInstance3D" parent="KiteA/Sail" unique_id=1767546455]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q2" type="MeshInstance3D" parent="KiteA/Sail" unique_id=797052722]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q3" type="MeshInstance3D" parent="KiteA/Sail" unique_id=499858434]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q4" type="MeshInstance3D" parent="KiteA/Sail" unique_id=606927136]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Bow0" type="MeshInstance3D" parent="KiteA" unique_id=2095916839]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, -1.1, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow1" type="MeshInstance3D" parent="KiteA" unique_id=1569107401]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.09635582, -1.45, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow2" type="MeshInstance3D" parent="KiteA" unique_id=162088903]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.05155014, -1.8, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow3" type="MeshInstance3D" parent="KiteA" unique_id=746587577]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.068776615, -2.15, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow4" type="MeshInstance3D" parent="KiteA" unique_id=133447159]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.08834547, -2.5, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Tail" type="MeshInstance3D" parent="KiteA" unique_id=985082366]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("CylinderMesh_vnfx8")
+
+[node name="String" type="MeshInstance3D" parent="KiteA" unique_id=1583582249]
+transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, 0, -4, 0)
+material_override = SubResource("StandardMaterial3D_qc1cl")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_i4mc1")
+
+[node name="KiteB" type="Node3D" parent="." unique_id=1823811898]
+transform = Transform3D(-1.13649605e-07, 0, 2.6, 0, 2.6, 0, -2.6, 0, -1.13649605e-07, -15, 4, 6)
+script = ExtResource("1_hiqxn")
+mode = 6
+amount = 0.18
+speed = 0.4
+axis = Vector3(1, 0, 0)
+
+[node name="Sail" type="Node3D" parent="KiteB" unique_id=1190717632]
+transform = Transform3D(0.70710677, -0.98994946, 0, 0.70710677, 0.98994946, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Q1" type="MeshInstance3D" parent="KiteB/Sail" unique_id=800934281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q2" type="MeshInstance3D" parent="KiteB/Sail" unique_id=1872075654]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q3" type="MeshInstance3D" parent="KiteB/Sail" unique_id=955014911]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_3n7eh")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q4" type="MeshInstance3D" parent="KiteB/Sail" unique_id=1385962591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Bow0" type="MeshInstance3D" parent="KiteB" unique_id=1794974990]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, -1.1, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow1" type="MeshInstance3D" parent="KiteB" unique_id=178261889]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.09635582, -1.45, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow2" type="MeshInstance3D" parent="KiteB" unique_id=1227705809]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.05155014, -1.8, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow3" type="MeshInstance3D" parent="KiteB" unique_id=34676922]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.068776615, -2.15, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow4" type="MeshInstance3D" parent="KiteB" unique_id=1059927035]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.08834547, -2.5, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Tail" type="MeshInstance3D" parent="KiteB" unique_id=1018214442]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("CylinderMesh_vnfx8")
+
+[node name="String" type="MeshInstance3D" parent="KiteB" unique_id=221686438]
+transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, 0, -4, 0)
+material_override = SubResource("StandardMaterial3D_qc1cl")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_i4mc1")
+
+[node name="KiteC" type="Node3D" parent="." unique_id=2070026354]
+transform = Transform3D(-7.86805e-08, 0, 1.8, 0, 1.8, 0, -1.8, 0, -7.86805e-08, -7, 7, 10)
+script = ExtResource("1_hiqxn")
+mode = 6
+amount = 0.18
+speed = 0.4
+axis = Vector3(1, 0, 0)
+
+[node name="Sail" type="Node3D" parent="KiteC" unique_id=4462247]
+transform = Transform3D(0.70710677, -0.98994946, 0, 0.70710677, 0.98994946, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Q1" type="MeshInstance3D" parent="KiteC/Sail" unique_id=1636538596]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_x42f1")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q2" type="MeshInstance3D" parent="KiteC/Sail" unique_id=1816887603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q3" type="MeshInstance3D" parent="KiteC/Sail" unique_id=1134528801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Q4" type="MeshInstance3D" parent="KiteC/Sail" unique_id=379766655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_x42f1")
+mesh = SubResource("BoxMesh_d6tjk")
+
+[node name="Bow0" type="MeshInstance3D" parent="KiteC" unique_id=494443135]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, -1.1, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow1" type="MeshInstance3D" parent="KiteC" unique_id=1925747383]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.09635582, -1.45, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow2" type="MeshInstance3D" parent="KiteC" unique_id=1696903851]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.05155014, -1.8, 0)
+material_override = SubResource("StandardMaterial3D_s6rlh")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow3" type="MeshInstance3D" parent="KiteC" unique_id=2053892955]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.068776615, -2.15, 0)
+material_override = SubResource("StandardMaterial3D_hd42g")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Bow4" type="MeshInstance3D" parent="KiteC" unique_id=462346997]
+transform = Transform3D(1.6, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -0.08834547, -2.5, 0)
+material_override = SubResource("StandardMaterial3D_7lyki")
+mesh = SubResource("SphereMesh_i01tc")
+
+[node name="Tail" type="MeshInstance3D" parent="KiteC" unique_id=977064235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+material_override = SubResource("StandardMaterial3D_jjtxx")
+mesh = SubResource("CylinderMesh_vnfx8")
+
+[node name="String" type="MeshInstance3D" parent="KiteC" unique_id=217191180]
+transform = Transform3D(0.9393727, -0.3428978, 0, 0.3428978, 0.9393727, 0, 0, 0, 1, 0, -4, 0)
+material_override = SubResource("StandardMaterial3D_qc1cl")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_i4mc1")
+
+[node name="HotAirBalloon" type="Node3D" parent="." unique_id=2043032905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 3, -12)
+script = ExtResource("1_hiqxn")
+amount = 0.72
+speed = 0.15
+
+[node name="Envelope" type="MeshInstance3D" parent="HotAirBalloon" unique_id=1925195791]
+transform = Transform3D(6, 0, 0, 0, 6.9, 0, 0, 0, 6, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_gbqcr")
+mesh = SubResource("SphereMesh_g7x4d")
+
+[node name="Skirt" type="MeshInstance3D" parent="HotAirBalloon" unique_id=586338681]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.2, 0)
+material_override = SubResource("ShaderMaterial_gbqcr")
+mesh = SubResource("CylinderMesh_lcwuk")
+
+[node name="Basket" type="MeshInstance3D" parent="HotAirBalloon" unique_id=849695071]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10.5, 0)
+material_override = SubResource("StandardMaterial3D_v5wn1")
+mesh = SubResource("BoxMesh_8sfqc")
+
+[node name="Rim" type="MeshInstance3D" parent="HotAirBalloon" unique_id=492194034]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9.48, 0)
+material_override = SubResource("StandardMaterial3D_3ix3p")
+mesh = SubResource("BoxMesh_hu183")
+
+[node name="Rope(1_0, 1_0)" type="MeshInstance3D" parent="HotAirBalloon" unique_id=1621564314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.08, -8.52, 1.08)
+material_override = SubResource("StandardMaterial3D_28i4c")
+mesh = SubResource("CylinderMesh_r5h01")
+
+[node name="Rope(-1_0, 1_0)" type="MeshInstance3D" parent="HotAirBalloon" unique_id=1359302760]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -8.52, 1.08)
+material_override = SubResource("StandardMaterial3D_28i4c")
+mesh = SubResource("CylinderMesh_r5h01")
+
+[node name="Rope(1_0, -1_0)" type="MeshInstance3D" parent="HotAirBalloon" unique_id=841630609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.08, -8.52, -1.08)
+material_override = SubResource("StandardMaterial3D_28i4c")
+mesh = SubResource("CylinderMesh_r5h01")
+
+[node name="Rope(-1_0, -1_0)" type="MeshInstance3D" parent="HotAirBalloon" unique_id=401350303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -8.52, -1.08)
+material_override = SubResource("StandardMaterial3D_28i4c")
+mesh = SubResource("CylinderMesh_r5h01")
