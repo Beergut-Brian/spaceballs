@@ -30,3 +30,7 @@ func test_presses_too_far_apart_do_not_restart() -> void:
 	assert_bool(Game.press_restart(201.5)).is_false()   # re-arms instead
 	assert_bool(Game.press_restart(202.2)).is_true()
 	assert_bool(Game.press_restart(202.4)).is_false()  # a third press starts over
+
+
+func after() -> void:
+	await Audio.stop_all()   # a cue still playing when the runner quits shows up as a leak

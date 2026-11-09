@@ -6,6 +6,14 @@ extends GdUnitTestSuite
 const KICKER := preload("res://scenes/players/kicker.tscn")
 
 
+## move_and_slide() uses the engine's last physics delta, so start from a clean 1x frame
+## (another suite may have run with a time scale).
+func before_test() -> void:
+	Engine.time_scale = 1.0
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+
 func test_run_up_quality_bounds() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3
@@ -47,6 +55,7 @@ func _time_to_reach(stick: Callable, seed_: int) -> float:
 	root.add_child(k)
 	k.global_position = Vector3(0, 0, 8)
 	k._rng.seed = seed_
+	k._phase = float(seed_) * 0.73
 	k.set_physics_process(false)
 	var ball := Vector3(0, 0.35, 0)
 	k.begin_approach(ball)
@@ -64,7 +73,7 @@ func _time_to_reach(stick: Callable, seed_: int) -> float:
 
 func test_wiggle_only_still_kicks_within_10_s() -> void:
 	var worst := 0.0
-	for s in 12:
+	for s in 60:
 		var wiggle := func(t: float) -> Vector2:
 			return Vector2(sin(t * 11.0 + s), cos(t * 7.0 + s * 2.0))
 		worst = maxf(worst, _time_to_reach(wiggle, s))
@@ -83,3 +92,38 @@ func test_stick_toward_ball_is_quick() -> void:
 	var t := _time_to_reach(func(_t: float) -> Vector2: return Vector2(1, 0), 2)
 	print("[kicker] stick-at-ball time: %.1f s" % t)
 	assert_float(t).is_less(4.0)
+
+
+func test_frog_mode_hides_upgrades_and_comes_back() -> void:
+	var k: Kicker = auto_free(KICKER.instantiate())
+	add_child(k)
+	var u := UpgradeData.new()
+	u.id = &"big_boot"
+	u.kind = "normal"
+	u.power_mult = 1.7
+	k.add_upgrade_visual(u)
+	assert_int(k.attach_point(&"head").get_child_count()).is_equal(1)
+	k.set_frog(true, load("res://scenes/curses/frog.tscn"))
+	assert_bool(k.frog).is_true()
+	assert_bool(k.body.visible).is_false()
+	assert_bool(k.attach.visible).is_false()
+	assert_int(k.frog_slot.get_child_count()).is_equal(1)
+	k.set_frog(false)
+	assert_bool(k.body.visible).is_true()
+	assert_bool(k.attach.visible).is_true()
+	assert_int(k.attach_point(&"head").get_child_count()).is_equal(1)
+
+
+func test_attach_points_exist() -> void:
+	var k: Kicker = auto_free(KICKER.instantiate())
+	add_child(k)
+	for slot in Kicker.SLOTS:
+		assert_object(k.attach_point(slot)).is_not_null()
+		assert_str(k.attach_point(slot).name).is_equal(String(slot).capitalize())
+
+
+func test_jeff_and_chuck_are_on_the_right_side() -> void:
+	var jeff: Kicker = auto_free(load("res://scenes/players/jeff.tscn").instantiate())
+	var chuck: Kicker = auto_free(load("res://scenes/players/chuck.tscn").instantiate())
+	assert_int(jeff.player).is_equal(Players.P1)
+	assert_int(chuck.player).is_equal(Players.P2)

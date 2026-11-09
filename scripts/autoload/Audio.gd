@@ -31,6 +31,11 @@ func _ready() -> void:
 ## than the engine checks). Game.quit() awaits this before quitting.
 func silence() -> void:
 	_silenced = true
+	await stop_all()
+
+
+## Stops every player and waits for the audio thread to let go of the playbacks.
+func stop_all() -> void:
 	for p in _pool + [_music]:
 		p.stop()
 		p.stream = null

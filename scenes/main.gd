@@ -108,7 +108,9 @@ func _begin_kick(p: int) -> void:
 	var tee := _marker("Tees", p)
 	for q in [P1, P2]:
 		var k: Kicker = kickers[q]
-		k.set_frog(false)
+		var q_curse := Run.curse_of(q)
+		if q_curse == null or q_curse.scene_override == null:
+			k.set_frog(false)
 		balls[q].visible = not Run.in_space(q)
 		if q == p:
 			continue
@@ -125,6 +127,7 @@ func _begin_kick(p: int) -> void:
 	var curse := Run.curse_of(p)
 	if curse != null and curse.scene_override != null:
 		me.set_frog(true, curse.scene_override)
+		Audio.play("curse")
 	elif curse != null:
 		Audio.play("curse")
 		Fx.puff(me.global_position + Vector3.UP, Color(0.6, 0.4, 0.9), 1.5)

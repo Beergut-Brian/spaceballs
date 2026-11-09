@@ -66,6 +66,8 @@ func wipe() -> void
 func play(cue: String, position = null) -> void   # cue = file stem in assets/audio/sfx/
 func music(track: String, fade: float = 0.5) -> void
 func stop_music(fade: float = 0.5) -> void
+func stop_all() -> void                 # await: stop everything, let the audio thread release it
+func silence() -> void                  # await: stop_all() and ignore play() from now on (quit)
 func bark(character: String, bark: String) -> void   # from openjar-characters voice packs
 ```
 
@@ -244,6 +246,10 @@ signal shouted(player: int)                   # A (harmless shout-hop; also the 
 func begin_approach(ball_position: Vector3) -> void
 func start_windup() -> void                   # the ball's KickZone calls this through main.gd
 func set_waiting(chair: bool) -> void         # sideline cheer, or the lawn chair
+func set_cloud() -> void                      # finished: cheers from a cloud, no gravity
+func cheer() -> void                          # sound + hop + puff (waiting player's A, kick reactions)
+func set_space_suit(on: bool) -> void         # end card
+var stick_override: Variant                   # a Vector2 steers instead of the pad (tests, bots)
 func set_frog(on: bool, override: PackedScene = null) -> void   # this round only
 func attach_point(slot: StringName) -> Node3D # head, back, feet, hands, body
 func add_upgrade_visual(upgrade: UpgradeData) -> void
@@ -286,8 +292,16 @@ signal mode_changed(mode: Mode)
 
 ### UI
 
-- `scenes/ui/upgrade_pick.tscn`: `open(draws: Dictionary)` (player -> Array[UpgradeData]),
+- `scenes/ui/upgrade_pick.tscn`: `open(draws: Dictionary, shown: Array)` (player -> Array[UpgradeData];
+  the halves to show), `frame(player, target, from)` points a half's camera, `close()`,
   `signal picked(player, upgrade)`, `signal closed()`. Halves: `Halves/P1`, `Halves/P2`, each with
   `View/SubViewport/Camera3D` and `Cards/Card1..3`. Never times out.
-- `scenes/ui/hud.tscn`: `Strip` (8 tier blocks), `Strip/Markers/P1|P2`, `Strip/BestFlag`, `Rounds` (ball stack).
-- `scenes/ui/end_card.tscn`: `signal restart_requested()`.
+- `scenes/ui/hud.tscn`: `Strip/Blocks` (8 tier blocks, top = space), `Strip/Markers/P1|P2`, `Strip/BestFlag`,
+  `Rounds` (ball stack), `RestartHint`. `track(player, ball)` makes a marker follow a flying ball.
+- `scenes/ui/end_card.tscn`: `open()`, `close()`, `signal restart_requested()` (A, after 1.2 s).
+- `scenes/ui/upgrade_card.tscn`: one card (`Icon`), themed by Art.
+
+### Debug / CLI (after `--`)
+
+`--screenshot-after=<s>` (template), `--demo` (two virtual players, auto-picks, auto-restarts: the game
+plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heights, picks).

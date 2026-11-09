@@ -268,3 +268,18 @@ func test_tier_lookup() -> void:
 		prev = f
 	assert_float(TierSet.visual_y(10.0)).is_equal(10.0)
 	assert_float(TierSet.visual_y(t.space_height())).is_less(1000.0)
+
+
+func test_save_keys_best_height_runs_and_seen() -> void:
+	Save.wipe()
+	var r := _run([P1])
+	r.save_enabled = true
+	var cards: Array = r.draw_cards(P1)
+	_kick(r, 1.0, r.tiers.space_height() * 2.0)
+	assert_int(r.phase).is_equal(Phase.END)
+	assert_float(float(Save.get_value("best_height", 0.0))).is_equal(r.tiers.space_height() * 2.0)
+	assert_int(int(Save.get_value("runs_completed", 0))).is_equal(1)
+	var seen: Array = Save.get_value("upgrades_seen", [])
+	for c in cards:
+		assert_bool(seen.has(String(c.id))).is_true()
+	Save.wipe()
