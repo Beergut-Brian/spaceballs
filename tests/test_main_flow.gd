@@ -7,6 +7,11 @@ var _main: Node
 
 
 func before_test() -> void:
+	# Start from a clean slate whatever suite ran before (CI runs suites in a different order:
+	# test_run.gd left Run.phase at KICK_P1, so no phase change fired and nobody kicked).
+	Run.phase = Run.Phase.IDLE
+	Players._device_of = {Players.P1: -1, Players.P2: -1}
+	Game._set_state(Game.State.TITLE)
 	Run.save_enabled = false
 	Run.demo = true
 	Engine.time_scale = 8.0
