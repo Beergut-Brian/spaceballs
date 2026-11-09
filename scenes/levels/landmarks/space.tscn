@@ -58,7 +58,7 @@ albedo_color = Color(1, 0.30980393, 0.84705883, 1)
 shading_mode = 0
 albedo_color = Color(0.5254902, 0.9647059, 1, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7hik5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uhw6r"]
 albedo_color = Color(0.10980392, 0.7882353, 0.6509804, 1)
 roughness = 0.7
 rim_enabled = true
@@ -118,7 +118,7 @@ height = 0.35
 radial_segments = 24
 rings = 1
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5sf7w"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cb86u"]
 albedo_color = Color(1, 0.30980393, 0.84705883, 1)
 roughness = 0.7
 rim_enabled = true
@@ -171,179 +171,179 @@ radial_segments = 32
 rings = 12
 is_hemisphere = true
 
-[node name="Space" type="Node3D" unique_id=1576976202]
+[node name="Space" type="Node3D" unique_id=191633371]
 metadata/_art = "Tier landmark space (art/tools/build_scenes.gd)."
 
-[node name="Moon" type="Node3D" parent="." unique_id=54861658]
+[node name="Moon" type="Node3D" parent="." unique_id=260715689]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -160, 38, 22)
 
-[node name="Surface" type="MeshInstance3D" parent="Moon" unique_id=2068021980]
+[node name="Surface" type="MeshInstance3D" parent="Moon" unique_id=518191092]
 transform = Transform3D(16, 0, 0, 0, 16, 0, 0, 0, 16, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_ef6mr")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater0" type="MeshInstance3D" parent="Moon" unique_id=774653693]
+[node name="Crater0" type="MeshInstance3D" parent="Moon" unique_id=762472803]
 transform = Transform3D(0.1705302, -0.70090497, 0.5722094, 0, 2.3561306, 0.1718111, -1.7647501, -0.0677294, 0.055293374, 14.782077, 4.4384527, 1.4284114)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater1" type="MeshInstance3D" parent="Moon" unique_id=5719692]
+[node name="Crater1" type="MeshInstance3D" parent="Moon" unique_id=240661863]
 transform = Transform3D(1.6267291, -0.808349, 0.45885384, 0, 1.9397523, 0.26376486, -2.6409922, -0.4979056, 0.28263277, 11.853723, 6.8139243, 7.301345)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater2" type="MeshInstance3D" parent="Moon" unique_id=2060605218]
+[node name="Crater2" type="MeshInstance3D" parent="Moon" unique_id=657119743]
 transform = Transform3D(2.2858555, 0.7915397, 0.35001817, 0, 1.8162231, -0.32041407, -2.1790073, 0.830353, 0.36718142, 9.042135, -8.277363, 9.485519)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater3" type="MeshInstance3D" parent="Moon" unique_id=1548846988]
+[node name="Crater3" type="MeshInstance3D" parent="Moon" unique_id=1059574677]
 transform = Transform3D(1.3308295, 1.7627696, 0.4175669, 0, 2.3635664, -0.38215122, -2.792607, 0.8400559, 0.1989934, 10.787144, -9.872239, 5.1406627)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater4" type="MeshInstance3D" parent="Moon" unique_id=101851136]
+[node name="Crater4" type="MeshInstance3D" parent="Moon" unique_id=1572501777]
 transform = Transform3D(-0.40923747, 1.4792306, 0.28389525, 0, 0.84897786, -0.5240374, -1.6789602, -0.3605545, -0.06919793, 7.3339605, -13.537631, -1.7876135)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater5" type="MeshInstance3D" parent="Moon" unique_id=1789574448]
+[node name="Crater5" type="MeshInstance3D" parent="Moon" unique_id=2105644030]
 transform = Transform3D(-0.2545158, 0.7786053, 0.52834207, 0, 1.4747597, -0.2808928, -3.0421467, -0.06514063, -0.044202805, 13.648838, -7.2563977, -1.1419063)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater6" type="MeshInstance3D" parent="Moon" unique_id=1912274639]
+[node name="Crater6" type="MeshInstance3D" parent="Moon" unique_id=576497367]
 transform = Transform3D(1.2990664, 0.7075334, 0.44961697, 0, 1.3032541, -0.31493023, -2.4115145, 0.38114342, 0.24220558, 11.615105, -8.135697, 6.2569776)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater7" type="MeshInstance3D" parent="Moon" unique_id=850360439]
+[node name="Crater7" type="MeshInstance3D" parent="Moon" unique_id=657338164]
 transform = Transform3D(1.2312024, 0.69404984, 0.30263877, 0, 1.90521, -0.31437328, -0.90483135, 0.9443924, 0.4118, 7.8181677, -8.121309, 10.638166)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Crater8" type="MeshInstance3D" parent="Moon" unique_id=2035378142]
+[node name="Crater8" type="MeshInstance3D" parent="Moon" unique_id=1947972296]
 transform = Transform3D(1.534653, -1.049159, 0.20117885, 0, 1.5127697, 0.47224268, -0.99379635, -1.6201459, 0.31066698, 5.1971197, 12.199601, 8.025563)
 material_override = SubResource("StandardMaterial3D_ng3r0")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Saucer" type="Node3D" parent="." unique_id=1627607948]
+[node name="Saucer" type="Node3D" parent="." unique_id=1312793513]
 transform = Transform3D(1.1133176, 0, 4.360106, 0, 4.5, 0, -4.360106, 0, 1.1133176, -16, 10, -7)
 script = ExtResource("1_qivny")
 amount = 0.25
 speed = 0.35
 
-[node name="Hull" type="MeshInstance3D" parent="Saucer" unique_id=944352070]
+[node name="Hull" type="MeshInstance3D" parent="Saucer" unique_id=1007665528]
 transform = Transform3D(1.4, 0, 0, 0, 0.32, 0, 0, 0, 1.4, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_4l345")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Ring" type="MeshInstance3D" parent="Saucer" unique_id=1855140483]
+[node name="Ring" type="MeshInstance3D" parent="Saucer" unique_id=1265955450]
 transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 1, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_t1lmo")
 mesh = SubResource("TorusMesh_ibkjo")
 
-[node name="Light0" type="MeshInstance3D" parent="Saucer" unique_id=1232700555]
+[node name="Light0" type="MeshInstance3D" parent="Saucer" unique_id=1932379182]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.33, 0, 0)
 material_override = SubResource("StandardMaterial3D_mnu43")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Light1" type="MeshInstance3D" parent="Saucer" unique_id=1544246631]
+[node name="Light1" type="MeshInstance3D" parent="Saucer" unique_id=573049420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.665, 0, 1.1518137)
 material_override = SubResource("StandardMaterial3D_5tvt0")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Light2" type="MeshInstance3D" parent="Saucer" unique_id=863367460]
+[node name="Light2" type="MeshInstance3D" parent="Saucer" unique_id=1873472129]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.665, 0, 1.1518137)
 material_override = SubResource("StandardMaterial3D_5mbvc")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Light3" type="MeshInstance3D" parent="Saucer" unique_id=227661286]
+[node name="Light3" type="MeshInstance3D" parent="Saucer" unique_id=1389845229]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.33, 0, 1.6287803e-16)
 material_override = SubResource("StandardMaterial3D_mnu43")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Light4" type="MeshInstance3D" parent="Saucer" unique_id=2114727337]
+[node name="Light4" type="MeshInstance3D" parent="Saucer" unique_id=1785539015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.665, 0, -1.1518137)
 material_override = SubResource("StandardMaterial3D_5tvt0")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Light5" type="MeshInstance3D" parent="Saucer" unique_id=1570064940]
+[node name="Light5" type="MeshInstance3D" parent="Saucer" unique_id=1826463261]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.665, 0, -1.1518137)
 material_override = SubResource("StandardMaterial3D_5mbvc")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Alien" type="Node3D" parent="Saucer" unique_id=895020853]
+[node name="Alien" type="Node3D" parent="Saucer" unique_id=1608062071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 
-[node name="Torso" type="MeshInstance3D" parent="Saucer/Alien" unique_id=1678480707]
+[node name="Torso" type="MeshInstance3D" parent="Saucer/Alien" unique_id=1075497319]
 transform = Transform3D(0.28, 0, 0, 0, 0.32, 0, 0, 0, 0.26, 0, 0.25, 0)
-material_override = SubResource("StandardMaterial3D_7hik5")
+material_override = SubResource("StandardMaterial3D_uhw6r")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="Node3D" parent="Saucer/Alien" unique_id=2053068804]
+[node name="Head" type="Node3D" parent="Saucer/Alien" unique_id=1444648464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
-[node name="Skull" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=898267959]
-material_override = SubResource("StandardMaterial3D_7hik5")
+[node name="Skull" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1529234403]
+material_override = SubResource("StandardMaterial3D_uhw6r")
 mesh = SubResource("SphereMesh_wq27i")
 
-[node name="Eye-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=173561001]
+[node name="Eye-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=2050740365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.32)
 material_override = SubResource("StandardMaterial3D_5jh0p")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Pupil-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=518679624]
+[node name="Pupil-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=548945588]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.4)
 material_override = SubResource("StandardMaterial3D_mq8i0")
 mesh = SubResource("SphereMesh_nvngo")
 
-[node name="Eye0" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=308016708]
+[node name="Eye0" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1911150789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0.32)
 material_override = SubResource("StandardMaterial3D_5jh0p")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Pupil0" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=587294154]
+[node name="Pupil0" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1386722410]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0.4)
 material_override = SubResource("StandardMaterial3D_mq8i0")
 mesh = SubResource("SphereMesh_nvngo")
 
-[node name="Eye1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1199434038]
+[node name="Eye1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1934904905]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.32)
 material_override = SubResource("StandardMaterial3D_5jh0p")
 mesh = SubResource("SphereMesh_786qv")
 
-[node name="Pupil1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=691740986]
+[node name="Pupil1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=542563844]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.4)
 material_override = SubResource("StandardMaterial3D_mq8i0")
 mesh = SubResource("SphereMesh_nvngo")
 
-[node name="Smile" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=1620576879]
+[node name="Smile" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=514867711]
 transform = Transform3D(1.8, 0, 0, 0, 0.6, 0, 0, 0, 0.5, 0, -0.14, 0.33)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_6m80t")
 
-[node name="Stalk-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=782246784]
+[node name="Stalk-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=362489789]
 transform = Transform3D(0.9553365, -0.29552022, 0, 0.29552022, 0.9553365, 0, 0, 0, 1, -0.14, 0.45, 0)
 material_override = SubResource("StandardMaterial3D_faofm")
 mesh = SubResource("CylinderMesh_7mljq")
 
-[node name="Bulb-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=399928325]
+[node name="Bulb-1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=837972986]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.63, 0)
-material_override = SubResource("StandardMaterial3D_5sf7w")
+material_override = SubResource("StandardMaterial3D_cb86u")
 mesh = SubResource("SphereMesh_j6na0")
 
-[node name="Stalk1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=13887661]
+[node name="Stalk1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=70347663]
 transform = Transform3D(0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 0, 0, 0, 1, 0.14, 0.45, 0)
 material_override = SubResource("StandardMaterial3D_faofm")
 mesh = SubResource("CylinderMesh_7mljq")
 
-[node name="Bulb1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=35375711]
+[node name="Bulb1" type="MeshInstance3D" parent="Saucer/Alien/Head" unique_id=528960579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.63, 0)
-material_override = SubResource("StandardMaterial3D_5sf7w")
+material_override = SubResource("StandardMaterial3D_cb86u")
 mesh = SubResource("SphereMesh_j6na0")
 
-[node name="WaveArm" type="Node3D" parent="Saucer/Alien" unique_id=1676966908]
+[node name="WaveArm" type="Node3D" parent="Saucer/Alien" unique_id=784122492]
 transform = Transform3D(0.87758255, 0.47942555, 0, -0.47942555, 0.87758255, 0, 0, 0, 1, 0.28, 0.4, 0)
 script = ExtResource("1_qivny")
 mode = 4
@@ -351,22 +351,22 @@ amount = 0.5
 speed = 1.6
 axis = Vector3(0, 0, -1)
 
-[node name="Arm" type="MeshInstance3D" parent="Saucer/Alien/WaveArm" unique_id=1621806255]
+[node name="Arm" type="MeshInstance3D" parent="Saucer/Alien/WaveArm" unique_id=1901870313]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
-material_override = SubResource("StandardMaterial3D_7hik5")
+material_override = SubResource("StandardMaterial3D_uhw6r")
 mesh = SubResource("CapsuleMesh_kb7yw")
 
-[node name="Mitt" type="MeshInstance3D" parent="Saucer/Alien/WaveArm" unique_id=391054996]
+[node name="Mitt" type="MeshInstance3D" parent="Saucer/Alien/WaveArm" unique_id=1408542192]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
 material_override = SubResource("StandardMaterial3D_b2c5v")
 mesh = SubResource("SphereMesh_5s6wm")
 
-[node name="OtherArm" type="MeshInstance3D" parent="Saucer/Alien" unique_id=2094438738]
+[node name="OtherArm" type="MeshInstance3D" parent="Saucer/Alien" unique_id=362016985]
 transform = Transform3D(0.921061, 0.38941833, 0, -0.38941833, 0.921061, 0, 0, 0, 1, -0.3, 0.25, 0)
-material_override = SubResource("StandardMaterial3D_7hik5")
+material_override = SubResource("StandardMaterial3D_uhw6r")
 mesh = SubResource("CapsuleMesh_aew3s")
 
-[node name="Dome" type="MeshInstance3D" parent="Saucer" unique_id=186870837]
+[node name="Dome" type="MeshInstance3D" parent="Saucer" unique_id=1313093814]
 transform = Transform3D(1, 0, 0, 0, 1.4, 0, 0, 0, 1, 0, 0.18, 0)
 material_override = SubResource("StandardMaterial3D_vqces")
 cast_shadow = 0

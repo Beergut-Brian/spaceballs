@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="1_5m7ed"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3n7eh"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vq264"]
 albedo_color = Color(0.5411765, 0.3529412, 0.16862746, 1)
 roughness = 0.7
 rim_enabled = true
@@ -186,7 +186,7 @@ height = 5.76
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23ynb"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mm364"]
 albedo_color = Color(0.21960784, 0.7764706, 1, 1)
 roughness = 0.7
 rim_enabled = true
@@ -205,7 +205,7 @@ height = 0.24
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4osly"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e3jo2"]
 albedo_color = Color(1, 0.62352943, 0.18039216, 1)
 roughness = 0.7
 rim_enabled = true
@@ -235,7 +235,7 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjtxx"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s6rlh"]
 albedo_color = Color(1, 0.84705883, 0.3019608, 1)
 roughness = 0.7
 rim_enabled = true
@@ -249,7 +249,7 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5sf7w"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cb86u"]
 albedo_color = Color(1, 0.30980393, 0.84705883, 1)
 roughness = 0.7
 rim_enabled = true
@@ -277,124 +277,124 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[node name="Treetops" type="Node3D" unique_id=2025137474]
+[node name="Treetops" type="Node3D" unique_id=1112789299]
 metadata/_art = "Tier landmark treetops (art/tools/build_scenes.gd)."
 
-[node name="TallTree0" type="Node3D" parent="." unique_id=545491272]
+[node name="TallTree0" type="Node3D" parent="." unique_id=404593865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, -14, -10)
 
-[node name="Trunk" type="MeshInstance3D" parent="TallTree0" unique_id=2077690020]
+[node name="Trunk" type="MeshInstance3D" parent="TallTree0" unique_id=1913410138]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.95, 0)
-material_override = SubResource("StandardMaterial3D_3n7eh")
+material_override = SubResource("StandardMaterial3D_vq264")
 mesh = SubResource("CylinderMesh_8eu1r")
 
-[node name="Crown" type="MeshInstance3D" parent="TallTree0" unique_id=801276057]
+[node name="Crown" type="MeshInstance3D" parent="TallTree0" unique_id=115955801]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.75, 0)
 material_override = SubResource("StandardMaterial3D_b2iyx")
 mesh = SubResource("SphereMesh_85xi5")
 
-[node name="BlobA" type="MeshInstance3D" parent="TallTree0" unique_id=694187306]
+[node name="BlobA" type="MeshInstance3D" parent="TallTree0" unique_id=2075210970]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.264, 10.54, 1.088)
 material_override = SubResource("StandardMaterial3D_kqldk")
 mesh = SubResource("SphereMesh_s1kgd")
 
-[node name="BlobB" type="MeshInstance3D" parent="TallTree0" unique_id=1714873961]
+[node name="BlobB" type="MeshInstance3D" parent="TallTree0" unique_id=1514726815]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.72, 11.22, -1.632)
 material_override = SubResource("StandardMaterial3D_kughv")
 mesh = SubResource("SphereMesh_sxggd")
 
-[node name="Top" type="MeshInstance3D" parent="TallTree0" unique_id=1759479879]
+[node name="Top" type="MeshInstance3D" parent="TallTree0" unique_id=862302427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.053796392, 16.66, 0)
 material_override = SubResource("StandardMaterial3D_x7v86")
 mesh = SubResource("SphereMesh_qka0y")
 
-[node name="TallTree1" type="Node3D" parent="." unique_id=391862344]
+[node name="TallTree1" type="Node3D" parent="." unique_id=989418501]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, -14, 6)
 
-[node name="Trunk" type="MeshInstance3D" parent="TallTree1" unique_id=167694972]
+[node name="Trunk" type="MeshInstance3D" parent="TallTree1" unique_id=1734674459]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.3, 0)
-material_override = SubResource("StandardMaterial3D_3n7eh")
+material_override = SubResource("StandardMaterial3D_vq264")
 mesh = SubResource("CylinderMesh_ksts3")
 
-[node name="Crown" type="MeshInstance3D" parent="TallTree1" unique_id=57848472]
+[node name="Crown" type="MeshInstance3D" parent="TallTree1" unique_id=1250985948]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.5, 0)
 material_override = SubResource("StandardMaterial3D_duiky")
 mesh = SubResource("SphereMesh_j1rjw")
 
-[node name="BlobA" type="MeshInstance3D" parent="TallTree1" unique_id=1744258129]
+[node name="BlobA" type="MeshInstance3D" parent="TallTree1" unique_id=1811561693]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.456, 11.16, 1.152)
 material_override = SubResource("StandardMaterial3D_m3miy")
 mesh = SubResource("SphereMesh_tgrru")
 
-[node name="BlobB" type="MeshInstance3D" parent="TallTree1" unique_id=1591902920]
+[node name="BlobB" type="MeshInstance3D" parent="TallTree1" unique_id=1446185651]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.88, 11.88, -1.728)
 material_override = SubResource("StandardMaterial3D_ed2xm")
 mesh = SubResource("SphereMesh_6tbna")
 
-[node name="Top" type="MeshInstance3D" parent="TallTree1" unique_id=1497330465]
+[node name="Top" type="MeshInstance3D" parent="TallTree1" unique_id=1085934117]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5618904, 17.64, 0)
 material_override = SubResource("StandardMaterial3D_3ehi8")
 mesh = SubResource("SphereMesh_qyawk")
 
-[node name="TallTree2" type="Node3D" parent="." unique_id=374955144]
+[node name="TallTree2" type="Node3D" parent="." unique_id=947275434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -14, 18)
 
-[node name="Trunk" type="MeshInstance3D" parent="TallTree2" unique_id=1343592010]
+[node name="Trunk" type="MeshInstance3D" parent="TallTree2" unique_id=1581066184]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.25, 0)
-material_override = SubResource("StandardMaterial3D_3n7eh")
+material_override = SubResource("StandardMaterial3D_vq264")
 mesh = SubResource("CylinderMesh_l1r7h")
 
-[node name="Crown" type="MeshInstance3D" parent="TallTree2" unique_id=1244176854]
+[node name="Crown" type="MeshInstance3D" parent="TallTree2" unique_id=1539763812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.25, 0)
 material_override = SubResource("StandardMaterial3D_qeqt4")
 mesh = SubResource("SphereMesh_sl05f")
 
-[node name="BlobA" type="MeshInstance3D" parent="TallTree2" unique_id=199141523]
+[node name="BlobA" type="MeshInstance3D" parent="TallTree2" unique_id=1063337522]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.88, 9.3, 0.96)
 material_override = SubResource("StandardMaterial3D_ex6jh")
 mesh = SubResource("SphereMesh_i0r4o")
 
-[node name="BlobB" type="MeshInstance3D" parent="TallTree2" unique_id=1025433357]
+[node name="BlobB" type="MeshInstance3D" parent="TallTree2" unique_id=1700074661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 9.9, -1.44)
 material_override = SubResource("StandardMaterial3D_o27xt")
 mesh = SubResource("SphereMesh_jre6e")
 
-[node name="Top" type="MeshInstance3D" parent="TallTree2" unique_id=975605955]
+[node name="Top" type="MeshInstance3D" parent="TallTree2" unique_id=863686097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.39307314, 14.7, 0)
 material_override = SubResource("StandardMaterial3D_bt38m")
 mesh = SubResource("SphereMesh_khlar")
 
-[node name="Bird0Orbit" type="Node3D" parent="." unique_id=394627724]
+[node name="Bird0Orbit" type="Node3D" parent="." unique_id=1320675087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 script = ExtResource("1_5m7ed")
 mode = 2
 amount = 0.0
 speed = 0.08
 
-[node name="Bird0" type="Node3D" parent="Bird0Orbit" unique_id=1948419144]
+[node name="Bird0" type="Node3D" parent="Bird0Orbit" unique_id=986155434]
 transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, 4.5, 1, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=747051655]
+[node name="Body" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=974004723]
 transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_23ynb")
+material_override = SubResource("StandardMaterial3D_mm364")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=292570288]
+[node name="Head" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=682810167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
-material_override = SubResource("StandardMaterial3D_23ynb")
+material_override = SubResource("StandardMaterial3D_mm364")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Beak" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=529689705]
+[node name="Beak" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=654956688]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
-material_override = SubResource("StandardMaterial3D_4osly")
+material_override = SubResource("StandardMaterial3D_e3jo2")
 mesh = SubResource("PrismMesh_ut2fe")
 
-[node name="Eye-1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=17569139]
+[node name="Eye-1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=1676523390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing-1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=1820033912]
+[node name="Wing-1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=1574996666]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -402,17 +402,17 @@ amount = -0.7
 speed = 3.0
 axis = Vector3(0, 0, -1)
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing-1" unique_id=377862468]
+[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing-1" unique_id=971131022]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_gogwe")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Eye1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=807747811]
+[node name="Eye1" type="MeshInstance3D" parent="Bird0Orbit/Bird0" unique_id=1185205947]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=636809935]
+[node name="Wing1" type="Node3D" parent="Bird0Orbit/Bird0" unique_id=1751617586]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -420,12 +420,12 @@ amount = 0.7
 speed = 3.0
 axis = Vector3(0, 0, -1)
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing1" unique_id=1932098600]
+[node name="Feathers" type="MeshInstance3D" parent="Bird0Orbit/Bird0/Wing1" unique_id=944002686]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_gogwe")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Bird1Orbit" type="Node3D" parent="." unique_id=1598303137]
+[node name="Bird1Orbit" type="Node3D" parent="." unique_id=993239200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 script = ExtResource("1_5m7ed")
 mode = 2
@@ -433,30 +433,30 @@ amount = 0.0
 speed = 0.08
 phase = 0.25
 
-[node name="Bird1" type="Node3D" parent="Bird1Orbit" unique_id=866353766]
+[node name="Bird1" type="Node3D" parent="Bird1Orbit" unique_id=1428648185]
 transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, 2.7554554e-16, 2.2, 6)
 
-[node name="Body" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1317667379]
+[node name="Body" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=351716984]
 transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_jjtxx")
+material_override = SubResource("StandardMaterial3D_s6rlh")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1564228022]
+[node name="Head" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1794798440]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
-material_override = SubResource("StandardMaterial3D_jjtxx")
+material_override = SubResource("StandardMaterial3D_s6rlh")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Beak" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1728354687]
+[node name="Beak" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=2069067950]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
-material_override = SubResource("StandardMaterial3D_4osly")
+material_override = SubResource("StandardMaterial3D_e3jo2")
 mesh = SubResource("PrismMesh_ut2fe")
 
-[node name="Eye-1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1026841663]
+[node name="Eye-1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=794287363]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing-1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=1633493330]
+[node name="Wing-1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=1881499203]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -465,17 +465,17 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.25
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing-1" unique_id=1184852553]
+[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing-1" unique_id=728504774]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_kfq85")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Eye1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=1496095963]
+[node name="Eye1" type="MeshInstance3D" parent="Bird1Orbit/Bird1" unique_id=365174607]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=898914857]
+[node name="Wing1" type="Node3D" parent="Bird1Orbit/Bird1" unique_id=1339941075]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -484,12 +484,12 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.25
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing1" unique_id=1738075983]
+[node name="Feathers" type="MeshInstance3D" parent="Bird1Orbit/Bird1/Wing1" unique_id=407563706]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_kfq85")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Bird2Orbit" type="Node3D" parent="." unique_id=2023488190]
+[node name="Bird2Orbit" type="Node3D" parent="." unique_id=307704805]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 script = ExtResource("1_5m7ed")
 mode = 2
@@ -497,30 +497,30 @@ amount = 0.0
 speed = 0.08
 phase = 0.5
 
-[node name="Bird2" type="Node3D" parent="Bird2Orbit" unique_id=25492597]
+[node name="Bird2" type="Node3D" parent="Bird2Orbit" unique_id=257350847]
 transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, -4.5, 1, 7.3478806e-16)
 
-[node name="Body" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1276683104]
+[node name="Body" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1346963477]
 transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_5sf7w")
+material_override = SubResource("StandardMaterial3D_cb86u")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=840681527]
+[node name="Head" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=512003944]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
-material_override = SubResource("StandardMaterial3D_5sf7w")
+material_override = SubResource("StandardMaterial3D_cb86u")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Beak" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1233386108]
+[node name="Beak" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=2024797859]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
-material_override = SubResource("StandardMaterial3D_4osly")
+material_override = SubResource("StandardMaterial3D_e3jo2")
 mesh = SubResource("PrismMesh_ut2fe")
 
-[node name="Eye-1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=316270423]
+[node name="Eye-1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=1994279310]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing-1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=273708229]
+[node name="Wing-1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=2032594239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -529,17 +529,17 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.5
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing-1" unique_id=1913914114]
+[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing-1" unique_id=444451617]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_t5ciu")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Eye1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=10453448]
+[node name="Eye1" type="MeshInstance3D" parent="Bird2Orbit/Bird2" unique_id=832685118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=212218970]
+[node name="Wing1" type="Node3D" parent="Bird2Orbit/Bird2" unique_id=717679362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -548,12 +548,12 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.5
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing1" unique_id=77018881]
+[node name="Feathers" type="MeshInstance3D" parent="Bird2Orbit/Bird2/Wing1" unique_id=312008499]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_t5ciu")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Bird3Orbit" type="Node3D" parent="." unique_id=90252028]
+[node name="Bird3Orbit" type="Node3D" parent="." unique_id=567168644]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 0)
 script = ExtResource("1_5m7ed")
 mode = 2
@@ -561,30 +561,30 @@ amount = 0.0
 speed = 0.08
 phase = 0.75
 
-[node name="Bird3" type="Node3D" parent="Bird3Orbit" unique_id=341056820]
+[node name="Bird3" type="Node3D" parent="Bird3Orbit" unique_id=2071779328]
 transform = Transform3D(-6.9938224e-08, 0, 1.6, 0, 1.6, 0, -1.6, 0, -6.9938224e-08, -8.266366e-16, 2.2, -6)
 
-[node name="Body" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1625499754]
+[node name="Body" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=684013878]
 transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.26, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_tw4fv")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Head" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=531151856]
+[node name="Head" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1739584923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
 material_override = SubResource("StandardMaterial3D_tw4fv")
 mesh = SubResource("SphereMesh_a8pny")
 
-[node name="Beak" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=877941812]
+[node name="Beak" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1235422554]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.34)
-material_override = SubResource("StandardMaterial3D_4osly")
+material_override = SubResource("StandardMaterial3D_e3jo2")
 mesh = SubResource("PrismMesh_ut2fe")
 
-[node name="Eye-1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=542519113]
+[node name="Eye-1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=1625378927]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing-1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=1211104446]
+[node name="Wing-1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=932714240]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -593,17 +593,17 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.75
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing-1" unique_id=1756810941]
+[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing-1" unique_id=831858063]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, -0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_8xdfe")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Eye1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=974191641]
+[node name="Eye1" type="MeshInstance3D" parent="Bird3Orbit/Bird3" unique_id=601355777]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.14, 0.29)
 material_override = SubResource("StandardMaterial3D_geted")
 mesh = SubResource("SphereMesh_68jlc")
 
-[node name="Wing1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=2074371122]
+[node name="Wing1" type="Node3D" parent="Bird3Orbit/Bird3" unique_id=1044817983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.05, 0)
 script = ExtResource("1_5m7ed")
 mode = 5
@@ -612,7 +612,7 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.75
 
-[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing1" unique_id=1287403714]
+[node name="Feathers" type="MeshInstance3D" parent="Bird3Orbit/Bird3/Wing1" unique_id=339070661]
 transform = Transform3D(0.22, 0, 0, 0, 0.04, 0, 0, 0, 0.14, 0.18, 0, 0)
 material_override = SubResource("StandardMaterial3D_8xdfe")
 mesh = SubResource("SphereMesh_r5v5p")

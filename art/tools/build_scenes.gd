@@ -110,8 +110,8 @@ func _mesh(kind: String, a := 0.0, b := 0.0, c := 0.0) -> Mesh:
 			var cp := CapsuleMesh.new()
 			cp.radius = a
 			cp.height = maxf(b, a * 2.0)
-			cp.radial_segments = 24
-			cp.rings = 6
+			cp.radial_segments = 8 if c > 0.0 else 24   # c > 0: low-detail (instanced pickets)
+			cp.rings = 2 if c > 0.0 else 6
 			m = cp
 		"prism":
 			var p := PrismMesh.new()
@@ -339,7 +339,7 @@ func _build_field() -> void:
 	pickets.position = Vector3(0, -0.55, 0)
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = _mesh("cap", 0.06, 0.85)
+	mm.mesh = _mesh("cap", 0.06, 0.85, 1.0)
 	mm.instance_count = 50
 	for i in mm.instance_count:
 		mm.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(1.0, 1.0, 0.6)), Vector3(0, 0.42, -14.7 + i * 0.6)))
@@ -476,7 +476,7 @@ func _dress_trees(d: Node3D) -> void:
 	var crowns := MultiMesh.new()
 	crowns.transform_format = MultiMesh.TRANSFORM_3D
 	crowns.use_colors = true
-	crowns.mesh = _mesh("sphere", 1.0, 32)
+	crowns.mesh = _mesh("sphere", 1.0, 20)
 	crowns.instance_count = spots.size() * 4
 	for i in spots.size():
 		var p: Vector3 = spots[i][0]
@@ -525,7 +525,7 @@ func _dress_horizon(d: Node3D) -> void:
 		Vector3(30, 28, 80), Vector3(60, 32, -60)]
 	var puffs := MultiMesh.new()
 	puffs.transform_format = MultiMesh.TRANSFORM_3D
-	puffs.mesh = _mesh("sphere", 1.0, 24)
+	puffs.mesh = _mesh("sphere", 1.0, 16)
 	puffs.instance_count = cspots.size() * 5
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 40
