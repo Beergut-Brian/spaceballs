@@ -13,12 +13,14 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 	var r: Node = RunScript.new()
 	r.drive_game = false
 	r.save_enabled = false
+	r._ensure_data()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	r.rng.seed = seed * 7919 + 1
 	r.start_run(players)
 	var max_gap_after_6 := 0
 	var curses := {0: 0, 1: 0}
+	var floored := 0
 	while r.phase != RunScript.Phase.END and r.round_index <= 20:
 		if r.phase == RunScript.Phase.PICK:
 			# Progress gap: best heights while both are still climbing (a curse dip is not progress).
@@ -42,6 +44,8 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 		var quality: float = RunScript.QUALITY_MIN + rng.randf() * 0.35 + (0.03 if hopped else 0.0)
 		var power: float = r.notify_kicked(p, quality)
 		var h: float = r.kick_height(p, power)
+		if RunScript.height_for_power(power) < r.tiers.space_height() and h >= r.tiers.space_height():
+			floored += 1
 		r.notify_tier(p, r.tier_of_height(h))
 		r.notify_stopped(p, h)
 		r.end_flight(p)
@@ -50,6 +54,7 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 		"rounds": players.map(func(p): return r.space_round(p)),
 		"gap": max_gap_after_6,
 		"curses": curses,
+		"floored": floored,
 	}
 	r.free()
 	return out
@@ -77,6 +82,7 @@ static func histogram(xs: Array) -> String:
 func _check(label: String, players: Array, policy: String) -> Array:
 	var rounds: Array = []
 	var gaps: Array = []
+	var floored := 0
 	for s in RUNS:
 		var res := simulate(s + 1, players, policy)
 		assert_bool(res["ended"]).override_failure_message("%s run %d never ended" % [label, s]).is_true()
@@ -84,8 +90,10 @@ func _check(label: String, players: Array, policy: String) -> Array:
 			assert_int(x).is_between(1, RunScript.MAX_ROUNDS)
 			rounds.append(x)
 		gaps.append(res["gap"])
+		floored += res["floored"]
 	print("\n[sim] %s, %d runs, %s picks: median %.1f, min %d, max %d\n%s" % [
 		label, RUNS, policy, median(rounds), rounds.min(), rounds.max(), histogram(rounds)])
+	print("[sim] kicks lifted to space by the round-15 floor: %d of %d player-runs" % [floored, rounds.size()])
 	if players.size() == 2:
 		print("[sim] max tier gap after round 6: median %.1f, worst %d, runs with gap > 2: %d" % [
 			median(gaps), gaps.max(), gaps.filter(func(g): return g > 2).size()])
