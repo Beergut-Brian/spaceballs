@@ -1,40 +1,55 @@
-[gd_scene load_steps=3 format=3 uid="uid://openjar_main"]
+[gd_scene load_steps=11 format=3 uid="uid://openjar_main"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/levels/field.tscn" id="2_field"]
+[ext_resource type="PackedScene" path="res://scenes/levels/height_ladder.tscn" id="3_ladder"]
+[ext_resource type="PackedScene" path="res://scenes/players/jeff.tscn" id="4_jeff"]
+[ext_resource type="PackedScene" path="res://scenes/players/chuck.tscn" id="5_chuck"]
+[ext_resource type="PackedScene" path="res://scenes/ball.tscn" id="6_ball"]
+[ext_resource type="Script" path="res://scripts/gameplay/camera_rig.gd" id="7_rig"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/upgrade_pick.tscn" id="9_pick"]
+[ext_resource type="PackedScene" path="res://scenes/ui/end_card.tscn" id="10_end"]
 
-[sub_resource type="RectangleShape2D" id="floor_shape"]
-size = Vector2(1920, 120)
-
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node3D"]
 script = ExtResource("1_main")
 
-[node name="Arena" type="Node2D" parent="."]
+[node name="Field" parent="." instance=ExtResource("2_field")]
 
-[node name="Floor" type="StaticBody2D" parent="Arena"]
-position = Vector2(960, 1000)
-collision_layer = 1
+[node name="HeightLadder" parent="." node_paths=PackedStringArray("environment") instance=ExtResource("3_ladder")]
+environment = NodePath("../Field/Environment")
 
-[node name="Shape" type="CollisionShape2D" parent="Arena/Floor"]
-shape = SubResource("floor_shape")
+[node name="Kickers" type="Node3D" parent="."]
 
-[node name="Visual" type="ColorRect" parent="Arena/Floor"]
-offset_left = -960.0
-offset_top = -40.0
-offset_right = 960.0
-offset_bottom = 80.0
-color = Color(0.2, 0.2, 0.25, 1)
+[node name="Jeff" parent="Kickers" instance=ExtResource("4_jeff")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 8)
 
-[node name="Spawns" type="Node2D" parent="Arena"]
+[node name="Chuck" parent="Kickers" instance=ExtResource("5_chuck")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -3.5)
 
-[node name="P1" type="Marker2D" parent="Arena/Spawns"]
-position = Vector2(760, 900)
+[node name="Balls" type="Node3D" parent="."]
 
-[node name="P2" type="Marker2D" parent="Arena/Spawns"]
-position = Vector2(1160, 900)
+[node name="P1" parent="Balls" instance=ExtResource("6_ball")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.35, 0)
 
-[node name="Players" type="Node2D" parent="Arena"]
+[node name="P2" parent="Balls" instance=ExtResource("6_ball")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.35, 0)
+player = 1
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("7_rig")
+
+[node name="Camera" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 4, 8)
+current = true
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("8_hud")]
+
+[node name="UpgradePick" parent="UI" instance=ExtResource("9_pick")]
+
+[node name="EndCard" parent="UI" instance=ExtResource("10_end")]
 
 [node name="Title" type="CenterContainer" parent="UI"]
 anchors_preset = 15
@@ -42,11 +57,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Prompt" type="Label" parent="UI/Title"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 64
-text = "Press any button"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.15, 0.3, 1)
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 96
+text = "SPACEBALLS"
 
 [node name="Pause" type="CenterContainer" parent="UI"]
 visible = false
@@ -58,5 +77,5 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="UI/Pause"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 96
+theme_override_font_sizes/font_size = 160
 text = "||"

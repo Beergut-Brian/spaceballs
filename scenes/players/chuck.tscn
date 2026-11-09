@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/players/kicker.tscn" id="1_kicker"]
+
+[sub_resource type="CylinderMesh" id="cap_mesh"]
+top_radius = 0.3
+bottom_radius = 0.36
+height = 0.16
+
+[sub_resource type="BoxMesh" id="brim_mesh"]
+size = Vector3(0.4, 0.04, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="cap_mat"]
+albedo_color = Color(0.18, 0.24, 0.45, 1)
+
+[node name="Chuck" instance=ExtResource("1_kicker")]
+player = 1
+metadata/_placeholder = "PLACEHOLDER (systems grey-box): Art swaps Body for Jarling Chuck (trucker hat). P2, red."
+
+[node name="Cap" type="MeshInstance3D" parent="Body/Head" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("cap_mesh")
+surface_material_override/0 = SubResource("cap_mat")
+
+[node name="Brim" type="MeshInstance3D" parent="Body/Head/Cap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, -0.3)
+mesh = SubResource("brim_mesh")
+surface_material_override/0 = SubResource("cap_mat")

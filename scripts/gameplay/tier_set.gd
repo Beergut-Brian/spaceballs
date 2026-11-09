@@ -33,6 +33,12 @@ static func visual_y(height: float) -> float:
 	return LINEAR_UNTIL + LOG_SCALE * log(height / LINEAR_UNTIL)
 
 
+static func real_height(visual: float) -> float:
+	if visual <= LINEAR_UNTIL:
+		return visual
+	return LINEAR_UNTIL * exp((visual - LINEAR_UNTIL) / LOG_SCALE)
+
+
 ## 0..1 up the HUD strip: one equal block per tier, log-interpolated inside a block.
 func ladder_fraction(height: float) -> float:
 	var n := tiers.size()

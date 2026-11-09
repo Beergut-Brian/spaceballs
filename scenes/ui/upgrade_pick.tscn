@@ -1,0 +1,135 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/upgrade_pick.gd" id="1_pick"]
+[ext_resource type="PackedScene" path="res://scenes/ui/upgrade_card.tscn" id="2_card"]
+
+[node name="UpgradePick" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_pick")
+
+[node name="Halves" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="P1" type="Control" parent="Halves"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="View" type="SubViewportContainer" parent="Halves/P1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Halves/P1/View"]
+handle_input_locally = false
+size = Vector2i(960, 1080)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Halves/P1/View/SubViewport"]
+current = true
+fov = 50.0
+
+[node name="Frame" type="ReferenceRect" parent="Halves/P1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+border_color = Color(0.235, 0.761, 0.29, 1)
+border_width = 12.0
+editor_only = false
+
+[node name="Cards" type="HBoxContainer" parent="Halves/P1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -380.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 36
+
+[node name="Card1" parent="Halves/P1/Cards" instance=ExtResource("2_card")]
+layout_mode = 2
+
+[node name="Card2" parent="Halves/P1/Cards" instance=ExtResource("2_card")]
+layout_mode = 2
+
+[node name="Card3" parent="Halves/P1/Cards" instance=ExtResource("2_card")]
+layout_mode = 2
+
+[node name="P2" type="Control" parent="Halves"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="View" type="SubViewportContainer" parent="Halves/P2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Halves/P2/View"]
+handle_input_locally = false
+size = Vector2i(960, 1080)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="Halves/P2/View/SubViewport"]
+current = true
+fov = 50.0
+
+[node name="Frame" type="ReferenceRect" parent="Halves/P2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+border_color = Color(0.894, 0.224, 0.235, 1)
+border_width = 12.0
+editor_only = false
+
+[node name="Cards" type="HBoxContainer" parent="Halves/P2"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -380.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 36
+
+[node name="Card1" parent="Halves/P2/Cards" instance=ExtResource("2_card")]
+layout_mode = 2
+
+[node name="Card2" parent="Halves/P2/Cards" instance=ExtResource("2_card")]
+layout_mode = 2
+
+[node name="Card3" parent="Halves/P2/Cards" instance=ExtResource("2_card")]
+layout_mode = 2

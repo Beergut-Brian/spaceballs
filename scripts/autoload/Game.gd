@@ -19,6 +19,19 @@ var _restart_armed_at := -INF
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().auto_accept_quit = false
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		quit()
+
+
+## Clean exit (code 0 for the launcher): save, silence audio so nothing leaks, quit.
+func quit(code: int = 0) -> void:
+	Save.flush()
+	await Audio.silence()
+	get_tree().quit(code)
 
 
 func _unhandled_input(event: InputEvent) -> void:

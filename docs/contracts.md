@@ -21,6 +21,7 @@ func end_round(result: Dictionary = {}) -> void
 func pause() -> void
 func resume() -> void
 func restart() -> void          # back to a fresh round, no questions asked
+func quit(code: int = 0) -> void   # save, silence audio (no exit leaks), quit; use instead of get_tree().quit()
 ```
 
 ### `Players` (`scripts/autoload/Players.gd`)
@@ -221,7 +222,8 @@ The schema Content fills (`data/upgrades/<id>.tres`). **Gameplay owns future cha
 @export var tiers: Array[TierData]
 func tier_for(height: float) -> int     # 1..8
 func space_height() -> float
-func visual_y(height: float) -> float   # world Y for a real height (log-compressed above 20 m)
+static func visual_y(height: float) -> float      # world Y for a real height (log-compressed above 20 m)
+static func real_height(visual: float) -> float     # inverse of visual_y
 func ladder_fraction(height: float) -> float   # 0..1 on the HUD strip, one equal block per tier
 ```
 
@@ -266,7 +268,7 @@ func launch(power: float, peak_height: float) -> void
 var height: float                         # real height in metres right now
 ```
 
-Physics for the first 2 s or below 25 m (`HANDOFF_TIME`, `HANDOFF_HEIGHT`), then a scripted
+Physics for the first 2 s or below 18 m (`HANDOFF_TIME`, `HANDOFF_HEIGHT`), then a scripted
 deterministic ease-out arc to the peak, `PEAK_HOLD` 0.8 s, then the drop. The ball calls
 `Run.notify_tier` / `Run.notify_stopped` itself; `main.gd` calls `Run.end_flight` on `returned`.
 

@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/hud.gd" id="1_hud"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+
+[node name="Strip" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = 90.0
+offset_right = -60.0
+offset_bottom = -90.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Blocks" type="VBoxContainer" parent="Strip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="Markers" type="Control" parent="Strip"]
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="P1" type="Panel" parent="Strip/Markers"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="P2" type="Panel" parent="Strip/Markers"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="BestFlag" type="Control" parent="Strip"]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Pole" type="ColorRect" parent="Strip/BestFlag"]
+layout_mode = 0
+offset_left = -18.0
+offset_right = -14.0
+offset_bottom = 28.0
+color = Color(1, 1, 1, 1)
+
+[node name="Flag" type="Polygon2D" parent="Strip/BestFlag"]
+position = Vector2(-14, 0)
+color = Color(1, 0.84, 0.2, 1)
+polygon = PackedVector2Array(0, 0, 26, 7, 0, 14)
+
+[node name="Rounds" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -60.0
+offset_right = 80.0
+offset_bottom = -40.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 2
+
+[node name="RestartHint" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 100.0
+offset_bottom = 100.0
+pivot_offset = Vector2(30, 30)
+mouse_filter = 2
