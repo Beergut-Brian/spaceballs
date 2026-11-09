@@ -182,6 +182,7 @@ Versus or scoring between players; aiming the kick (it always goes up); online, 
 - 2026-11-09 (Systems): height is ballistic, `h = power^2 / 2g`, base power 8 (about 3 m on round 1), space line at 100 km. Above 20 m the scene is log-compressed so a 100 km kick is a few hundred metres of world and stays stable.
 - 2026-11-09 (Systems): P2 joining mid-run starts from zero upgrades at the next round; the catch-up rule pulls P2 up fast. A pad that drops out during the pick no longer blocks it.
 - 2026-11-09 (Systems): the first Select press shows a small spinning marker and beeps; a second within 1 s restarts. Keyboard keys join players for development, and `-- --demo` plays the game by itself.
+- 2026-11-09 (Systems): **solo mode, playtest only** (Kaden asked so he can test alone). Hold Select + Start together for 2 s on any pad (or launch with `-- --solo`) and that one pad plays both Jeff and Chuck; the same hold turns it off and Chuck goes back to normal drop-in. The pad steers whoever's kick it is, and in the pick it chooses for Jeff then Chuck (B goes back to Jeff's card). A small two-heads icon sits top-left while it is on. Never on by default, and a short or one-button press does nothing, so a kid can't trip it.
 
 ## Open questions
 
