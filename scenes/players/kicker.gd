@@ -115,6 +115,10 @@ var _quiet := false
 static var _gear_cache := {}
 var _phase := 0.0
 var _frog_timer := 0.0
+## Card icon -> its main colour (icon_color), filled on first use.
+static var _icon_colors := {}
+## Colour of the next gear poof (the card being put on), set just before equipment.equip.
+var _poof_color := Color.WHITE
 var _anim_t := 0.0
 var _tween: Tween
 var _gag := &""
@@ -473,6 +477,7 @@ func add_upgrade_visual(upgrade: UpgradeData) -> void:
 			equipment.unequip(_gear_cache[String(old)].slots[0])
 			_quiet = false
 		_gear_slot[upgrade.slot] = gear.id
+		_poof_color = icon_color(upgrade)   # the poof wears the card's colour
 		equipment.equip(gear)
 		if swap:
 			_sfx("poof", "upgrade_on", 0.8)
@@ -533,7 +538,7 @@ func _on_gear_poof(_slot: StringName, at: Vector3) -> void:
 	if _quiet or not is_inside_tree():
 		return
 	Audio.play("upgrade_on")
-	Fx.puff(at, Color.WHITE, 0.8)
+	Fx.puff(at, _poof_color, 0.8)
 	Fx.pop(body, 1.25)
 
 
@@ -904,8 +909,41 @@ func _flat(v: Vector3) -> Vector3:
 
 
 func _icon_color(upgrade: UpgradeData) -> Color:
-	var tex := upgrade.icon as GradientTexture2D
-	return tex.gradient.get_color(0) if tex and tex.gradient else Color.WHITE
+	return icon_color(upgrade)
+
+
+
+## The card icon's main colour, for the puff when a piece goes on: the grey-box gradient's first
+## stop, or for a painted icon the average of its most colourful pixels (cached per icon).
+static func icon_color(upgrade: UpgradeData) -> Color:
+	if upgrade == null or upgrade.icon == null:
+		return Color.WHITE
+	var grad := upgrade.icon as GradientTexture2D
+	if grad:
+		return grad.gradient.get_color(0) if grad.gradient else Color.WHITE
+	var key := upgrade.icon.resource_path if upgrade.icon.resource_path != "" else str(upgrade.icon.get_instance_id())
+	if _icon_colors.has(key):
+		return _icon_colors[key]
+	var out := Color.WHITE
+	var img := upgrade.icon.get_image()
+	if img:
+		if img.is_compressed():
+			img.decompress()
+		img.resize(24, 24, Image.INTERPOLATE_BILINEAR)
+		var sum := Vector3.ZERO
+		var weight := 0.0
+		for y in img.get_height():
+			for x in img.get_width():
+				var c := img.get_pixel(x, y)
+				var w := c.a * c.s * c.s * c.v   # bright, saturated pixels lead; outline and white skip
+				sum += Vector3(c.r, c.g, c.b) * w
+				weight += w
+		if weight > 0.01:
+			var avg := sum / weight
+			out = Color(avg.x, avg.y, avg.z)
+			out = Color.from_hsv(out.h, maxf(out.s, 0.55), maxf(out.v, 0.85))
+	_icon_colors[key] = out
+	return out
 
 
 func _placeholder_piece(upgrade: UpgradeData) -> Node3D:
