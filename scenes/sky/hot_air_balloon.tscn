@@ -121,7 +121,7 @@ height = 0.3
 radial_segments = 24
 rings = 6
 
-[node name="HotAirBalloon" type="Node3D" unique_id=1599888124]
+[node name="HotAirBalloon" type="Node3D" unique_id=650100386]
 script = ExtResource("1_dgq1g")
 reaction = 3
 cue = &"sky_boing"
@@ -132,103 +132,103 @@ near_radius = 3.0
 hold = 0.15
 drift = Vector3(0.1, 0.1, 0)
 
-[node name="Gag" type="Node3D" parent="." unique_id=1803557134]
+[node name="Gag" type="Node3D" parent="." unique_id=899703313]
 
-[node name="Sway" type="Node3D" parent="Gag" unique_id=339742662]
+[node name="Sway" type="Node3D" parent="Gag" unique_id=1419677250]
 script = ExtResource("2_vrqow")
 mode = 7
 amount = 0.06
 speed = 0.4
 axis = Vector3(0, 0, 1)
 
-[node name="Envelope" type="MeshInstance3D" parent="Gag/Sway" unique_id=1413616789]
+[node name="Envelope" type="MeshInstance3D" parent="Gag/Sway" unique_id=159874305]
 transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 1, 0, 0.6, 0)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_n8iws")
 
-[node name="BandA" type="MeshInstance3D" parent="Gag/Sway" unique_id=673853887]
+[node name="BandA" type="MeshInstance3D" parent="Gag/Sway" unique_id=1439636535]
 transform = Transform3D(1, 0, 0, 0, 1.6, 0, 0, 0, 1, 0, 0.85, 0)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_dpms8")
 
-[node name="BandB" type="MeshInstance3D" parent="Gag/Sway" unique_id=1145280333]
+[node name="BandB" type="MeshInstance3D" parent="Gag/Sway" unique_id=1568576058]
 transform = Transform3D(1, 0, 0, 0, 1.6, 0, 0, 0, 1, 0, 0.1, 0)
 material_override = SubResource("StandardMaterial3D_l8bb2")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_4jxam")
 
-[node name="Skirt" type="MeshInstance3D" parent="Gag/Sway" unique_id=1892631259]
+[node name="Skirt" type="MeshInstance3D" parent="Gag/Sway" unique_id=854461751]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 0)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_7ka54")
 
-[node name="Basket" type="MeshInstance3D" parent="Gag/Sway" unique_id=1519444203]
+[node name="Basket" type="MeshInstance3D" parent="Gag/Sway" unique_id=1428372921]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, 0)
 material_override = SubResource("StandardMaterial3D_aimb4")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_e2w5q")
 
-[node name="Rope-0_2-0_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=321814652]
+[node name="Rope-0_2-0_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=484872635]
 transform = Transform3D(0.98898315, -0.14761756, -0.011016844, 0.14761756, 0.9779663, 0.14761756, -0.011016844, -0.14761756, 0.98898315, -0.24000001, -0.81500006, -0.24000001)
 material_override = SubResource("StandardMaterial3D_vm3h6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_k1jbn")
 
-[node name="Rope-0_20_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=99586808]
+[node name="Rope-0_20_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=1466310734]
 transform = Transform3D(0.98898315, -0.14761756, 0.011016844, 0.14761756, 0.9779663, -0.14761756, 0.011016844, 0.14761756, 0.98898315, -0.24000001, -0.81500006, 0.24000001)
 material_override = SubResource("StandardMaterial3D_vm3h6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_k1jbn")
 
-[node name="Rope0_2-0_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=234806323]
+[node name="Rope0_2-0_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=1706598724]
 transform = Transform3D(0.98898315, 0.14761756, 0.011016844, -0.14761756, 0.9779663, 0.14761756, 0.011016844, -0.14761756, 0.98898315, 0.24000001, -0.81500006, -0.24000001)
 material_override = SubResource("StandardMaterial3D_vm3h6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_k1jbn")
 
-[node name="Rope0_20_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=1908223844]
+[node name="Rope0_20_2" type="MeshInstance3D" parent="Gag/Sway" unique_id=2143791613]
 transform = Transform3D(0.98898315, 0.14761756, -0.011016844, -0.14761756, 0.9779663, -0.14761756, -0.011016844, 0.14761756, 0.98898315, 0.24000001, -0.81500006, 0.24000001)
 material_override = SubResource("StandardMaterial3D_vm3h6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_k1jbn")
 
-[node name="Rider" type="Node3D" parent="Gag/Sway" unique_id=270903204]
+[node name="Rider" type="Node3D" parent="Gag/Sway" unique_id=1509337517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0.05)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=1684697379]
+[node name="Body" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=820991802]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 material_override = SubResource("StandardMaterial3D_syobp")
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_21324")
 
-[node name="Head" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=1210316966]
+[node name="Head" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=295023160]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 material_override = SubResource("StandardMaterial3D_woke1")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iqmla")
 
-[node name="EyeL" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=1847101359]
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=449155837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.081, 0.345, 0.13)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_th571")
 
-[node name="EyeR" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=2006839214]
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=571369211]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.081, 0.345, 0.13)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_th571")
 
-[node name="Smile" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=549599161]
+[node name="Smile" type="MeshInstance3D" parent="Gag/Sway/Rider" unique_id=1326750567]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -0.5, 0, 1, -2.1855694e-08, 0, 0.273, 0.13)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_lpl3r")
 
-[node name="Arm" type="Node3D" parent="Gag/Sway/Rider" unique_id=1106010161]
+[node name="Arm" type="Node3D" parent="Gag/Sway/Rider" unique_id=1571891631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.12, 0)
 script = ExtResource("2_vrqow")
 mode = 5
@@ -236,7 +236,7 @@ amount = 0.6
 speed = 1.6
 axis = Vector3(0, 0, 1)
 
-[node name="Hand" type="MeshInstance3D" parent="Gag/Sway/Rider/Arm" unique_id=998245968]
+[node name="Hand" type="MeshInstance3D" parent="Gag/Sway/Rider/Arm" unique_id=633504819]
 transform = Transform3D(0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 0, 0, 0, 1, 0.05, 0.16, 0)
 material_override = SubResource("StandardMaterial3D_syobp")
 cast_shadow = 0

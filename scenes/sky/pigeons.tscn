@@ -78,7 +78,7 @@ rings = 16
 [sub_resource type="PrismMesh" id="PrismMesh_riyvp"]
 size = Vector3(0.3, 0.25, 0.06)
 
-[node name="Pigeons" type="Node3D" unique_id=990890030]
+[node name="Pigeons" type="Node3D" unique_id=188613438]
 script = ExtResource("1_cwotv")
 reaction = 2
 cue = &"sky_flutter"
@@ -89,60 +89,60 @@ push = 2.0
 hold = 0.08
 shake = 0.05
 
-[node name="Gag" type="Node3D" parent="." unique_id=771181062]
+[node name="Gag" type="Node3D" parent="." unique_id=1901020546]
 
-[node name="Antenna" type="MeshInstance3D" parent="Gag" unique_id=2005572552]
+[node name="Antenna" type="MeshInstance3D" parent="Gag" unique_id=373461000]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_laqmk")
 
-[node name="Mast" type="MeshInstance3D" parent="Gag" unique_id=1614641032]
+[node name="Mast" type="MeshInstance3D" parent="Gag" unique_id=1859919773]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_q2qs8")
 
-[node name="Bird0" type="Node3D" parent="Gag" unique_id=1055156400]
+[node name="Bird0" type="Node3D" parent="Gag" unique_id=185834619]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -0.65, 0.05, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1590569172]
+[node name="Body" type="MeshInstance3D" parent="Gag/Bird0" unique_id=34246878]
 transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1.2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_667l8")
 
-[node name="Belly" type="MeshInstance3D" parent="Gag/Bird0" unique_id=968744832]
+[node name="Belly" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1109699381]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -0.06, 0.12)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Head" type="MeshInstance3D" parent="Gag/Bird0" unique_id=503106356]
+[node name="Head" type="MeshInstance3D" parent="Gag/Bird0" unique_id=977975919]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.25)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_mkkbk")
 
-[node name="Beak" type="MeshInstance3D" parent="Gag/Bird0" unique_id=978958002]
+[node name="Beak" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1827646656]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.24, 0.48)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_q8ibw")
 
-[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1411254531]
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1128010747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1977025250]
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1184863056]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="WingL" type="Node3D" parent="Gag/Bird0" unique_id=679024075]
+[node name="WingL" type="Node3D" parent="Gag/Bird0" unique_id=1248292040]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -150,13 +150,13 @@ amount = 0.7
 speed = 3.0
 axis = Vector3(0, 0, -1)
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird0/WingL" unique_id=1243746166]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird0/WingL" unique_id=962325877]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, -0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="WingR" type="Node3D" parent="Gag/Bird0" unique_id=141109195]
+[node name="WingR" type="Node3D" parent="Gag/Bird0" unique_id=1813175436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -164,58 +164,58 @@ amount = 0.7
 speed = 3.0
 axis = Vector3(0, 0, 1)
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird0/WingR" unique_id=776454180]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird0/WingR" unique_id=438284250]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, 0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Tail" type="MeshInstance3D" parent="Gag/Bird0" unique_id=731004731]
+[node name="Tail" type="MeshInstance3D" parent="Gag/Bird0" unique_id=1885884974]
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.05, -0.38)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_riyvp")
 
-[node name="Bird1" type="Node3D" parent="Gag" unique_id=2094314570]
+[node name="Bird1" type="Node3D" parent="Gag" unique_id=1295016992]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0.05, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1943769765]
+[node name="Body" type="MeshInstance3D" parent="Gag/Bird1" unique_id=412794699]
 transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1.2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_667l8")
 
-[node name="Belly" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1641684086]
+[node name="Belly" type="MeshInstance3D" parent="Gag/Bird1" unique_id=2106495036]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -0.06, 0.12)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Head" type="MeshInstance3D" parent="Gag/Bird1" unique_id=356518190]
+[node name="Head" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1513531024]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.25)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_mkkbk")
 
-[node name="Beak" type="MeshInstance3D" parent="Gag/Bird1" unique_id=788400013]
+[node name="Beak" type="MeshInstance3D" parent="Gag/Bird1" unique_id=633286176]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.24, 0.48)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_q8ibw")
 
-[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1092364781]
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1063703605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird1" unique_id=56635561]
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1724663130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="WingL" type="Node3D" parent="Gag/Bird1" unique_id=2032699347]
+[node name="WingL" type="Node3D" parent="Gag/Bird1" unique_id=995349278]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -224,13 +224,13 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.3
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingL" unique_id=297723599]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingL" unique_id=449132527]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, -0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="WingR" type="Node3D" parent="Gag/Bird1" unique_id=555371512]
+[node name="WingR" type="Node3D" parent="Gag/Bird1" unique_id=822317856]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -239,58 +239,58 @@ speed = 3.0
 axis = Vector3(0, 0, 1)
 phase = 0.3
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingR" unique_id=1155918094]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingR" unique_id=839318417]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, 0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Tail" type="MeshInstance3D" parent="Gag/Bird1" unique_id=414884308]
+[node name="Tail" type="MeshInstance3D" parent="Gag/Bird1" unique_id=809828114]
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.05, -0.38)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_riyvp")
 
-[node name="Bird2" type="Node3D" parent="Gag" unique_id=185481379]
+[node name="Bird2" type="Node3D" parent="Gag" unique_id=1614481731]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0.65, 0.05, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Bird2" unique_id=254869439]
+[node name="Body" type="MeshInstance3D" parent="Gag/Bird2" unique_id=2003351032]
 transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1.2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_667l8")
 
-[node name="Belly" type="MeshInstance3D" parent="Gag/Bird2" unique_id=1548071477]
+[node name="Belly" type="MeshInstance3D" parent="Gag/Bird2" unique_id=346590447]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -0.06, 0.12)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Head" type="MeshInstance3D" parent="Gag/Bird2" unique_id=671405237]
+[node name="Head" type="MeshInstance3D" parent="Gag/Bird2" unique_id=1769418403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.25)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_mkkbk")
 
-[node name="Beak" type="MeshInstance3D" parent="Gag/Bird2" unique_id=78137929]
+[node name="Beak" type="MeshInstance3D" parent="Gag/Bird2" unique_id=2070448971]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.24, 0.48)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_q8ibw")
 
-[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird2" unique_id=1676244660]
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird2" unique_id=872500885]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird2" unique_id=1093349176]
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird2" unique_id=320693390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.32, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_qiij4")
 
-[node name="WingL" type="Node3D" parent="Gag/Bird2" unique_id=152423830]
+[node name="WingL" type="Node3D" parent="Gag/Bird2" unique_id=1680637325]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -299,13 +299,13 @@ speed = 3.0
 axis = Vector3(0, 0, -1)
 phase = 0.6
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird2/WingL" unique_id=706503089]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird2/WingL" unique_id=978710660]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, -0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="WingR" type="Node3D" parent="Gag/Bird2" unique_id=1844446317]
+[node name="WingR" type="Node3D" parent="Gag/Bird2" unique_id=502843583]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0)
 script = ExtResource("2_ymn3v")
 mode = 6
@@ -314,13 +314,13 @@ speed = 3.0
 axis = Vector3(0, 0, 1)
 phase = 0.6
 
-[node name="Feather" type="MeshInstance3D" parent="Gag/Bird2/WingR" unique_id=2010203020]
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird2/WingR" unique_id=196204023]
 transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, 0.3, 0, 0)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Tail" type="MeshInstance3D" parent="Gag/Bird2" unique_id=861890440]
+[node name="Tail" type="MeshInstance3D" parent="Gag/Bird2" unique_id=88488957]
 transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.05, -0.38)
 material_override = SubResource("StandardMaterial3D_cc48n")
 cast_shadow = 0

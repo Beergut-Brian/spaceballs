@@ -91,7 +91,7 @@ weight = 0.4
 script = ExtResource("2_dnf8g")
 id = &"treetops"
 count_max = 6
-scale = 2.0
+scale = 2.6
 spread = Vector2(1.8, 4.5)
 entries = Array[ExtResource("3_i4dd2")]([SubResource("Resource_pn4ny"), SubResource("Resource_76wge"), SubResource("Resource_cekwp"), SubResource("Resource_s2oww")])
 

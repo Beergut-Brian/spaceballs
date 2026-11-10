@@ -80,7 +80,7 @@ height = 0.12
 radial_segments = 32
 rings = 16
 
-[node name="Satellite" type="Node3D" unique_id=355397322]
+[node name="Satellite" type="Node3D" unique_id=233417831]
 script = ExtResource("1_f2jog")
 reaction = 5
 cue = &"sky_ping"
@@ -89,93 +89,93 @@ hold = 0.12
 shake = 0.06
 puff_color = Color(1, 0.84705883, 0.3019608, 1)
 
-[node name="Gag" type="Node3D" parent="." unique_id=169907852]
+[node name="Gag" type="Node3D" parent="." unique_id=228125099]
 
-[node name="Turn" type="Node3D" parent="Gag" unique_id=1333197748]
+[node name="Turn" type="Node3D" parent="Gag" unique_id=831145039]
 script = ExtResource("2_quwlk")
 mode = 1
 amount = 0.0
 speed = 0.08
 axis = Vector3(0.2, 1, 0.1)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Turn" unique_id=807295921]
+[node name="Body" type="MeshInstance3D" parent="Gag/Turn" unique_id=2002310098]
 material_override = SubResource("StandardMaterial3D_l8bb2")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_nujia")
 
-[node name="Arm-1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=830078768]
+[node name="Arm-1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=404045902]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_4k0xa")
 
-[node name="Panel-1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=1821438654]
+[node name="Panel-1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=1588850362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0)
 material_override = SubResource("StandardMaterial3D_ekg32")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_yk60e")
 
-[node name="Line-1_00" type="MeshInstance3D" parent="Gag/Turn" unique_id=142437804]
+[node name="Line-1_00" type="MeshInstance3D" parent="Gag/Turn" unique_id=529815129]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Line-1_01" type="MeshInstance3D" parent="Gag/Turn" unique_id=748445535]
+[node name="Line-1_01" type="MeshInstance3D" parent="Gag/Turn" unique_id=2063129987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Line-1_02" type="MeshInstance3D" parent="Gag/Turn" unique_id=1848303773]
+[node name="Line-1_02" type="MeshInstance3D" parent="Gag/Turn" unique_id=421147097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Arm1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=374814782]
+[node name="Arm1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=1730232570]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_4k0xa")
 
-[node name="Panel1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=1545476709]
+[node name="Panel1_0" type="MeshInstance3D" parent="Gag/Turn" unique_id=1015209704]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0)
 material_override = SubResource("StandardMaterial3D_ekg32")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_yk60e")
 
-[node name="Line1_00" type="MeshInstance3D" parent="Gag/Turn" unique_id=207819058]
+[node name="Line1_00" type="MeshInstance3D" parent="Gag/Turn" unique_id=1109976249]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Line1_01" type="MeshInstance3D" parent="Gag/Turn" unique_id=188708786]
+[node name="Line1_01" type="MeshInstance3D" parent="Gag/Turn" unique_id=2031611986]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Line1_02" type="MeshInstance3D" parent="Gag/Turn" unique_id=1969164968]
+[node name="Line1_02" type="MeshInstance3D" parent="Gag/Turn" unique_id=286517096]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_4tnwc")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_v3o7m")
 
-[node name="Dish" type="MeshInstance3D" parent="Gag/Turn" unique_id=2112537095]
+[node name="Dish" type="MeshInstance3D" parent="Gag/Turn" unique_id=336912269]
 transform = Transform3D(1, 0, 0, 0, -0.5, 8.742278e-08, 0, -4.371139e-08, -1, 0, 0.45, 0)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_ikxwn")
 
-[node name="Antenna" type="MeshInstance3D" parent="Gag/Turn" unique_id=1374205737]
+[node name="Antenna" type="MeshInstance3D" parent="Gag/Turn" unique_id=1026784052]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_2t10j")
 
-[node name="Light" type="MeshInstance3D" parent="Gag/Turn" unique_id=120399563]
+[node name="Light" type="MeshInstance3D" parent="Gag/Turn" unique_id=243215316]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 material_override = SubResource("StandardMaterial3D_33oop")
 cast_shadow = 0

@@ -85,7 +85,7 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[node name="PartyBalloons" type="Node3D" unique_id=1102783509]
+[node name="PartyBalloons" type="Node3D" unique_id=408475606]
 script = ExtResource("1_c66km")
 reaction = 0
 cue = &"sky_pop"
@@ -93,97 +93,97 @@ hit_radius = 0.75
 hit_offset = Vector3(0, 0.3, 0)
 drift = Vector3(0, 0.2, 0)
 
-[node name="Gag" type="Node3D" parent="." unique_id=1372001801]
+[node name="Gag" type="Node3D" parent="." unique_id=849000858]
 
-[node name="Strings" type="Node3D" parent="Gag" unique_id=1087116837]
+[node name="Strings" type="Node3D" parent="Gag" unique_id=1990740029]
 script = ExtResource("2_efjeu")
 mode = 7
 amount = 0.1
 speed = 0.5
 axis = Vector3(0, 0, 1)
 
-[node name="String0" type="MeshInstance3D" parent="Gag/Strings" unique_id=1041226874]
+[node name="String0" type="MeshInstance3D" parent="Gag/Strings" unique_id=263849661]
 transform = Transform3D(-0.9309733, 0.3650874, 0, -0.3650874, -0.9309733, 0, 0, 0, 1, -0.2, -0.69, 0)
 material_override = SubResource("StandardMaterial3D_txgin")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_f2m01")
 
-[node name="String1" type="MeshInstance3D" parent="Gag/Strings" unique_id=1337598663]
+[node name="String1" type="MeshInstance3D" parent="Gag/Strings" unique_id=1272846475]
 transform = Transform3D(-0.82440495, -0.33515352, -0.45610124, 0.33515352, -0.9384303, 0.08378838, -0.45610124, -0.08378838, 0.8859747, 0.2, -0.64, 0.05)
 material_override = SubResource("StandardMaterial3D_txgin")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_uq431")
 
-[node name="String2" type="MeshInstance3D" parent="Gag/Strings" unique_id=134406637]
+[node name="String2" type="MeshInstance3D" parent="Gag/Strings" unique_id=1866936454]
 transform = Transform3D(1, 0, 0, 0, -0.9978429, -0.06564648, 0, 0.06564648, -0.9978429, 0, -0.44, -0.05)
 material_override = SubResource("StandardMaterial3D_txgin")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_qjutq")
 
-[node name="Bow" type="MeshInstance3D" parent="Gag/Strings" unique_id=1543507292]
+[node name="Bow" type="MeshInstance3D" parent="Gag/Strings" unique_id=47687679]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -1.2, 0)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_mnclx")
 
-[node name="Pop0" type="Node3D" parent="Gag" unique_id=2053129531]
+[node name="Pop0" type="Node3D" parent="Gag" unique_id=1882151331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.3, 0)
 
-[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop0" unique_id=1745506073]
+[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop0" unique_id=1671920982]
 transform = Transform3D(1, 0, 0, 0, 1.18, 0, 0, 0, 1, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_8pinp")
 
-[node name="Shine" type="MeshInstance3D" parent="Gag/Pop0" unique_id=2036729659]
+[node name="Shine" type="MeshInstance3D" parent="Gag/Pop0" unique_id=895229440]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, 0.171, 0.228)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_p2chn")
 
-[node name="Knot" type="MeshInstance3D" parent="Gag/Pop0" unique_id=1634426621]
+[node name="Knot" type="MeshInstance3D" parent="Gag/Pop0" unique_id=609802104]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4636, 0)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_5jx4c")
 
-[node name="Pop1" type="Node3D" parent="Gag" unique_id=1028014967]
+[node name="Pop1" type="Node3D" parent="Gag" unique_id=836963740]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.4, 0.1)
 
-[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop1" unique_id=2113252121]
+[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop1" unique_id=471698677]
 transform = Transform3D(1, 0, 0, 0, 1.18, 0, 0, 0, 1, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_l8bb2")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_8pinp")
 
-[node name="Shine" type="MeshInstance3D" parent="Gag/Pop1" unique_id=890758803]
+[node name="Shine" type="MeshInstance3D" parent="Gag/Pop1" unique_id=1636023600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, 0.171, 0.228)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_p2chn")
 
-[node name="Knot" type="MeshInstance3D" parent="Gag/Pop1" unique_id=677621052]
+[node name="Knot" type="MeshInstance3D" parent="Gag/Pop1" unique_id=1215229757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4636, 0)
 material_override = SubResource("StandardMaterial3D_l8bb2")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_5jx4c")
 
-[node name="Pop2" type="Node3D" parent="Gag" unique_id=741106770]
+[node name="Pop2" type="Node3D" parent="Gag" unique_id=2052200115]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.1)
 
-[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop2" unique_id=1511202282]
+[node name="Rubber" type="MeshInstance3D" parent="Gag/Pop2" unique_id=36936271]
 transform = Transform3D(1, 0, 0, 0, 1.18, 0, 0, 0, 1, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_4gvq8")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_8pinp")
 
-[node name="Shine" type="MeshInstance3D" parent="Gag/Pop2" unique_id=1779043000]
+[node name="Shine" type="MeshInstance3D" parent="Gag/Pop2" unique_id=706986021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.152, 0.171, 0.228)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_p2chn")
 
-[node name="Knot" type="MeshInstance3D" parent="Gag/Pop2" unique_id=923807645]
+[node name="Knot" type="MeshInstance3D" parent="Gag/Pop2" unique_id=589809005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4636, 0)
 material_override = SubResource("StandardMaterial3D_4gvq8")
 cast_shadow = 0
