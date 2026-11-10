@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RunStyle" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/run_style.gd" id="1_v5g6l"]
+
+[resource]
+script = ExtResource("1_v5g6l")
+bob = 0.17
+cadence = 5.2
+sway = 0.34
+lean = -0.12
+arm_swing = 2.6
+windmill = true
+arm_keep = 0.0
+flap = 0.7
+anim_speed = 1.3
