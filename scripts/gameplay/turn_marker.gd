@@ -84,6 +84,14 @@ func _part(mesh: PrimitiveMesh, at: Vector3) -> MeshInstance3D:
 	mat.emission_enabled = true
 	mat.emission_energy_multiplier = 0.6
 	mat.rim_enabled = true
+	# A white outline so a green arrow still pops against the green lawn and blue sky.
+	var outline := StandardMaterial3D.new()
+	outline.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	outline.cull_mode = BaseMaterial3D.CULL_FRONT
+	outline.grow = true
+	outline.grow_amount = 0.05
+	outline.albedo_color = Color.WHITE
+	mat.next_pass = outline
 	mesh.material = mat
 	_mats.append(mat)
 	var mi := MeshInstance3D.new()

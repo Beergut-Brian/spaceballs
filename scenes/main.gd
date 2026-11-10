@@ -290,13 +290,13 @@ func _begin_pick() -> void:
 
 
 ## Pick camera [from, look_at]: low and a little to the side, pulled back far enough that the
-## whole pile (feet to top hat, `height` metres) sits between 4 % and 58 % of the half's height,
+## whole pile (feet to top hat, `height` metres) sits between about 8 % and 56 % of the half's height,
 ## clear of the cards along the bottom.
 static func pick_view(spot: Vector3, height: float, fov_deg: float = 50.0) -> Array:
 	var h := maxf(height, 1.6)
-	var view_h := h / 0.54                      # metres of world the half shows, top to bottom
+	var view_h := h / 0.48                      # metres of world the half shows, top to bottom
 	var dist := view_h / (2.0 * tan(deg_to_rad(fov_deg) * 0.5))
-	var look := spot + Vector3.UP * (h * 0.5 - 0.19 * view_h)
+	var look := spot + Vector3.UP * (h * 0.5 - 0.17 * view_h)
 	# From the spawn side (+Z): the tees, balls and landing puffs stay behind him, not in the lens.
 	var from := look + Vector3(-0.22, 0.12, 1.0).normalized() * dist
 	return [from, look]
