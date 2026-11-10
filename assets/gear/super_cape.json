@@ -15,10 +15,10 @@
   },
   "spring": {
     "node": "cape_pivot",
-    "stiffness": 45.0,
-    "damping": 7.0,
-    "gain": 0.25,
+    "stiffness": 40.0,
+    "damping": 5.0,
+    "gain": 0.14,
     "rest_deg": 5.0,
-    "max_deg": 65.0
+    "max_deg": 48.0
   }
 }
