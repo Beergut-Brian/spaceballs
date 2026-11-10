@@ -1,6 +1,8 @@
 ## Sound on every action. Autoload: Audio.
 ## play("cue") looks for assets/audio/sfx/cue.ogg, or cue_1.ogg..cue_N.ogg and picks one.
 ## Missing cues warn once and never crash.
+## music("track") plays assets/audio/music/track.ogg on a loop. If track_layer_1.ogg..N exist
+## they play in sync on top (silent at first); music_level(n) fades layers 1..n in.
 extends Node
 
 const SFX_DIR := "res://assets/audio/sfx/"
@@ -13,6 +15,11 @@ var _music: AudioStreamPlayer
 var _warned := {}
 var _cache := {}
 var _silenced := false
+var _track := ""
+var _layers := 0
+var _level := 0
+var _level_tween: Tween
+const LAYER_OFF_DB := -60.0
 
 
 func _ready() -> void:
@@ -69,13 +76,13 @@ func play(cue: String, _position = null, pitch: float = 1.0) -> void:
 
 
 func music(track: String, fade: float = 0.5) -> void:
-	if _silenced:
+	if _silenced or (track == _track and _music.playing):
 		return
-	var stream := _resolve(MUSIC_DIR, track)
+	var stream := _music_stream(track)
 	if stream == null:
 		return
-	if stream is AudioStreamOggVorbis:
-		stream.loop = true
+	_track = track
+	_level = 0
 	var tw := create_tween()
 	if _music.playing:
 		tw.tween_property(_music, "volume_db", -40.0, fade)
@@ -86,10 +93,53 @@ func music(track: String, fade: float = 0.5) -> void:
 	tw.tween_property(_music, "volume_db", 0.0, fade)
 
 
+## Layered music: layers 1..level audible, the rest silent. No-op for a single-file track.
+func music_level(level: int, fade: float = 1.0) -> void:
+	level = clampi(level, 0, _layers)
+	if _layers == 0 or level == _level or not (_music.stream is AudioStreamSynchronized):
+		_level = level
+		return
+	_level = level
+	var sync: AudioStreamSynchronized = _music.stream
+	if _level_tween:
+		_level_tween.kill()
+	_level_tween = create_tween().set_parallel()
+	for i in range(1, _layers + 1):
+		var to := 0.0 if i <= level else LAYER_OFF_DB
+		_level_tween.tween_method(func(db: float): sync.set_sync_stream_volume(i, db),
+				sync.get_sync_stream_volume(i), to, fade)
+
+
+func _music_stream(track: String) -> AudioStream:
+	var base := _resolve(MUSIC_DIR, track)
+	_layers = 0
+	if base == null:
+		return null
+	if base is AudioStreamOggVorbis:
+		base.loop = true
+	var layers: Array[AudioStream] = []
+	while ResourceLoader.exists("%s%s_layer_%d.ogg" % [MUSIC_DIR, track, layers.size() + 1]):
+		var s: AudioStream = load("%s%s_layer_%d.ogg" % [MUSIC_DIR, track, layers.size() + 1])
+		if s is AudioStreamOggVorbis:
+			s.loop = true
+		layers.append(s)
+	if layers.is_empty():
+		return base
+	var sync := AudioStreamSynchronized.new()
+	sync.stream_count = layers.size() + 1
+	sync.set_sync_stream(0, base)
+	for i in layers.size():
+		sync.set_sync_stream(i + 1, layers[i])
+		sync.set_sync_stream_volume(i + 1, LAYER_OFF_DB)
+	_layers = layers.size()
+	return sync
+
+
 func stop_music(fade: float = 0.5) -> void:
 	var tw := create_tween()
 	tw.tween_property(_music, "volume_db", -40.0, fade)
 	tw.tween_callback(_music.stop)
+	_track = ""
 
 
 func bark(character: String, bark_name: String) -> void:
