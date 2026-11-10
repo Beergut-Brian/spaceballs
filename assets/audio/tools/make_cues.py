@@ -747,6 +747,224 @@ def restart_arm(rng):
     return notes_seq([(79, 0.0), (74, 0.13)], rng, WOOD, 0.04)
 
 
+# ---------------------------------------------------------------- cues: upgrade-piece gags
+# upgrade_piece.gd plays gag_cue only if sfx/<cue>.ogg exists (no _N variants), so one file each.
+
+def achoo(rng):
+    # "ah... ah... AH-CHOO!": two breathy rising ahs, a bigger one, then a soft "choo"
+    out = silence(1.25)
+    for at, sec, f, g in ((0.0, 0.2, 330, 0.45), (0.27, 0.22, 370, 0.6), (0.56, 0.18, 420, 0.8)):
+        mix(out, voice(lambda t, f=f, sec=sec: f * (1.0 + 0.25 * t / sec), sec, "a",
+                       ar(sec, 0.05, 0.06), rng, 0.25, 1.15), at, g)
+    ch = svf(noise(0.11, rng), 3200, 1.4, "band")   # "ch": soft and band-limited, not a spit
+    mix(out, [v * ar(0.11, 0.005, 0.07)(i / SR) for i, v in enumerate(ch)], 0.76, 0.5)
+    mix(out, voice(lambda t: 470 * (1.0 - 0.35 * t / 0.4), 0.4, "u", ar(0.4, 0.01, 0.25), rng,
+                   0.12, 1.15), 0.82, 1.0)
+    return out
+
+
+def cannon_boom(rng):
+    # A toy cannon: cork "pomf", a round low boom, a smoke puff and a falling slide whistle
+    out = silence(1.5)
+    mix(out, thump(900, 300, 0.05, 0.012), 0.0, 0.5)                # cork pop
+    mix(out, thump(85, 34, 1.0, 0.24), 0.01, 1.0)
+    mix(out, rumble(rng, 1.0, 220, 0.25, attack=0.01), 0.02, 0.9)
+    mix(out, [v * ar(0.4, 0.02, 0.3)(i / SR) for i, v in enumerate(svf(noise(0.4, rng), 900, 0.8, "band"))],
+        0.03, 0.25)                                                   # puff of smoke
+    mix(out, whistle(1500, 500, 0.55, rng, curve=0.8), 0.45, 0.12)  # ...and away it goes
+    return out
+
+
+def confetti_pop(rng):
+    # Party popper "pok!", a quick shower of paper and two glock pings
+    out = silence(0.9)
+    mix(out, thump(600, 180, 0.06, 0.015), 0.0, 0.8)
+    mix(out, burst(rng, 0.04, 1600, 1.0, 0.006), 0.0, 0.8)
+    for _ in range(70):
+        at = 0.04 + 0.6 * rng.random() ** 1.4
+        mix(out, burst(rng, 0.01, rng.uniform(3000, 6500), 1.5, 0.0015), at, rng.uniform(0.1, 0.25))
+    mix(out, struck(midi(96), 0.07, rng, BELL, click=0.05), 0.08, 0.3)
+    mix(out, struck(midi(100), 0.07, rng, BELL, click=0.05), 0.17, 0.25)
+    return out
+
+
+def hic(rng):
+    # "hic!": a little glottal click and a squeaky upward "i"
+    out = silence(0.3)
+    mix(out, burst(rng, 0.01, 900, 1.5, 0.002), 0.0, 0.5)
+    mix(out, voice(lambda t: 560 * (1.0 + 0.6 * t / 0.11), 0.11, glide("e", "i", 0.0, 0.05),
+                   ar(0.11, 0.004, 0.04), rng, 0.15, 1.3), 0.005, 1.0)
+    return out
+
+
+def opera_la(rng):
+    # A diva warming up: "la-la-LAAA!" (short; the long "la-LAAAA" is `opera`)
+    out = silence(1.15)
+    for n, at, sec in ((72, 0.0, 0.13), (76, 0.15, 0.13), (79, 0.3, 0.75)):
+        def f0(t, n=n, long=sec > 0.5):
+            return midi(n) * (1.0 + (0.03 * min(1.0, max(0.0, t - 0.15) / 0.3)
+                                     * math.sin(TAU * 5.8 * t) if long else 0.0))
+        x = voice(f0, sec, glide("l", "a", 0.0, 0.04), ar(sec, 0.012, 0.2 if sec > 0.5 else 0.03),
+                  rng, 0.03, 1.1)
+        mix(x, svf(x, 3000, 5.0, "band"), 0.0, 0.4)
+        mix(out, x, at, 0.75 if sec < 0.5 else 1.0)
+    return out
+
+
+def slip(rng):
+    # Banana peel: a squeaky skid, a zippy slide whistle up, and a soft bump on the bottom
+    out = silence(1.0)
+    mix(out, osc(0.12, lambda t: 1100 * (1.0 + 0.5 * t / 0.12), ((1, 1.0, 0.0), (2, 0.15, 0.0)),
+                 attack=0.004, amp=ar(0.12, 0.004, 0.03)), 0.0, 0.35)   # skid squeak
+    mix(out, whistle(500, 2100, 0.42, rng, curve=1.6), 0.08, 0.4)
+    mix(out, thump(140, 60, 0.3, 0.07), 0.58, 1.0)
+    mix(out, rumble(rng, 0.15, 500, 0.03), 0.58, 0.5)
+    mix(out, osc(0.3, lambda t: 420 * (1.0 + 0.25 * math.exp(-t / 0.1) * math.sin(TAU * 16.0 * t)),
+                 ((1, 1.0, 1.0),), decay=0.12), 0.6, 0.25)                # boing of the bottom
+    return out
+
+
+def squawk(rng):
+    # Rubber chicken: a squeezed, nasal "bwaaa-aaak" that wheezes out
+    sec = 0.55
+
+    def f0(t):
+        return 520 + 380 * math.sin(math.pi * min(1.0, t / 0.4)) ** 0.7 - 250 * max(0.0, t - 0.4)
+    x = voice(f0, sec, lambda t: glide("u", "a", 0.0, 0.08)(t) if t < 0.3 else glide("a", "e", 0.3, 0.5)(t),
+              ar(sec, 0.02, 0.12), rng, 0.12, 1.35, rough=0.35, qs=(3.0, 5.0, 6.0))
+    out = [math.tanh(2.5 * v) for v in x]
+    wheeze = svf(noise(0.18, rng), 2000, 2.0, "band")
+    mix(out, [v * ar(0.18, 0.05, 0.1)(i / SR) for i, v in enumerate(wheeze)], sec - 0.12, 0.08)
+    return out + silence(0.08)
+
+
+def squeak(rng):
+    # Balloon animal: two twisty rubber squeaks, "eek-eeek"
+    out = silence(0.5)
+    for at, sec, f in ((0.0, 0.12, 1250), (0.16, 0.22, 1400)):
+        def freq(t, f=f, sec=sec):
+            return f * (1.0 + 0.3 * t / sec) * (1.0 + 0.06 * math.sin(TAU * 42.0 * t))
+        mix(out, osc(sec, freq, ((1, 1.0, 0.0), (2, 0.25, 0.0), (3, 0.08, 0.0)), attack=0.01,
+                     amp=lambda t, sec=sec: math.sin(math.pi * t / sec) ** 0.5), at, 0.6)
+    return out
+
+
+def ref_whistle(rng):
+    # Coach's pea whistle: "tweet-TWEEEET" (rounder and lower than a real one)
+    out = silence(0.85)
+    for at, sec, g in ((0.0, 0.13, 0.75), (0.19, 0.5, 1.0)):
+        x = osc(sec, lambda t: 2100 * (1.0 + 0.035 * math.sin(TAU * 34.0 * t)),
+                ((1, 1.0, 0.0), (2, 0.04, 0.0)), attack=0.012,
+                amp=lambda t, sec=sec: ar(sec, 0.012, 0.05)(t) * (0.8 + 0.2 * math.sin(TAU * 34.0 * t)))
+        mix(out, x, at, 0.6 * g)
+        mix(out, [v * 0.05 for v in svf(noise(sec, rng), 2100, 3.0, "band")], at, g)
+    return out
+
+
+# ---------------------------------------------------------------- cues: gameplay gags
+
+def frog_bloop(depth):
+    # A sad little bloop (a deflated frog): a falling bubble, then a smaller lower "blp"
+    def make(rng):
+        out = silence(0.75)
+        for at, sec, f0, f1, g in ((0.0, 0.26, 520, 520 * depth, 1.0), (0.32, 0.18, 330, 330 * depth, 0.6)):
+            mix(out, osc(sec, lambda t, f0=f0, f1=f1, sec=sec: f0 * (f1 / f0) ** (t / sec)
+                         * (1.0 + 0.04 * math.sin(TAU * 11.0 * t)), ((1, 1.0, 0.0), (2, 0.12, 0.0)),
+                         attack=0.008, amp=ar(sec, 0.008, 0.1)), at, g)
+        return out
+    return make
+
+
+def crowd_aww(n_voices, sec):
+    """The Jarling crowd goes "awww" (so close!): falling voices and a soft breathy sigh."""
+    def make(rng):
+        out = silence(sec + 0.2)
+        for _ in range(n_voices):
+            f = rng.uniform(280, 480)
+            d = rng.uniform(sec * 0.7, sec)
+            at = rng.uniform(0.0, 0.15)
+            v = voice(lambda t, f=f, d=d: f * (1.08 - 0.3 * t / d) * (1.0 + 0.015 * math.sin(TAU * 5.0 * t)),
+                      d, glide("a", "o", 0.1, d * 0.8), ar(d, 0.08, d * 0.5), rng, 0.03,
+                      rng.uniform(1.05, 1.25))
+            mix(out, v, at, rng.uniform(0.25, 0.45))
+        sigh = svf(noise(sec, rng), lambda t: 900 - 300 * t / sec, 0.8, "band")
+        mix(out, [v * ar(sec, 0.1, sec * 0.6)(i / SR) for i, v in enumerate(sigh)], 0.0, 0.06)
+        return out
+    return make
+
+
+def orbit_chime(seq):
+    """Magic twinkle as a ball settles into orbit: a rising bell run, then a shimmering ring."""
+    def make(rng):
+        out = notes_seq([(n, i * 0.07) for i, n in enumerate(seq)], rng, BELL, 0.18, 0.7)
+        ring = osc(1.1, midi(seq[-1]), ((1, 1.0, 1.0), (2.0, 0.3, 1.5)), decay=0.5, attack=0.03,
+                   amp=lambda t: 0.75 + 0.25 * math.sin(TAU * 7.0 * t))    # shimmer
+        mix(out, ring, len(seq) * 0.07, 0.35)
+        mix(out, sparkle(rng, 9, 0.1, 1.0, 0.3), 0.0, 1.0)
+        return out
+    return make
+
+
+def crowd_wild(n_voices, claps, sec):
+    """Big crowd: a roar of "yaaay!", lots of claps, and two-finger whistles (wheee-whoo)."""
+    def make(rng):
+        out = cheer(n_voices, claps, sec)(rng)
+        for _ in range(2):   # more waves of voices
+            mix(out, cheer(n_voices // 2, claps // 2, sec * 0.7)(rng), rng.uniform(0.5, 0.8), 0.7)
+        for at in (rng.uniform(0.1, 0.3), rng.uniform(0.9, 1.3)):
+            f = rng.uniform(1500, 1800)
+            mix(out, osc(0.5, lambda t, f=f: f * (1.0 + 0.35 * math.sin(math.pi * min(1.0, t / 0.5)) - 0.2 * t),
+                         ((1, 1.0, 0.0), (2, 0.04, 0.0)), attack=0.02, amp=ar(0.5, 0.02, 0.1)), at, 0.22)
+        return out
+    return make
+
+
+def trip(f0):
+    """Shoelaces tied: a scuff, a startled "whoa!", two stumbling steps and a soft flop."""
+    def make(rng):
+        out = silence(1.0)
+        sc = svf(noise(0.1, rng), lambda t: 1800 - 900 * t / 0.1, 1.2, "band")
+        mix(out, [v * ar(0.1, 0.005, 0.06)(i / SR) for i, v in enumerate(sc)], 0.0, 0.5)
+        mix(out, voice(lambda t: f0 * (1.0 + 0.4 * math.sin(math.pi * min(1.0, t / 0.25))), 0.25,
+                       glide("u", "a", 0.02, 0.15), ar(0.25, 0.01, 0.08), rng, 0.08, 1.2), 0.06, 0.8)
+        mix(out, steps(rng, "bare", (0.3, 0.42)), 0.0, 0.6)
+        mix(out, thump(130, 55, 0.3, 0.07), 0.62, 1.0)
+        mix(out, rumble(rng, 0.2, 450, 0.04), 0.62, 0.6)
+        return out
+    return make
+
+
+def waddle(notes):
+    """Too much lunch: three heavy, squishy steps, each with a tuba "bwomp" and a belly wobble."""
+    def make(rng):
+        out = silence(1.2)
+        for i, n in enumerate(notes):
+            at = i * 0.3
+            mix(out, thump(110, 50, 0.2, 0.05), at, 0.6)
+            mix(out, brass(midi(n), 0.2, rng, lambda t: math.sin(math.pi * min(1.0, t / 0.2)),
+                           scoop=0.05, bright=700), at, 0.8)
+            mix(out, osc(0.22, lambda t: 140 * (1.0 + 0.3 * math.exp(-t / 0.08) * math.sin(TAU * 12.0 * t)),
+                         decay=0.08), at + 0.02, 0.35)   # belly jiggle
+        return out
+    return make
+
+
+def butterfly(notes):
+    """A butterfly flutters by: soft wing flaps and a light rising glockenspiel twinkle."""
+    def make(rng):
+        out = silence(1.4)
+        at, k = 0.0, 0
+        while at < 1.0:
+            flap = svf(noise(0.03, rng), 1300 + 300 * math.sin(k), 1.0, "band")
+            mix(out, [v * math.sin(math.pi * i / len(flap)) for i, v in enumerate(flap)], at,
+                0.25 * (0.6 + 0.4 * math.sin(math.pi * at)))
+            at += 0.055 + 0.01 * math.sin(k * 0.7)
+            k += 1
+        mix(out, notes_seq([(n, 0.05 + i * 0.16) for i, n in enumerate(notes)], rng, BELL, 0.07), 0.0, 0.45)
+        return out
+    return make
+
+
 # ---------------------------------------------------------------- files
 # stem: (make, kind, trim dB). A stem ending in _<n> is variant n of its cue (Audio.gd picks one).
 
@@ -789,8 +1007,7 @@ FILES = {
     "cheer_2": (cheer(14, 26, 1.9), "sfx", 0.0),
     "cheer_3": (cheer(10, 18, 1.6), "sfx", 0.0),
     "confetti": (confetti, "sfx", -1.0),
-    "honk_1": (honk((0.0,)), "sfx", -1.0),
-    "honk_2": (honk((0.0, 0.32)), "sfx", -1.0),
+    "honk": (honk((0.0,)), "sfx", -1.0),   # one file: upgrade_piece.gd looks for honk.ogg
     "opera": (opera, "sfx", 0.0),
     "hop_1": (hop(320), "sfx", -2.0),
     "hop_2": (hop(360), "sfx", -2.0),
@@ -802,6 +1019,30 @@ FILES = {
     "round_end": (round_end, "sfx", 0.0),
     "pause": (pause, "sfx", -2.0),
     "restart_arm": (restart_arm, "sfx", -1.0),
+    # upgrade-piece gags (one file each, see above)
+    "achoo": (achoo, "sfx", 0.0),
+    "cannon_boom": (cannon_boom, "sfx", 0.0),
+    "confetti_pop": (confetti_pop, "sfx", -1.0),
+    "hic": (hic, "sfx", -2.0),
+    "opera_la": (opera_la, "sfx", 0.0),
+    "slip": (slip, "sfx", 0.0),
+    "squawk": (squawk, "sfx", -1.0),
+    "squeak": (squeak, "sfx", -2.0),
+    "whistle": (ref_whistle, "sfx", -3.0),
+    # gameplay gags
+    "frog_bloop_1": (frog_bloop(0.45), "sfx", -1.0),
+    "frog_bloop_2": (frog_bloop(0.55), "sfx", -1.0),
+    "crowd_aww_1": (crowd_aww(12, 1.5), "sfx", 0.0),
+    "crowd_aww_2": (crowd_aww(10, 1.3), "sfx", 0.0),
+    "orbit_chime_1": (orbit_chime((84, 88, 91, 96, 100)), "sfx", -1.0),
+    "orbit_chime_2": (orbit_chime((86, 89, 93, 98, 101)), "sfx", -1.0),
+    "crowd_wild": (crowd_wild(16, 34, 2.6), "sfx", 0.0),
+    "trip_1": (trip(380), "sfx", 0.0),
+    "trip_2": (trip(430), "sfx", 0.0),
+    "waddle_1": (waddle((41, 38, 41)), "sfx", -1.0),
+    "waddle_2": (waddle((43, 41, 38)), "sfx", -1.0),
+    "butterfly_1": (butterfly((88, 91, 93, 96, 100)), "sfx", -2.0),
+    "butterfly_2": (butterfly((86, 91, 95, 98)), "sfx", -2.0),
 }
 
 
