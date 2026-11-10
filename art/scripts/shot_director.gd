@@ -51,4 +51,4 @@ func _shot(tag: String, delay: float) -> void:
 
 func _kicker(p: int) -> Node:
 	var scene := get_tree().current_scene
-	return scene.get_node_or_null("Kickers/Jeff" if p == 0 else "Kickers/Chuck") if scene else null
+	return scene.get_node_or_null("Kickers/P%d" % (p + 1)) if scene else null

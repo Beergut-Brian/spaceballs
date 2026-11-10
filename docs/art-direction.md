@@ -20,7 +20,8 @@ The rendering technique changes per game; these rules do not.
 
 Recurring characters come from `openjar-characters` (submodule at `addons/openjar/characters/`).
 Each has a bible, a look sheet, a voice pack and prompt packs. Universal characters can be used
-anywhere; player-locked characters (Jeff = P1, Chuck = P2) only on their side.
+anywhere; Jeff and Chuck are the P1 / P2 defaults, not locked: players pick any roster character, and
+the slot colour (not the character) says who is who.
 New characters are proposed in the design sprint and approved by Kaden before any art is made.
 
 ## This game

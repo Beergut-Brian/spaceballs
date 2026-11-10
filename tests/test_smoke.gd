@@ -2,9 +2,9 @@
 class_name TestSmoke
 extends GdUnitTestSuite
 
-
+## This suite boots main.tscn: its own settings and picks files, never the real ones.
 func before() -> void:
-	SettingsSandbox.enter()
+	SettingsSandbox.enter("user://test_settings_smoke.json")
 
 
 func test_main_scene_loads() -> void:

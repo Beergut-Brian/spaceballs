@@ -46,6 +46,8 @@ func test_every_sfx_file_is_used() -> void:
 	cues.merge(_piece_gag_cues())
 	for id in Kicker.GEAR_CUES:   # worn gear's kick sounds (kicker.gd)
 		cues[Kicker.GEAR_CUES[id][0]] = true
+	for id in Roster.roster():   # a character's own wind-up voice (Kicker.voice_cue)
+		cues["windup_" + id] = true
 	var re := RegEx.create_from_string("^(.+)_\\d+$")
 	for f in DirAccess.get_files_at(Audio.SFX_DIR):
 		if not f.ends_with(".ogg"):
@@ -57,6 +59,8 @@ func test_every_sfx_file_is_used() -> void:
 
 
 func test_layered_music_is_silent_without_files() -> void:
+	Audio._music.stop()   # an earlier suite's field music may still be playing
+	Audio._track = ""
 	Audio.music("no_such_track")
 	Audio.music_level(2)
 	assert_bool(Audio._music.playing).is_false()

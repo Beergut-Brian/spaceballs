@@ -1,10 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://openjar_main"]
+[gd_scene load_steps=12 format=3 uid="uid://openjar_main"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/levels/field.tscn" id="2_field"]
 [ext_resource type="PackedScene" path="res://scenes/levels/height_ladder.tscn" id="3_ladder"]
-[ext_resource type="PackedScene" path="res://scenes/players/jeff.tscn" id="4_jeff"]
-[ext_resource type="PackedScene" path="res://scenes/players/chuck.tscn" id="5_chuck"]
+[ext_resource type="PackedScene" path="res://scenes/players/jarling_kicker.tscn" id="4_kicker"]
 [ext_resource type="PackedScene" path="res://scenes/ball.tscn" id="6_ball"]
 [ext_resource type="Script" path="res://scripts/gameplay/camera_rig.gd" id="7_rig"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_hud"]
@@ -23,10 +22,12 @@ environment = NodePath("../Field/Environment")
 
 [node name="Kickers" type="Node3D" parent="."]
 
-[node name="Jeff" parent="Kickers" instance=ExtResource("4_jeff")]
+[node name="P1" parent="Kickers" instance=ExtResource("4_kicker")]
+player = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 8)
 
-[node name="Chuck" parent="Kickers" instance=ExtResource("5_chuck")]
+[node name="P2" parent="Kickers" instance=ExtResource("4_kicker")]
+player = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -3.5)
 
 [node name="Balls" type="Node3D" parent="."]

@@ -212,6 +212,7 @@ Source: `playtests/2026-11-09-2.md`.
 - 2026-11-10: the round card says "ROUND 1" with "JEFF KICKS FIRST" (or "CHUCK KICKS FIRST" when Chuck starts alone) in the kicker's colour.
 - 2026-11-10: the upgrade pick and the end card keep their own look. They never used the kit's menu bars, so the kit did not restyle them; frames show both still read with big icons and no text. Left alone on playtest night rather than restyled.
 - 2026-11-10: the kit saves "Solo playtest" when it changes, including Select+Start. Kept as the kit designed it (it shows in Settings), flagged for playtest #3.
+- 2026-11-10 (Systems, chooser adoption): each player kicks as their **Roster pick** (the start-menu chooser, shared with the launcher); Jeff and Chuck are only the defaults. The slot keeps the player colour (rings, arrows, HUD, round card); names come from the pick ("<NAME> KICKS FIRST"). A character's own wind-up voice plays if recorded, else the generic wind-up; never another character's. The frog wears Jeff's hood / Chuck's hat only on Jeff / Chuck; anyone else is a plain frog in the player tint.
 
 ## Open questions
 

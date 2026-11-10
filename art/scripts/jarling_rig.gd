@@ -33,13 +33,47 @@ var _pop_rest := Transform3D.IDENTITY
 var _squash: Tween
 var _sitting := false
 var _base_y := 0.0
+var _helmet_bone: BoneAttachment3D
 
-@onready var model: Node3D = $Model
+## The Jarling .glb (a child named Model). set_model() swaps it for the Roster pick in place.
+var model: Node3D
 
 
 func _ready() -> void:
 	_base_y = position.y
 	_kicker = _find_kicker()
+	model = get_node_or_null("Model") as Node3D
+	if _kicker:
+		_kicker.state_changed.connect(_on_state)
+		_kicker.kick_contact.connect(_on_contact)
+		_kicker.shouted.connect(func(_p: int) -> void: _flash_face(&"happy"))
+		_kicker.hopped.connect(func(_p: int) -> void: _flash_face(&"surprised"))
+	if model:
+		_bind()
+
+
+## Become another Jarling (the Roster pick, docs/roster.md): the old model goes, `scene` (a
+## standard-body Jarling .glb) takes its place under the same rig, kicker and state. `detach` is
+## the node that pops off on the kick ("" or not in the model: nothing pops).
+func set_model(scene: PackedScene, detach := "") -> void:
+	for tw in [_squash, _hat_tween]:
+		if tw and tw.is_valid():
+			tw.kill()
+	_release_helmet()
+	if model:
+		remove_child(model)
+		model.free()
+	_hat = null
+	_pop_node = null
+	_face_mat = null
+	detachable = detach
+	model = scene.instantiate() as Node3D
+	model.name = "Model"
+	add_child(model)
+	_bind()
+
+
+func _bind() -> void:
 	_anim = model.find_child("AnimationPlayer", true, false)
 	_skel = model.find_child("Skeleton3D", true, false)
 	for a in LOOPS:
@@ -52,17 +86,13 @@ func _ready() -> void:
 			_hat_rest = _hat.transform
 	_attach_helmet()
 	if _kicker:
-		_kicker.state_changed.connect(_on_state)
-		_kicker.kick_contact.connect(_on_contact)
-		_kicker.shouted.connect(func(_p: int) -> void: _flash_face(&"happy"))
-		_kicker.hopped.connect(func(_p: int) -> void: _flash_face(&"surprised"))
 		_on_state(_kicker.state)
 	else:
 		_play(&"idle")
 
 
 func _process(_delta: float) -> void:
-	if _kicker == null:
+	if _kicker == null or _anim == null:
 		return
 	if _kicker.state == Kicker.State.APPROACH and _anim.current_animation == "run":
 		var hv := Vector2(_kicker.velocity.x, _kicker.velocity.z).length()
@@ -74,6 +104,8 @@ func _process(_delta: float) -> void:
 
 
 func _on_state(s: Kicker.State) -> void:
+	if _anim == null:
+		return
 	_sitting = s == Kicker.State.CHAIR
 	position.y = _base_y + (CHAIR_DROP if _sitting else 0.0)
 	match s:
@@ -99,6 +131,8 @@ func _on_state(s: Kicker.State) -> void:
 
 
 func _on_contact(_quality: float) -> void:
+	if model == null:
+		return
 	_set_face(&"surprised")
 	if _squash and _squash.is_valid():
 		_squash.kill()
@@ -205,17 +239,38 @@ func _dress_materials() -> void:
 
 func _attach_helmet() -> void:
 	# Space-suit helmet follows the head bone instead of floating where the capsule's head was.
-	if _kicker == null or _skel == null:
+	if _kicker == null or _skel == null or _helmet() == null:
 		return
-	var helmet := _kicker.get_node_or_null("Body/Helmet") as Node3D
 	var bone := _skel.find_bone("head")
-	if helmet == null or bone < 0:
+	if bone < 0:
 		return
 	var ba := BoneAttachment3D.new()
 	ba.bone_idx = bone
 	_skel.add_child(ba)
-	helmet.reparent.call_deferred(ba, false)
-	helmet.set_deferred("transform", Transform3D(Basis.from_scale(Vector3.ONE * 0.62), Vector3(0, 0.27, 0.02)))
+	_helmet_bone = ba
+	_mount_helmet.call_deferred()
+
+
+func _mount_helmet() -> void:
+	# Deferred (the kicker may still be adding children); a model swapped since then is skipped.
+	var ba := _helmet_bone
+	if not is_instance_valid(ba) or not ba.is_inside_tree() or not is_ancestor_of(ba):
+		return
+	var helmet := _helmet()
+	helmet.reparent(ba, false)
+	helmet.transform = Transform3D(Basis.from_scale(Vector3.ONE * 0.62), Vector3(0, 0.27, 0.02))
+
+
+## Before the model goes: the helmet goes back on the kicker's Body so it isn't freed with it.
+func _release_helmet() -> void:
+	var helmet := _helmet() if _kicker else null
+	if helmet and model and model.is_ancestor_of(helmet):
+		helmet.reparent(_kicker.get_node("Body"), false)
+
+
+## The kicker's helmet (its @onready var is still unset while this rig readies first).
+func _helmet() -> Node3D:
+	return _kicker.helmet if _kicker.helmet else _kicker.get_node_or_null("Body/Helmet") as Node3D
 
 
 func _find_kicker() -> Kicker:
