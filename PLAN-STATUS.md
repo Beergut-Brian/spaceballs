@@ -77,7 +77,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | K-11 | S1/S2 Kid checks | Waiting player has something to look at and to do (cheers on a button press) | partial | kicker.gd::_buttons (A off-turn = cheer) | works in code; no test covers it |
 | K-12 | S1/S2 Kid checks | Upgrade pick never times out | built | upgrade_pick.gd (no timer), tests/test_solo.gd::test_solo_pick_takes_p1_then_p2_from_one_pad | |
 | K-13 | S1/S2 Kid checks | Catch-up keeps the balls within two tiers after round 6 | built | tests/test_simulation.gd::test_two_players_random_picks | |
-| K-14 | S1/S2 Kid checks | Height shown with pictures, not numbers | partial | hud.gd strip = 8 sky-coloured blocks, no numbers | no pictures yet (V-07) |
+| K-14 | S1/S2 Kid checks | Height shown with pictures, not numbers | built | tests/test_plan_gaps.gd::test_strip_blocks_are_landmark_pictures_top_down, handoff/shots/strip/strip_closeup.png | 2026-11-10 plan-gaps |
 | K-15 | S1/S2 Kid checks | Frog round reads as a joke: both laugh, upgrades return next round | built | tests/test_rounds_polish.gd::test_frog_round, tests/test_upgrade_effects.gd::test_frog_switches_effects_off | |
 
 ## U: upgrades
@@ -109,11 +109,11 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | V-04 | S1/S2 Art | Sky ramp steps clearly through eight tiers | built | art/scripts/sky_ramp.gd, data/tiers.tres | |
 | V-05 | S1/S2 Progression | Eight tiers with landmark gags, as data | built | data/tiers.tres, scenes/levels/landmarks/*.tscn, tests/test_run.gd::test_tier_lookup | |
 | V-06 | S4 | Busier sky; ball pops balloons, bonks planes, scatters birds, each with a sound | built | tests/test_sky.gd (8 tests) | |
-| V-07 | S1/S2 Camera | Height strip on the right edge with landmark pictures, no numbers | partial | hud.gd, handoff/shots/base/t009.0s.png | right edge, no numbers; plain colour blocks, no pictures |
-| V-08 | S1/S2 Camera | Best-ever height per profile is a little flag on the strip | partial | hud.gd best_flag, tests/test_run.gd::test_save_keys_best_height_runs_and_seen | there, but tiny (24 px) and flat yellow; doesn't celebrate being beaten |
+| V-07 | S1/S2 Camera | Height strip on the right edge with landmark pictures, no numbers | built | scenes/ui/tier_icon.gd, tests/test_plan_gaps.gd::test_every_tier_has_a_picture, handoff/shots/strip/strip_closeup.png | 2026-11-10: each block is its landmark drawn on the tier's sky colour (fence, house + cat, tree + bird, hot-air balloon, plane + cloud, jet + balloon, satellite + aurora, moon + alien); strip 50 -> 90 px wide |
+| V-08 | S1/S2 Camera | Best-ever height per profile is a little flag on the strip | built | tests/test_plan_gaps.gd::test_best_flag_rides_with_a_ball_that_beats_it, tests/test_run.gd::test_save_keys_best_height_runs_and_seen, handoff/shots/strip/strip_closeup.png | 2026-11-10: bigger flag on a white line inside the strip (clear of the ball markers); a ball that beats it pops it (sparkle cue) and carries it up |
 | V-09 | S1/S2 Camera | Approach and kick: TV-sports framing, side-on, behind and above | built | camera_rig.gd::field_frame, handoff/shots/base/t090.0s.png | |
 | V-10 | S1/S2 Camera | Flight: follows the ball, zooms out as speed rises | built | camera_rig.gd (follow_zoom) | |
-| V-11 | S1/S2 Camera | Landing: hold the peak a beat, a stamp shows the tier reached (icon) | partial | main.gd hold_peak, ball.gd PEAK_HOLD | hold built; no stamp |
+| V-11 | S1/S2 Camera | Landing: hold the peak a beat, a stamp shows the tier reached (icon) | built | tests/test_plan_gaps.gd::test_peak_shows_the_tier_stamp_in_the_kickers_colour, handoff/shots/strip/peak_stamp.png | 2026-11-10: round badge of the tier's picture in the kicker's colour slams in at the top, 1.4 s, with a bonk |
 | V-12 | S1/S2 Camera | Upgrade pick: vertical split, each half frames its character | built | handoff/shots/base/t040.0s.png | |
 | V-13 | S1/S2 Camera | Space: slow orbit round the floating ball and the celebrating character | partial | main.gd::_on_ball_stopped rig.orbit | orbit is round the ball; the character isn't in it (C-17) |
 | V-14 | S4 | Camera on the kicker only; follows big jumps up and down | built | camera_rig.gd (jump look-ahead) | |
