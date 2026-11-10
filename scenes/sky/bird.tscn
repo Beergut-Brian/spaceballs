@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/sky/sky_object.gd" id="1_yv38a"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_kjn78"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4gvq8"]
+albedo_color = Color(0.21960784, 0.7764706, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_667l8"]
+radius = 0.3
+height = 0.6
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcrig"]
+albedo_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_iu2a8"]
+radius = 0.22
+height = 0.44
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_mkkbk"]
+radius = 0.2
+height = 0.4
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgkp8"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_q8ibw"]
+top_radius = 0.0
+bottom_radius = 0.07
+height = 0.18
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_56eph"]
+albedo_color = Color(0.039215688, 0.039215688, 0.078431375, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_qiij4"]
+radius = 0.04
+height = 0.08
+radial_segments = 32
+rings = 16
+
+[sub_resource type="PrismMesh" id="PrismMesh_riyvp"]
+size = Vector3(0.3, 0.25, 0.06)
+
+[node name="Bird" type="Node3D" unique_id=1291699846]
+script = ExtResource("1_yv38a")
+reaction = 2
+cue = &"sky_flutter"
+near_cue = &"squawk"
+near_pitch = 1.3
+hit_radius = 0.6
+near_radius = 2.2
+push = 1.5
+hold = 0.06
+shake = 0.04
+drift = Vector3(0, 0, 0.5)
+
+[node name="Gag" type="Node3D" parent="." unique_id=560229768]
+
+[node name="Bird1" type="Node3D" parent="Gag" unique_id=584845058]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Gag/Bird1" unique_id=813903027]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1.2, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_667l8")
+
+[node name="Belly" type="MeshInstance3D" parent="Gag/Bird1" unique_id=1310722803]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -0.06, 0.12)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_iu2a8")
+
+[node name="Head" type="MeshInstance3D" parent="Gag/Bird1" unique_id=93113058]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.25)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_mkkbk")
+
+[node name="Beak" type="MeshInstance3D" parent="Gag/Bird1" unique_id=401914878]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.24, 0.48)
+material_override = SubResource("StandardMaterial3D_dgkp8")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_q8ibw")
+
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bird1" unique_id=2056578807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.32, 0.4)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_qiij4")
+
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bird1" unique_id=55956360]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.32, 0.4)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_qiij4")
+
+[node name="WingL" type="Node3D" parent="Gag/Bird1" unique_id=1342366186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.05, 0)
+script = ExtResource("2_kjn78")
+mode = 6
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, -1)
+
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingL" unique_id=1857809510]
+transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, -0.3, 0, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_iu2a8")
+
+[node name="WingR" type="Node3D" parent="Gag/Bird1" unique_id=3012095]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0)
+script = ExtResource("2_kjn78")
+mode = 6
+amount = 0.7
+speed = 3.0
+axis = Vector3(0, 0, 1)
+
+[node name="Feather" type="MeshInstance3D" parent="Gag/Bird1/WingR" unique_id=222271773]
+transform = Transform3D(1.6, 0, 0, 0, 0.3, 0, 0, 0, 1, 0.3, 0, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_iu2a8")
+
+[node name="Tail" type="MeshInstance3D" parent="Gag/Bird1" unique_id=962696834]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.05, -0.38)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("PrismMesh_riyvp")

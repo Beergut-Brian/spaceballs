@@ -1,0 +1,199 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/sky/sky_object.gd" id="1_14bhg"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_l2xiy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aimb4"]
+albedo_color = Color(0.5411765, 0.3529412, 0.16862746, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kvx7f"]
+top_radius = 0.12
+bottom_radius = 0.16
+height = 2.4
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ur1y4"]
+albedo_color = Color(0.29803923, 0.72156864, 0.41568628, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_0do82"]
+radius = 0.42
+height = 0.84
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_0xtc4"]
+radius = 0.36
+height = 0.72
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_667l8"]
+radius = 0.3
+height = 0.6
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xo1al"]
+albedo_color = Color(0.75, 0.46764708, 0.13529412, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_oqspe"]
+radius = 0.26
+height = 0.52
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_6t8ws"]
+radius = 0.19
+height = 0.38
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_woke1"]
+albedo_color = Color(1, 0.7490196, 0.627451, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_enkwh"]
+radius = 0.17
+height = 0.34
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_rb8lv"]
+radius = 0.06
+height = 0.12
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_56eph"]
+albedo_color = Color(0.039215688, 0.039215688, 0.078431375, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_qiij4"]
+radius = 0.04
+height = 0.08
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qmvef"]
+albedo_color = Color(0.85, 0.53000003, 0.15333334, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[node name="Squirrel" type="Node3D" unique_id=1846628545]
+script = ExtResource("1_14bhg")
+cue = &"squeak"
+cue_pitch = 1.3
+near_cue = &"squeak"
+near_pitch = 1.6
+hit_radius = 0.9
+near_radius = 2.5
+push = 2.5
+hold = 0.08
+
+[node name="Gag" type="Node3D" parent="." unique_id=1353364672]
+
+[node name="Branch" type="MeshInstance3D" parent="Gag" unique_id=1462163253]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -0.35, 0)
+material_override = SubResource("StandardMaterial3D_aimb4")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_kvx7f")
+
+[node name="Leaves0" type="MeshInstance3D" parent="Gag" unique_id=78112199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, -0.2, -0.2)
+material_override = SubResource("StandardMaterial3D_ur1y4")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0do82")
+
+[node name="Leaves1" type="MeshInstance3D" parent="Gag" unique_id=1215875975]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_ur1y4")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0xtc4")
+
+[node name="Leaves2" type="MeshInstance3D" parent="Gag" unique_id=835484033]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0.04, 0.2)
+material_override = SubResource("StandardMaterial3D_ur1y4")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_667l8")
+
+[node name="Squirrel" type="Node3D" parent="Gag" unique_id=1316505692]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 0)
+script = ExtResource("2_l2xiy")
+amount = 0.06
+speed = 2.2
+
+[node name="Body" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=1173392381]
+transform = Transform3D(0.9, 0, 0, 0, 1.1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_xo1al")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_oqspe")
+
+[node name="Head" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=1946681128]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0.12)
+material_override = SubResource("StandardMaterial3D_xo1al")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_6t8ws")
+
+[node name="Belly" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=227348126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.14)
+material_override = SubResource("StandardMaterial3D_woke1")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_enkwh")
+
+[node name="Ear-1_0" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=1639740714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11, 0.5, 0.1)
+material_override = SubResource("StandardMaterial3D_xo1al")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_rb8lv")
+
+[node name="Eye-1_0" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=1866757812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.36, 0.28)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_qiij4")
+
+[node name="Ear1_0" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=1883490737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.5, 0.1)
+material_override = SubResource("StandardMaterial3D_xo1al")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_rb8lv")
+
+[node name="Eye1_0" type="MeshInstance3D" parent="Gag/Squirrel" unique_id=2081062394]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.36, 0.28)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_qiij4")
+
+[node name="Tail" type="Node3D" parent="Gag/Squirrel" unique_id=348240649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.25)
+script = ExtResource("2_l2xiy")
+mode = 5
+speed = 1.5
+axis = Vector3(1, 0, 0)
+
+[node name="Fluff" type="MeshInstance3D" parent="Gag/Squirrel/Tail" unique_id=731759564]
+transform = Transform3D(0.8, 0, 0, 0, 1.6, 0, 0, 0, 0.8, 0, 0.35, -0.12)
+material_override = SubResource("StandardMaterial3D_qmvef")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_oqspe")

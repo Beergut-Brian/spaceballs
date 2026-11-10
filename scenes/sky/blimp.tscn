@@ -1,0 +1,171 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/sky/sky_object.gd" id="1_adt5g"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_hqwb8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a8c01"]
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_cybdo"]
+radius = 0.6
+height = 2.6
+radial_segments = 24
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_48of4"]
+albedo_color = Color(0.47843137, 0.42352942, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_b1w5k"]
+radius = 0.62
+height = 1.24
+radial_segments = 24
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8c8y6"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="PrismMesh" id="PrismMesh_2xpu4"]
+size = Vector3(0.05, 0.45, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l8bb2"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_204so"]
+size = Vector3(0.3, 0.2, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4gvq8"]
+albedo_color = Color(0.21960784, 0.7764706, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_0ms5i"]
+radius = 0.05
+height = 0.1
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5byk0"]
+albedo_color = Color(0.5568628, 0.6117647, 0.7529412, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_8nqvr"]
+size = Vector3(0.45, 0.06, 0.02)
+
+[node name="Blimp" type="Node3D" unique_id=557923820]
+script = ExtResource("1_adt5g")
+reaction = 3
+cue = &"sky_boing"
+cue_pitch = 0.6
+hit_radius = 1.1
+push = 2.5
+hold = 0.12
+shake = 0.07
+drift = Vector3(0, 0, 0.4)
+
+[node name="Gag" type="Node3D" parent="." unique_id=457794719]
+
+[node name="Hull" type="MeshInstance3D" parent="Gag" unique_id=1248904332]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_a8c01")
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_cybdo")
+
+[node name="Stripe" type="MeshInstance3D" parent="Gag" unique_id=303437111]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_48of4")
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_b1w5k")
+
+[node name="Fin0" type="Node3D" parent="Gag" unique_id=1820135366]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.1)
+
+[node name="Blade" type="MeshInstance3D" parent="Gag/Fin0" unique_id=879024529]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_8c8y6")
+cast_shadow = 0
+mesh = SubResource("PrismMesh_2xpu4")
+
+[node name="Fin1" type="Node3D" parent="Gag" unique_id=278909235]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, -1.1)
+
+[node name="Blade" type="MeshInstance3D" parent="Gag/Fin1" unique_id=1420660717]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_8c8y6")
+cast_shadow = 0
+mesh = SubResource("PrismMesh_2xpu4")
+
+[node name="Fin2" type="Node3D" parent="Gag" unique_id=57355184]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, 0, 0, -1.1)
+
+[node name="Blade" type="MeshInstance3D" parent="Gag/Fin2" unique_id=597136339]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_8c8y6")
+cast_shadow = 0
+mesh = SubResource("PrismMesh_2xpu4")
+
+[node name="Fin3" type="Node3D" parent="Gag" unique_id=726333982]
+transform = Transform3D(1.1924881e-08, 1, 0, -1, 1.1924881e-08, 0, 0, 0, 1, 0, 0, -1.1)
+
+[node name="Blade" type="MeshInstance3D" parent="Gag/Fin3" unique_id=909724780]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_8c8y6")
+cast_shadow = 0
+mesh = SubResource("PrismMesh_2xpu4")
+
+[node name="Gondola" type="MeshInstance3D" parent="Gag" unique_id=1283573177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.68, 0.1)
+material_override = SubResource("StandardMaterial3D_l8bb2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_204so")
+
+[node name="Window0" type="MeshInstance3D" parent="Gag" unique_id=1022112370]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, -0.66, -0.1)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0ms5i")
+
+[node name="Window1" type="MeshInstance3D" parent="Gag" unique_id=1824053822]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, -0.66, 0.1)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0ms5i")
+
+[node name="Window2" type="MeshInstance3D" parent="Gag" unique_id=172334769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, -0.66, 0.3)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0ms5i")
+
+[node name="Prop" type="Node3D" parent="Gag" unique_id=2002516897]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.68, -0.28)
+script = ExtResource("2_hqwb8")
+mode = 1
+amount = 0.0
+speed = 3.0
+axis = Vector3(0, 0, 1)
+
+[node name="Blade" type="MeshInstance3D" parent="Gag/Prop" unique_id=1778522813]
+material_override = SubResource("StandardMaterial3D_5byk0")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_8nqvr")
