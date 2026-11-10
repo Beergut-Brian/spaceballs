@@ -272,7 +272,6 @@ func _begin_pick() -> void:
 		if Run.in_run(p) or Run.in_space(p):
 			shown.append(p)
 		var k: Kicker = kickers[p]
-		k.set_frog(false)
 		var spot := _marker("PickSpots", p)
 		if Run.in_space(p):
 			_to_cloud(p)
@@ -282,6 +281,7 @@ func _begin_pick() -> void:
 			k.set_waiting(false)
 		else:
 			_bench(p)
+		k.set_frog(false)   # here, so the poof back happens in his own half
 		var view := pick_view(spot, _stack_height(k), pick_ui.camera_of(p).fov)
 		k.rotation.y = atan2(-(view[0] - spot).x, -(view[0] - spot).z)
 		pick_ui.frame(p, view[1], view[0])
@@ -297,7 +297,8 @@ static func pick_view(spot: Vector3, height: float, fov_deg: float = 50.0) -> Ar
 	var view_h := h / 0.54                      # metres of world the half shows, top to bottom
 	var dist := view_h / (2.0 * tan(deg_to_rad(fov_deg) * 0.5))
 	var look := spot + Vector3.UP * (h * 0.5 - 0.19 * view_h)
-	var from := look + Vector3(0.22, 0.12, -1.0).normalized() * dist
+	# From the spawn side (+Z): the tees, balls and landing puffs stay behind him, not in the lens.
+	var from := look + Vector3(-0.22, 0.12, 1.0).normalized() * dist
 	return [from, look]
 
 

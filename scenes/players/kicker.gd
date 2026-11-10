@@ -214,7 +214,7 @@ func set_frog(on: bool, override: PackedScene = null) -> void:
 		c.queue_free()
 	if was_frog and not on and is_inside_tree():
 		# Poof! Back to himself, gear and all.
-		Fx.puff(global_position + Vector3.UP * 0.8, Color(0.75, 1.0, 0.6), 2.0)
+		Fx.puff(global_position + Vector3.UP * 0.4, Color(0.75, 1.0, 0.6), 0.9)
 		Fx.pop(body, 1.35)
 		_sfx("poof", "upgrade_on", 0.8)
 	body.visible = not on
