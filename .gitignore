@@ -12,3 +12,5 @@ addons/gdUnit4/
 # local secrets
 .env
 reports/
+# store/jar.glb is the launcher's jar world, read raw at runtime: never import it (art/tools/make_jar.py)
+!store/jar.glb.import
