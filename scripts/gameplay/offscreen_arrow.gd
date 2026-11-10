@@ -4,6 +4,8 @@ class_name OffscreenArrow
 extends Control
 
 const MARGIN := 56.0
+## Keeps clear of the HUD's height ladder down the right edge.
+const RIGHT_MARGIN := 190.0
 const SIZE := 30.0
 
 var target: Node3D
@@ -53,8 +55,8 @@ func _edge_point() -> Variant:
 		d = -d
 	if d.length() < 0.01:
 		d = Vector2.DOWN
-	var inner := c - Vector2(MARGIN, MARGIN)
-	var k := minf(inner.x / maxf(absf(d.x), 0.001), inner.y / maxf(absf(d.y), 0.001))
+	var inner_x := (c.x - RIGHT_MARGIN) if d.x > 0.0 else (c.x - MARGIN)
+	var k := minf(inner_x / maxf(absf(d.x), 0.001), (c.y - MARGIN) / maxf(absf(d.y), 0.001))
 	return c + d * k
 
 

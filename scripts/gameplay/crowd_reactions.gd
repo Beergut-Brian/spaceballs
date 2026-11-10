@@ -97,15 +97,15 @@ func _hats(odds: float) -> void:
 		crowd.add_child(hat)
 		var start := m.global_position + Vector3.UP * 1.75
 		hat.global_position = start
-		var up := _rng.randf_range(1.8, 3.0)
+		var up := _rng.randf_range(2.2, 3.4)
 		var drift := Vector3(_rng.randf_range(-0.4, 0.4), 0.0, _rng.randf_range(-0.6, 0.6))
 		var spin := _rng.randf_range(2.0, 4.0) * (1.0 if _rng.randf() < 0.5 else -1.0)
-		var delay := _rng.randf() * 0.3
+		var delay := _rng.randf() * 0.12
 		var tw := hat.create_tween()
 		tw.tween_interval(delay)
 		tw.tween_method(func(u: float) -> void:
 			hat.global_position = start + drift * u + Vector3.UP * up * sin(u * PI)
-			hat.rotation = Vector3(sin(u * 9.0) * 0.4, u * TAU * spin * 0.5, 0.0), 0.0, 1.0, 1.4)
+			hat.rotation = Vector3(sin(u * 9.0) * 0.4, u * TAU * spin * 0.5, 0.0), 0.0, 1.0, 1.3)
 		tw.tween_callback(hat.queue_free)
 
 
@@ -115,16 +115,16 @@ func _hat(c: Color) -> Node3D:
 	mat.albedo_color = c
 	mat.rim_enabled = true
 	var crown := CylinderMesh.new()
-	crown.top_radius = 0.16
-	crown.bottom_radius = 0.19
-	crown.height = 0.22
+	crown.top_radius = 0.2
+	crown.bottom_radius = 0.24
+	crown.height = 0.28
 	crown.material = mat
 	var brim := CylinderMesh.new()
-	brim.top_radius = 0.32
-	brim.bottom_radius = 0.32
+	brim.top_radius = 0.4
+	brim.bottom_radius = 0.4
 	brim.height = 0.04
 	brim.material = mat
-	for part in [[crown, 0.11], [brim, 0.0]]:
+	for part in [[crown, 0.14], [brim, 0.0]]:
 		var mi := MeshInstance3D.new()
 		mi.mesh = part[0]
 		mi.position.y = part[1]

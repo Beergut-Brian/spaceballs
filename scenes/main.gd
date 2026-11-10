@@ -43,6 +43,8 @@ const SNAP_GAP := 0.75
 const BUMP_PUSH := 4.0
 ## The field's picket fence is 30 m long; the long run-up (spawns 30 m out) gets a second length.
 const FENCE_LENGTH := 30.0
+## A great kick holds the shot this long on the kicker and the cheering crowd before following the ball.
+const CROWD_BEAT := 0.35
 
 var _turn: TurnMarker
 var _crowd: CrowdReactions
@@ -383,13 +385,23 @@ func _on_kick_contact(quality: float, p: int) -> void:
 		if juice and juice.has_method("shake") and float(fx.get(&"shake", 0.0)) > 0.0:
 			juice.call_deferred("shake", float(fx.get(&"shake", 0.0)))   # after its own kick shake
 	balls[p].launch(power, height)
-	if not balls[p].dribbles(Run.curse_of(p)):
-		rig.follow(balls[p])   # the frog's and the banana's dribble stays in the close-up
-	_crowd.react(CrowdReactions.kick_level(tier, Run.tier_of_height(Run.best_height(p)), quality,
-			Run.curse_of(p) != null))
+	var cursed := Run.curse_of(p) != null
+	var level := CrowdReactions.kick_level(tier, Run.tier_of_height(Run.best_height(p)), quality, cursed)
+	if not cursed and tier > _run_top_tier:
+		# Headed for a height nobody has reached this run: the crowd roars.
+		_run_top_tier = tier
+		level = CrowdReactions.Level.ROAR
+	_crowd.react(level)
 	var other := P2 if p == P1 else P1
 	if kickers[other].state == Kicker.State.CHEER or kickers[other].state == Kicker.State.CLOUD:
 		kickers[other].cheer()
+	if not balls[p].dribbles(Run.curse_of(p)):
+		# A big one: a beat on the kick and the crowd going up, then off after the ball.
+		if level >= CrowdReactions.Level.GREAT:
+			await get_tree().create_timer(CROWD_BEAT).timeout
+			if Run.phase != Run.FLIGHT_PHASE[p]:
+				return
+		rig.follow(balls[p])   # the frog's and the banana's dribble stays in the close-up
 
 
 func _kick_cue(p: int, tier: int) -> String:
