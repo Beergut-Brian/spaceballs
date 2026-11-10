@@ -55,6 +55,12 @@ jobs:
           mkdir -p build
           godot --headless --path . --import || true
           godot --headless --path . --export-release "Linux" build/game.x86_64
+      - name: Smoke-test the exported build
+        shell: bash   # the export must boot without script errors (an export filter once dropped runtime files)
+        run: |
+          timeout 60 build/game.x86_64 --headless --audio-driver Dummy --quit-after 600 > smoke.log 2>&1 || true
+          cat smoke.log
+          if grep -E "SCRIPT ERROR|Failed to load script|Can't load dependency|File not found" smoke.log; then echo "export is broken"; exit 1; fi
       - name: Write launcher manifest
         shell: bash   # [[ ]] below is bash; the container default sh made every build dev=false
         run: |
