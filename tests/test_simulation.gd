@@ -42,6 +42,8 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 		var p: int = r.phase_player()
 		var hopped := rng.randf() < 0.3
 		var quality: float = RunScript.QUALITY_MIN + rng.randf() * 0.35 + (0.03 if hopped else 0.0)
+		# Gear like Running Start makes a good run-up easier (the 1.2 cap stays).
+		quality = minf(quality + float(r.effects_of(p).runup_bonus), RunScript.QUALITY_MAX)
 		var power: float = r.notify_kicked(p, quality)
 		var h: float = r.kick_height(p, power)
 		if RunScript.height_for_power(power) < r.tiers.space_height() and h >= r.tiers.space_height():
