@@ -475,7 +475,7 @@ func test_jeff_left_chuck_right_and_ready_cheers() -> void:
 	var cam: Camera3D = _main.rig.camera
 	var jeff: Kicker = _main.kickers[P1]
 	var chuck: Kicker = _main.kickers[P2]
-	assert_str(jeff.name).is_equal("Jeff")
+	assert_str(jeff.character_id).is_equal("jeff")
 	var jx := cam.unproject_position(jeff.global_position + Vector3.UP).x
 	var cx := cam.unproject_position(chuck.global_position + Vector3.UP).x
 	var vw := get_tree().root.get_visible_rect().size.x

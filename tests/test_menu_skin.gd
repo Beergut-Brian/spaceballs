@@ -57,7 +57,7 @@ func test_lobby_shows_jeff_and_chuck() -> void:
 	for p in [Players.P1, Players.P2]:
 		var slot: CharacterSlot = lobby.get_node("Spots/P%d/Character" % (p + 1))
 		assert_bool(slot.character is Node3D).is_true()
-		assert_int(slot.character.player).is_equal(p)
+		assert_str(slot.character.id).is_equal(models[p])   # the Roster pick (defaults)
 		var model: Node = slot.character.get_node("Jarling/Model")
 		assert_str(model.scene_file_path).contains(models[p])
 		assert_object(model.find_child("AnimationPlayer", true, false)).is_not_null()

@@ -1,7 +1,10 @@
-## Boot scene and round director: the lobby (template start screen) with Jeff and Chuck on the tees,
+## Boot scene and round director: the lobby (template start screen) with both players' picked
+## characters (Roster, docs/roster.md; Jeff and Chuck by default) on the tees,
 ## drop-in, and the scene side of Run's phases (who stands where, which ball is armed, which camera,
 ## which UI). Game rules live in Run. Systems lane owns.
 ## CLI (after --): --demo plays itself (no lobby), --timescale=<x> speeds it up, --gear=a,b / --gear2=c.
+## Who plays: --p1-char=<id> / --p2-char=<id> (Roster). Dev only: --roster=<res path> reads another
+## roster file (tests/fixtures/roster_standin.json for the stand-in screenshots; not in an export).
 extends Node3D
 
 const P1 := Players.P1
@@ -14,7 +17,7 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 @onready var pick_ui: Control = $UI/UpgradePick
 @onready var end_card: Control = $UI/EndCard
 @onready var lobby: Control = $UI/Lobby
-@onready var kickers := {P1: $Kickers/Jeff, P2: $Kickers/Chuck}
+@onready var kickers := {P1: $Kickers/P1, P2: $Kickers/P2}
 @onready var balls := {P1: $Balls/P1, P2: $Balls/P2}
 
 ## Space moment: the ball circles the planet this long before the next kick.
@@ -56,7 +59,18 @@ var _confetti: CPUParticles2D
 var _gear := {P1: [], P2: []}
 
 
+## Before the kickers ready (they spawn as Roster.pick): a dev roster file, if asked for and present.
+func _enter_tree() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--roster="):
+			var path := arg.trim_prefix("--roster=")
+			if FileAccess.file_exists(path) and Roster.data_path != path:
+				Roster.data_path = path
+				Roster.reload()
+
+
 func _ready() -> void:
+	Roster.pick_changed.connect(_on_pick_changed)
 	Players.player_joined.connect(_on_player_joined)
 	Players.player_left.connect(_on_player_left)
 	Players.solo_changed.connect(_on_solo_changed)
@@ -119,6 +133,12 @@ func _ready() -> void:
 
 
 # --- players -------------------------------------------------------------------
+
+## The chooser changed someone: the field kicker becomes them too (gear and all).
+func _on_pick_changed(player: int, id: String) -> void:
+	if kickers.has(player) and is_instance_valid(kickers[player]):
+		kickers[player].set_character(id)
+
 
 func _on_player_joined(player: int, _device: int) -> void:
 	if Game.state == Game.State.LOBBY:
@@ -680,7 +700,7 @@ func _lobby_character(p: int) -> CharacterSlot:
 	return lobby.get_node("Spots/P%d/Character" % (p + 1))
 
 
-## The podium Jeff and Chuck wear what they will wear on the field (--gear / --gear2), nothing else.
+## The podium characters wear what they will wear on the field (--gear / --gear2), nothing else.
 func _dress_lobby() -> void:
 	for p in [P1, P2]:
 		var who: Node = _lobby_character(p).character

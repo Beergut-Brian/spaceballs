@@ -1,7 +1,7 @@
 ## Kicker: runs freely round the field; running into his own ball starts the kick. Systems lane owns
 ## the node, Gameplay the movement and the upgrade effects (docs/contracts.md "Kicker").
-## jeff.tscn / chuck.tscn inherit kicker.tscn; Art swaps Body for the Jarling and drives an
-## AnimationTree from `state`. Keep the node names and the API (docs/contracts.md "Kicker").
+## jarling_kicker.tscn inherits kicker.tscn: Body holds the rigged Jarling (art/scripts/jarling_rig.gd)
+## and set_character() makes it whoever the player picked (Roster, docs/roster.md), gear and all. Keep the node names and the API (docs/contracts.md "Kicker").
 class_name Kicker
 extends CharacterBody3D
 
@@ -52,6 +52,9 @@ const RUN_FX_COLOR := {
 }
 
 @export var player: int = Players.P1
+## Which Roster character this kicker is. "" = whoever the player picked (Roster.pick(player)).
+## jeff.tscn / chuck.tscn fix it for previews and tests; main.tscn leaves it to the pick.
+@export var character_id := ""
 @export_group("Free run")
 @export var max_speed := 5.5
 ## Fractions of max_speed per second: speeding up, and stopping when the stick lets go.
@@ -130,6 +133,12 @@ func _ready() -> void:
 	mat.albedo_color = Players.COLOR[player]
 	accent.material_override = mat
 	helmet.visible = false
+	if body.has_node("Jarling"):
+		var id := character_id if character_id != "" else Roster.pick(player)
+		character_id = ""
+		for c in [id, Roster.default_for(player)] + Roster.roster():
+			if set_character(c):
+				break
 	if body.find_child("slot_head", true, false) == null:
 		var slots := Node3D.new()
 		slots.name = "Slots"
@@ -140,6 +149,14 @@ func _ready() -> void:
 			m.name = "slot_%s" % s
 			m.position = GREYBOX_SLOTS[s]
 			slots.add_child(m)
+	_make_equipment()
+	kick_contact.connect(func(_q: float) -> void: _gear_cue(false))
+	state_changed.connect(func(s: State) -> void:
+		if s == State.WINDUP:
+			_gear_cue(true))
+
+
+func _make_equipment() -> void:
 	equipment = JarlingEquipment.new()
 	equipment.name = "Equipment"
 	equipment.jarling = body
@@ -148,11 +165,62 @@ func _ready() -> void:
 	equipment.item_equipped.connect(_on_gear_equipped)
 	equipment.item_unequipped.connect(func(_s: StringName, _i: JarlingGear) -> void: _find_gear_fx())
 	equipment.item_leveled_up.connect(func(_s: StringName, _i: JarlingGear, _l: int) -> void:
-		Audio.play("upgrade_on", null, 1.3))
-	kick_contact.connect(func(_q: float) -> void: _gear_cue(false))
-	state_changed.connect(func(s: State) -> void:
-		if s == State.WINDUP:
-			_gear_cue(true))
+		if not _quiet:
+			Audio.play("upgrade_on", null, 1.3))
+
+
+## Become Roster character `id` (its vendored Jarling .glb) in place: same rig, collision, state,
+## frog form and actions, and the gear worn now moves onto the new body at the same levels.
+## False (and nothing changes) for an unknown id or a missing .glb.
+func set_character(id: String) -> bool:
+	var who := Roster.info(id)
+	var rig := body.get_node_or_null("Jarling")
+	if who.is_empty() or not ResourceLoader.exists(str(who.glb)) or rig == null or not rig.has_method("set_model"):
+		return false
+	if id == character_id:
+		return true
+	var worn: Array[Vector2i] = []   # (index into ids, level)
+	var ids: Array[StringName] = []
+	var had := equipment != null
+	if had:
+		for gid: StringName in _gear_slot.values():
+			if equipment.has_item(gid):
+				var item: JarlingGear = _gear_cache[String(gid)]
+				ids.append(gid)
+				worn.append(Vector2i(ids.size() - 1, equipment.level(item.slots[0])))
+		_quiet = true
+		equipment.unequip_all()
+		remove_child(equipment)
+		equipment.free()
+		equipment = null
+	rig.set_model(load(str(who.glb)) as PackedScene, id + "_hat")
+	character_id = id
+	if not had:
+		return true
+	_make_equipment()
+	for w in worn:
+		var item: JarlingGear = _gear_cache[String(ids[w.x])]
+		equipment.equip(item)
+		for i in w.y - 1:
+			equipment.level_up(item.slots[0])
+	_quiet = false
+	_find_gear_fx()
+	return true
+
+
+## The display name of who this kicker is ("Jeff"), or "Player 1" with no Roster character.
+func character_name() -> String:
+	var who := Roster.info(character_id)
+	return str(who.name) if not who.is_empty() else "Player %d" % (player + 1)
+
+
+## A character's own voice for `base` ("windup_<id>", when the Audio lane has recorded it), else the
+## generic `base` cue. Never another character's voice.
+static func voice_cue(base: String, id: String) -> String:
+	var own := "%s_%s" % [base, id]
+	if id != "" and (ResourceLoader.exists(SFX_DIR + own + ".ogg") or ResourceLoader.exists(SFX_DIR + own + "_1.ogg")):
+		return own
+	return base
 
 
 func _physics_process(delta: float) -> void:
@@ -211,7 +279,7 @@ func begin_approach(ball_position: Vector3) -> void:
 	_face(_ball - global_position, 1.0)
 	_spawn_prop()
 	_set_state(State.APPROACH)
-	Audio.play("frog" if frog else ("windup_jeff" if player == Players.P1 else "windup_chuck"))
+	Audio.play("frog" if frog else voice_cue("windup", character_id))
 
 
 func start_windup() -> void:

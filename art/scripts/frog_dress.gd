@@ -1,5 +1,6 @@
-## Frog form dressing: picks Jeff's chicken-hood frog or Chuck's trucker-hat frog from the
-## kicker it lands under, and keeps the frog green (the kicker tints the node named Skin; the
+## Frog form dressing: Jeff's chicken-hood frog or Chuck's trucker-hat frog when the kicker it
+## lands under is that character (Kicker.character_id, the Roster pick), a plain frog for anyone
+## else (never another character's costume), and keeps the frog green (the kicker tints the node named Skin; the
 ## exact player accents live on the hood / hat). Art lane.
 extends Node3D
 
@@ -16,17 +17,18 @@ func _ready() -> void:
 
 
 func _dress() -> void:
-	var player := 0
+	var who := ""
 	var n := get_parent()
 	while n:
-		if n is CharacterBody3D and &"player" in n:
-			player = n.get(&"player")
+		if n is CharacterBody3D and &"character_id" in n:
+			who = str(n.get(&"character_id"))
 			break
 		n = n.get_parent()
-	$JeffHood.visible = player == 0
-	$ChuckHat.visible = player == 1
+	$JeffHood.visible = who == "jeff"
+	$ChuckHat.visible = who == "chuck"
+	# Jeff and Chuck carry the player accent on hood / hat; anyone else keeps the kicker's player tint.
 	var skin := get_node_or_null("Skin") as MeshInstance3D
-	if skin:
+	if skin and who in ["jeff", "chuck"]:
 		skin.material_override = _skin_mat
 	# A little "boing" when the frog appears.
 	scale = Vector3(1.4, 0.4, 1.4) * size
