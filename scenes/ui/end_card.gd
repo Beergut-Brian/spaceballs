@@ -21,6 +21,7 @@ func open() -> void:
 	_t = 0.0
 	visible = true
 	confetti.emitting = true
+	Audio.play("confetti")
 	set_process(true)
 
 

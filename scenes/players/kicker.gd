@@ -106,7 +106,7 @@ func begin_approach(ball_position: Vector3) -> void:
 	body.rotation = Vector3.ZERO
 	_face(_ball - global_position, 1.0)
 	_set_state(State.APPROACH)
-	Audio.play("frog" if frog else "windup", null, 0.8)
+	Audio.play("frog" if frog else ("windup_jeff" if player == Players.P1 else "windup_chuck"))
 
 
 func start_windup() -> void:
