@@ -118,7 +118,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | V-13 | S1/S2 Camera | Space: slow orbit round the floating ball and the celebrating character | partial | main.gd::_on_ball_stopped rig.orbit | orbit is round the ball; the character isn't in it (C-17) |
 | V-14 | S4 | Camera on the kicker only; follows big jumps up and down | built | camera_rig.gd (jump look-ahead) | |
 | V-15 | S1/S2 Art | Juice: screen shake scaled to power, dust puff, speed lines, star burst at tiers | built | art/scripts/juice.gd | |
-| V-16 | S1/S2 Art | Half-second slow motion on the strongest kicks | missing | no time-scale code outside `--timescale` | |
+| V-16 | S1/S2 Art | Half-second slow motion on the strongest kicks | built | scripts/gameplay/slow_mo.gd, tests/test_plan_gaps.gd::test_slow_mo_lasts_half_a_real_second_then_restores, ::test_slow_mo_only_for_the_strongest_uncursed_kicks | 2026-11-10: kicks peaking at tier 7-8 (the sonic-boom kick), never a curse or the frog; 0.25x for 0.5 real s; a still frame can't show it |
 | V-17 | S1/S2 Art | Balls with reacting faces | built | art/scripts/ball_look.gd | |
 | V-18 | S1/S2 Art | Props: tee, two balls, lawn chair, landmarks, upgrade attachments | built | scenes/levels/field.tscn | lawn chair kept as scenery |
 | V-19 | S4 | Crowd cheers a good kick (bigger kick, bigger celebration) | built | tests/test_playtest2.gd::test_crowd_reaction_scales_with_the_kick | |

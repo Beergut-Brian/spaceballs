@@ -92,3 +92,33 @@ func test_best_flag_rides_with_a_ball_that_beats_it() -> void:
 	Run.phase = Run.Phase.IDLE
 	await get_tree().process_frame
 	assert_float(hud.best_flag.position.y).is_equal_approx(at_best, 0.5)
+
+
+# --- V-16: half a second of slow motion on the strongest kicks -------------------------------
+
+func test_slow_mo_only_for_the_strongest_uncursed_kicks() -> void:
+	for t in range(1, 7):
+		assert_bool(SlowMo.wants(t, false)).is_false()
+	assert_bool(SlowMo.wants(7, false)).is_true()
+	assert_bool(SlowMo.wants(8, false)).is_true()
+	assert_bool(SlowMo.wants(8, true)).is_false()
+
+
+func test_slow_mo_lasts_half_a_real_second_then_restores() -> void:
+	var s := SlowMo.new()
+	add_child(s)
+	Engine.time_scale = 2.0
+	s.trigger()
+	assert_float(Engine.time_scale).is_equal_approx(2.0 * SlowMo.SCALE, 0.001)
+	s.trigger()   # a second one inside the first just extends it
+	assert_float(Engine.time_scale).is_equal_approx(2.0 * SlowMo.SCALE, 0.001)
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	assert_bool(s.active()).is_true()
+	await get_tree().create_timer(0.4, true, false, true).timeout
+	assert_bool(s.active()).is_false()
+	assert_float(Engine.time_scale).is_equal_approx(2.0, 0.001)
+	# Leaving the tree mid-slow-mo restores the speed too.
+	s.trigger()
+	s.free()
+	assert_float(Engine.time_scale).is_equal_approx(2.0, 0.001)
+	Engine.time_scale = 1.0

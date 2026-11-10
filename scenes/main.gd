@@ -49,6 +49,7 @@ const FENCE_LENGTH := 30.0
 const CROWD_BEAT := 0.35
 
 var _turn: TurnMarker
+var slow_mo: SlowMo
 var _crowd: CrowdReactions
 var _bystander_arrow: OffscreenArrow
 var _bump_t := 0.0
@@ -94,6 +95,8 @@ func _ready() -> void:
 	Run.ball_stopped.connect(_on_ball_stopped)
 	_turn = TurnMarker.new()
 	add_child(_turn)
+	slow_mo = SlowMo.new()
+	add_child(slow_mo)
 	_lengthen_field()
 	_crowd = CrowdReactions.new()
 	add_child(_crowd)
@@ -410,6 +413,8 @@ func _on_kick_contact(quality: float, p: int) -> void:
 			juice.call_deferred("shake", float(fx.get(&"shake", 0.0)))   # after its own kick shake
 	balls[p].launch(power, height)
 	var cursed := Run.curse_of(p) != null
+	if SlowMo.wants(tier, cursed or kickers[p].frog):
+		slow_mo.trigger()   # the strongest kicks: half a second of slow motion on the boot
 	var level := CrowdReactions.kick_level(tier, Run.tier_of_height(Run.best_height(p)), quality, cursed)
 	if not cursed and tier > _run_top_tier:
 		# Headed for a height nobody has reached this run: the crowd roars.
