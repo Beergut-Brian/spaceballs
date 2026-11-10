@@ -85,6 +85,12 @@ func _bind() -> void:
 		if _hat:
 			_hat_rest = _hat.transform
 	_attach_helmet()
+	if _kicker and _skel:
+		# The character's own arms and costume on the run (RunStyle, P-03 / P-04).
+		var mod := RunStyleModifier.new()
+		mod.name = "RunStyle"
+		mod.kicker = _kicker
+		_skel.add_child(mod)
 	if _kicker:
 		_on_state(_kicker.state)
 	else:
@@ -96,7 +102,8 @@ func _process(_delta: float) -> void:
 		return
 	if _kicker.state == Kicker.State.APPROACH and _anim.current_animation == "run":
 		var hv := Vector2(_kicker.velocity.x, _kicker.velocity.z).length()
-		_anim.speed_scale = clampf(0.6 + hv / _kicker.max_speed * 0.9, 0.6, 1.6)
+		var style := _kicker.run_style.anim_speed if _kicker.run_style else 1.0
+		_anim.speed_scale = clampf(0.6 + hv / _kicker.max_speed * 0.9, 0.6, 1.6) * style
 	else:
 		_anim.speed_scale = 1.0
 	if _sitting:
@@ -118,7 +125,8 @@ func _on_state(s: Kicker.State) -> void:
 		Kicker.State.WINDUP:
 			# Contact in `kick` is about f14 (0.58 s), close to the kicker's 0.6 s wind-up.
 			_anim.play(&"kick", 0.05)
-			_anim.seek(0.0, true)
+			# A toe-poke (no run-up, K-08) meets the ball after 0.22 s: start the clip late.
+			_anim.seek(0.36 if _kicker.poking else 0.0, true)
 			_set_face(&"determined")
 		Kicker.State.FOLLOW_THROUGH:
 			_set_face(&"happy")

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RunStyle" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/run_style.gd" id="1_vmopi"]
+
+[resource]
+script = ExtResource("1_vmopi")
+bob = 0.26
+cadence = 3.2
+sway = 0.05
+arm_swing = 0.18
+arm_keep = 0.15
+stomp = 1.0
+land_squash = 0.22
+anim_speed = 0.8

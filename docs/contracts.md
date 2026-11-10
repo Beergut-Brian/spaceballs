@@ -515,7 +515,28 @@ func add_upgrade_visual(upgrade: UpgradeData) -> void
 func clear_upgrade_visuals() -> void
 static func run_up_quality(path_length: float, straight_distance: float,
 		avg_speed: float, max_speed: float, hopped: bool) -> float   # 0.8..1.2
+# Run styles and the short run-up (Polish, 2026-11-10: P-03, P-04, K-08)
+var run_style: RunStyle                       # RunStyle.for_character(character_id); set_character updates it
+var run_amount: float                         # 0..1 of top speed while running (APPROACH / roaming), else 0
+var stride: float                             # step phase: +1 per step, for the rig's arms
+signal footfall(hard: float)                  # a foot lands on the run; hard > 0 = a stomp (thud + dust)
+func has_run_up() -> bool                     # covered RUNUP_PACE x top speed x RUNUP_SHORT m straight, just now
+var poking: bool                              # this kick is a toe-poke (set by start_windup)
 ```
+
+Run style (`scripts/gameplay/run_style.gd`, `data/run_styles/<character id>.tres`, else
+`default.tres`): per Roster character, not per player. `bob`, `cadence`, `sway`, `lean`, `stomp`
+(lift slow, drop hard) and `land_squash` move the kicker's Body; `arm_swing`, `windmill`, `arm_keep`
+and `flap` move the Jarling's arms and comb through `art/scripts/run_style_modifier.gd`
+(`SkeletonModifier3D` under the Skeleton3D, added by `jarling_rig.gd`), and `anim_speed` scales the
+run clip. Jeff: windmilling arms, flapping comb, a big loose bob. Chuck: stiff arms, slow heavy steps,
+a hard landing with a squash, a thud (`land`, low) and a dust puff on every step.
+
+Short run-up (K-08): `start_windup()` checks `has_run_up()` (straight-line distance over the last
+`RUNUP_SHORT` = 0.6 s at least `RUNUP_PACE` = 0.45 of his top speed, about 1.5 m at base speed). Without
+one (a stick wiggle at the ball, a nudge from standing) the kick is a toe-poke: `poking`, a quick tap
+(squeak) instead of the lunatic wind-up, quality `QUALITY_MIN`. It still kicks, every time. Gags and
+the frog are never a poke.
 
 Free movement (2026-11-09 playtest, supersedes auto-steer): in `APPROACH` the kicker runs where the
 stick points (acceleration, turn-in-place, B hop), with no pull toward the ball and no movement with
