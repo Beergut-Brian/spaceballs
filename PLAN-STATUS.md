@@ -7,7 +7,7 @@ Sources (newest last):
 - S4 `GAME.md` "Playtest 2026-11-09 #2 changes" (`playtests/2026-11-09-2.md`)
 - S5 Kaden's chat 2026-11-10: "a couple of those Spaceballs features are done, but may not be polished. And the Lawn Chair obviously isn't relevant since the other player can now run around."
 
-Audit 2026-11-10 (plan-gaps lane, `feature/plan-gaps` off `dev` at `46f115f`). Every row was checked
+Audit 2026-11-10 (plan-gaps lane, `feature/plan-gaps` off `dev` at `46f115f`). Totals after this lane: 97 built, 6 partial, 0 missing, 3 superseded, 4 later (110 rows). Every row was checked
 against the code and the tests on this branch, not against earlier reports. Frames are under
 `handoff/shots/` (git-excluded; Gary attaches them to the PR). Tests are `tests/<file>.gd::<test>`.
 When S1 and S2 say the same thing it is one row, sourced "S1/S2".
@@ -160,4 +160,4 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | M-01 | S3 | Main menu with a way back to the launcher | built | tests/test_lobby.gd::test_lobby_door_asks_then_quits | |
 | M-02 | S3 | Pause menu with "back to the launcher" | built | tests/test_lobby.gd::test_pause_door_asks_then_quits | |
 | M-03 | S3 | Start screen where both players ready up before round 1 | built | tests/test_lobby.gd::test_both_ready_counts_down_then_starts | |
-| M-04 | S5 | Polish counts: features that exist but feel rough get finished | partial | this file: every `partial` row | |
+| M-04 | S5 | Polish counts: features that exist but feel rough get finished | partial | this file: every `partial` row | 2026-11-10 audit found 3 missing + 15 partial; this lane built the 3 missing and finished 9 partial (K-11, K-14, U-14, V-07, V-08, V-11, V-13, A-04, C-18). Left: P-03/P-04 run styles (Art), K-07/K-08 (by design since free roam), U-13 (gear-art lane) |
