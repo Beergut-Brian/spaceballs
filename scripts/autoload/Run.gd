@@ -226,13 +226,20 @@ func draw_cards(player: int, with_rng: RandomNumberGenerator = null) -> Array[Up
 	_ensure_data()
 	var cards := draw_from(pool, round_index, catch_up_for(player), with_rng if with_rng else rng,
 			upgrades_of(player))
-	if save_enabled:
-		var seen: Array = Save.get_value("upgrades_seen", [])
-		for c in cards:
-			if not seen.has(String(c.id)):
-				seen.append(String(c.id))
-		Save.set_value("upgrades_seen", seen)
+	_mark_seen(cards)
 	return cards
+
+
+## Every card a player has ever been shown (drawn, or revealed as a hidden curse) goes into the
+## profile's collection (the end card shows it).
+func _mark_seen(cards: Array) -> void:
+	if not save_enabled or cards.is_empty():
+		return
+	var seen: Array = Save.get_value("upgrades_seen", [])
+	for c in cards:
+		if c != null and not seen.has(String(c.id)):
+			seen.append(String(c.id))
+	Save.set_value("upgrades_seen", seen)
 
 
 ## After `player` picks a card: the curse it secretly was, or null (it was what it said).
@@ -242,7 +249,9 @@ func reveal_curse(player: int, with_rng: RandomNumberGenerator = null) -> Upgrad
 	var r := with_rng if with_rng else rng
 	if not rolls_curse(round_index, catch_up_for(player), curses_of(player), curse_of(player) != null, r):
 		return null
-	return pick_curse(pool, round_index, r)
+	var curse := pick_curse(pool, round_index, r)
+	_mark_seen([curse])
+	return curse
 
 
 ## Curses this player has had this run.

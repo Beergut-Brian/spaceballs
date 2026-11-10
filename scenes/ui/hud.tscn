@@ -18,7 +18,7 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -110.0
+offset_left = -150.0
 offset_top = 90.0
 offset_right = -60.0
 offset_bottom = -90.0
@@ -56,15 +56,15 @@ mouse_filter = 2
 
 [node name="Pole" type="ColorRect" parent="Strip/BestFlag"]
 layout_mode = 0
-offset_left = -18.0
-offset_right = -14.0
-offset_bottom = 28.0
+offset_left = -24.0
+offset_right = -18.0
+offset_bottom = 46.0
 color = Color(1, 1, 1, 1)
 
 [node name="Flag" type="Polygon2D" parent="Strip/BestFlag"]
-position = Vector2(-14, 0)
+position = Vector2(-18, 0)
 color = Color(1, 0.84, 0.2, 1)
-polygon = PackedVector2Array(0, 0, 26, 7, 0, 14)
+polygon = PackedVector2Array(0, 0, 44, 12, 0, 24)
 
 [node name="Rounds" type="VBoxContainer" parent="."]
 layout_mode = 1
