@@ -965,6 +965,101 @@ def butterfly(notes):
     return make
 
 
+# ---------------------------------------------------------------- sky objects (Sky lane)
+# The ball bumps into things on the way up (scenes/sky/): one cue per kind of bump.
+
+def sky_pop(f):
+    def make(rng):
+        # Balloon "BANG-pff": a sharp rubber crack, a puff of air, a few paper bits, a glock ping
+        out = silence(0.7)
+        mix(out, burst(rng, 0.05, f, 0.8, 0.008), 0.0, 1.0)
+        mix(out, burst(rng, 0.03, f * 2.6, 1.2, 0.003, "high"), 0.0, 0.6)
+        mix(out, thump(f * 0.25, f * 0.08, 0.08, 0.025), 0.0, 0.6)
+        mix(out, rumble(rng, 0.3, 900, 0.09), 0.01, 0.35)
+        for _ in range(30):
+            at = 0.05 + 0.45 * rng.random() ** 1.3
+            mix(out, burst(rng, 0.01, rng.uniform(3000, 6000), 1.5, 0.0015), at, rng.uniform(0.08, 0.18))
+        mix(out, struck(midi(98), 0.08, rng, BELL, click=0.05), 0.07, 0.25)
+        return out
+    return make
+
+
+def sky_bonk(rng):
+    # A hollow tin "BONK" with a wobble, then a small cross "hey!"
+    out = silence(0.85)
+    mix(out, osc(0.45, lambda t: 330 * (1.0 + 0.04 * math.sin(TAU * 9.0 * t)), METAL, decay=0.12), 0.0, 0.7)
+    mix(out, burst(rng, 0.03, 1800, 1.2, 0.005), 0.0, 0.6)
+    mix(out, thump(220, 90, 0.12, 0.04), 0.0, 0.6)
+    mix(out, voice(lambda t: 300 + 140 * math.sin(math.pi * min(1.0, t / 0.22)), 0.26,
+                   glide("e", "i", 0.04, 0.18), ar(0.26, 0.015, 0.09), rng, 0.08, 1.15), 0.42, 0.8)
+    return out
+
+
+def sky_flutter(rng):
+    # Startled birds: a burst of wing flaps that thins out, and three panicky tweets
+    out = silence(0.95)
+    at = 0.0
+    k = 0
+    while at < 0.6:
+        mix(out, burst(rng, 0.05, rng.uniform(700, 1400), 0.9, 0.012), at, 0.55 * (1.0 - at))
+        at += 0.035 + 0.05 * at + 0.01 * rng.random()
+        k += 1
+    for at, f in ((0.05, 2700), (0.2, 3200), (0.33, 2900)):
+        mix(out, chirp(f * 0.7, f, 0.08, ((1, 1.0, 0.0), (2, 0.05, 0.0))), at, 0.35)
+    return out
+
+
+def sky_boing(rng):
+    # A soft, cushiony boing (cloud, balloon envelope, blimp): low sprung sine and a puff of air
+    sec = 0.6
+
+    def f(t):
+        return 140 * (1.0 + 0.9 * t / sec) * (1.0 + 0.18 * math.exp(-t / 0.18) * math.sin(TAU * 13.0 * t))
+    out = silence(0.7)
+    mix(out, osc(sec, f, ((1, 1.0, 0.0), (2, 0.25, 0.0)), attack=0.01, amp=ar(sec, 0.01, 0.3)), 0.0, 0.8)
+    mix(out, rumble(rng, 0.25, 700, 0.07), 0.0, 0.5)
+    return out
+
+
+def sky_twang(rng):
+    # A kite string snags: a rubbery twang, then the kite whirring round, "fwip-fwip-fwip"
+    out = silence(1.0)
+    mix(out, osc(0.5, lambda t: 196 * (1.0 + 0.03 * math.exp(-t / 0.1) * math.sin(TAU * 7.0 * t)),
+                 ((1, 1.0, 1.0), (2, 0.5, 1.5), (3, 0.3, 2.0), (4, 0.15, 3.0)), decay=0.18), 0.0, 0.8)
+    for i in range(5):
+        mix(out, burst(rng, 0.06, 900 + 220 * i, 1.4, 0.018), 0.18 + i * 0.13, 0.5 - 0.06 * i)
+    return out
+
+
+def sky_ping(rng):
+    # Satellite / comet: a bright sonar "ping!" with a shimmer
+    out = silence(0.9)
+    mix(out, struck(midi(93), 0.35, rng, BELL, click=0.1), 0.0, 0.8)
+    mix(out, osc(0.6, lambda t: 2093 * (1.0 + 0.004 * math.sin(TAU * 6.0 * t)), decay=0.25), 0.0, 0.25)
+    mix(out, sparkle(rng, 4, 0.08, 0.5), 0.0, 1.0)
+    return out
+
+
+def sky_catch(rng):
+    # The saucer's beam: "vwoom", a held wobble, then the toss: a rising alien "wheee!"
+    out = silence(1.2)
+    mix(out, osc(0.45, lambda t: 180 + 60 * math.sin(TAU * 6.0 * t), ((1, 1.0, 0.0), (2, 0.4, 0.0)),
+                 attack=0.03, amp=ar(0.45, 0.03, 0.12)), 0.0, 0.6)
+    mix(out, osc(0.55, lambda t: 500 * 2.0 ** (1.4 * t / 0.55) * (1.0 + 0.03 * math.sin(TAU * 7.0 * t)),
+                 ((1, 1.0, 0.0), (3, 0.1, 0.0)), attack=0.02, amp=ar(0.55, 0.02, 0.15)), 0.4, 0.55)
+    mix(out, sparkle(rng, 3, 0.75, 1.05), 0.0, 1.0)
+    return out
+
+
+def sky_flap(rng):
+    # Laundry: a wet cloth "fwap", a flap and a peg flicking off
+    out = silence(0.6)
+    mix(out, burst(rng, 0.09, 1100, 0.8, 0.03), 0.0, 0.9)
+    mix(out, burst(rng, 0.07, 1500, 0.9, 0.02), 0.16, 0.6)
+    mix(out, struck(midi(84), 0.05, rng, MARIMBA, click=0.2), 0.3, 0.35)
+    return out
+
+
 # ---------------------------------------------------------------- files
 # stem: (make, kind, trim dB). A stem ending in _<n> is variant n of its cue (Audio.gd picks one).
 
@@ -1043,6 +1138,16 @@ FILES = {
     "waddle_2": (waddle((43, 41, 38)), "sfx", -1.0),
     "butterfly_1": (butterfly((88, 91, 93, 96, 100)), "sfx", -2.0),
     "butterfly_2": (butterfly((86, 91, 95, 98)), "sfx", -2.0),
+    # sky objects (Sky lane, scenes/sky/)
+    "sky_pop_1": (sky_pop(2200), "sfx", -1.0),
+    "sky_pop_2": (sky_pop(2600), "sfx", -1.0),
+    "sky_bonk": (sky_bonk, "sfx", -1.0),
+    "sky_flutter": (sky_flutter, "sfx", -2.0),
+    "sky_boing": (sky_boing, "sfx", -2.0),
+    "sky_twang": (sky_twang, "sfx", -2.0),
+    "sky_ping": (sky_ping, "sfx", -2.0),
+    "sky_catch": (sky_catch, "sfx", -1.0),
+    "sky_flap": (sky_flap, "sfx", -2.0),
 }
 
 
