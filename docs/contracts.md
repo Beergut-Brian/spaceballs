@@ -21,6 +21,7 @@ func end_round(result: Dictionary = {}) -> void
 func pause() -> void
 func resume() -> void
 func restart() -> void          # back to a fresh round, no questions asked
+func to_title() -> void         # Spaceballs end card: unpause, round_index 0, state TITLE (main.gd re-lays the title)
 func quit(code: int = 0) -> void   # save, silence audio (no exit leaks), quit; use instead of get_tree().quit()
 ```
 
@@ -269,7 +270,7 @@ func ladder_fraction(height: float) -> float   # 0..1 on the HUD strip, one equa
 `state`); keep the node names below.
 
 ```gdscript
-enum State { IDLE, APPROACH, WINDUP, FOLLOW_THROUGH, CHEER, CHAIR, CLOUD }
+enum State { IDLE, APPROACH, WINDUP, FOLLOW_THROUGH, CHEER, CHAIR, CLOUD, GAG }   # GAG: Gameplay polish, appended
 @export var player: int
 var state: State
 signal state_changed(state: State)
@@ -283,6 +284,12 @@ func set_waiting(chair: bool) -> void         # sideline cheer, or the lawn chai
 func set_cloud() -> void                      # finished: cheers from a cloud, no gravity
 func cheer() -> void                          # sound + hop + puff (waiting player's A, kick reactions)
 func set_space_suit(on: bool) -> void         # end card
+func dance(on: bool) -> void                  # end card: cheer state plus a sway and a spin now and then
+# Wind-up gags (Gameplay polish, 2026-11-09)
+const GAGS: Array[StringName] = [&"slip", &"chase", &"waddle", &"trip", &"sneeze"]
+var windup: UpgradeData                       # set before begin_approach: this kick's gag source, or null
+signal gag_started(gag: StringName)           # state GAG: the full-body gag runs before (or instead of) WINDUP
+func gag_of(upgrade: UpgradeData) -> StringName   # the upgrade's windup_anim if it is one of GAGS
 var stick_override: Variant                   # a Vector2 steers instead of the pad (tests, bots)
 func set_frog(on: bool, override: PackedScene = null) -> void   # this round only
 func attach_point(slot: StringName) -> Node3D # head, back, feet, hands, body
@@ -291,6 +298,14 @@ func clear_upgrade_visuals() -> void
 static func run_up_quality(path_length: float, straight_distance: float,
 		avg_speed: float, max_speed: float, hopped: bool) -> float   # 0.8..1.2
 ```
+
+Wind-up gags: `main.gd` sets `windup` to the round's curse, else the newest upgrade with a
+`windup_anim`. `start_windup()` then enters `GAG` (emits `gag_started`), plays the full-body gag on
+`Body` (and the upgrade's `visual` as a temporary prop for curses, which never join the stack),
+and always ends in `kick_contact` exactly once: the gag changes the approach, never the result.
+`slip` and `trip` boot the ball on the way down (GAG -> FOLLOW_THROUGH); `chase`, `waddle` and
+`sneeze` finish with a short `WINDUP`. The frog's flop wins over any gag. `waddle` also slows the
+approach to 70 %.
 
 Nodes: `Body` (placeholder capsule), `Accent` (player-colour band), `Attach/{Head,Back,Feet,Hands,Body}`
 (`Marker3D`), `FrogSlot`, `Shape`. An upgrade `visual` scene picks its slot with root metadata
@@ -320,7 +335,8 @@ func frame_field(kicker: Node3D, tee: Vector3) -> void   # TV-sports framing of 
 func follow(ball: Node3D) -> void                         # zooms out with speed
 func hold_peak() -> void
 func split(on: bool) -> void                              # the pick; main viewport stops drawing 3D
-func orbit(center: Vector3) -> void                       # space / end card
+func orbit(center: Vector3, radius: float = 7.0, height: float = 2.5) -> void   # space / end card
+func frame_close(on: bool) -> void                        # tighter FIELD framing (the frog round)
 signal mode_changed(mode: Mode)
 ```
 
@@ -333,6 +349,8 @@ signal mode_changed(mode: Mode)
 - `scenes/ui/hud.tscn`: `Strip/Blocks` (8 tier blocks, top = space), `Strip/Markers/P1|P2`, `Strip/BestFlag`,
   `Rounds` (ball stack), `RestartHint`. `track(player, ball)` makes a marker follow a flying ball.
 - `scenes/ui/end_card.tscn`: `open()`, `close()`, `signal restart_requested()` (A, after 1.2 s).
+  `main.gd` answers it with `Game.to_title()` (the title card; A there starts a fresh run, the
+  pause menu quits to the launcher); `--demo` skips the title and restarts straight away.
 - `scenes/ui/upgrade_card.tscn`: one card (`Icon`), themed by Art.
 
 ### Debug / CLI (after `--`)
