@@ -20,6 +20,8 @@ const SPACE_HOLD := 2.0
 const DROP_HEIGHT := 12.0
 const DROP_TIME := 0.55
 const TEE_HEIGHT := 0.35
+## Landmarks with a little sound gag on top of the tier sparkle (assets/audio/sfx/gag_<id>.ogg).
+const TIER_GAGS: Array[StringName] = [&"rooftops", &"treetops", &"clouds", &"edge", &"space"]
 
 @export var player: int = 0
 
@@ -149,6 +151,8 @@ func _check_tiers() -> void:
 		_tier += 1
 		var data: TierData = Run.tiers.get_tier(_tier) if Run.tiers else null
 		Audio.play(String(data.tier_up_cue) if data else "tier_up", null, 1.0 + _tier * 0.05)
+		if data and data.id in TIER_GAGS:
+			Audio.play("gag_" + String(data.id))
 		Fx.puff(global_position, data.color if data else Color.WHITE, 2.0 + _tier * 0.5)
 		Run.notify_tier(player, _tier)
 

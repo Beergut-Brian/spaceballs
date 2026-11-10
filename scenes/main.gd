@@ -28,6 +28,7 @@ func _ready() -> void:
 	Run.phase_changed.connect(_on_phase_changed)
 	Run.run_started.connect(_on_run_started)
 	Run.reached_space.connect(_on_reached_space)
+	Run.ball_tier_reached.connect(func(_p: int, tier: int) -> void: Audio.music_level((tier - 1) / 2))
 	Run.ball_stopped.connect(func(_p: int, _h: float, _t: int) -> void: rig.hold_peak())
 	for p in [P1, P2]:
 		balls[p].kick_zone_entered.connect(_on_kick_zone.bind(p))
@@ -38,6 +39,7 @@ func _ready() -> void:
 	end_card.restart_requested.connect(func() -> void: Run.start_run())
 	title.visible = true
 	hud.visible = false
+	Audio.music("field_loop")
 	_layout_title()
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--demo":
@@ -114,6 +116,8 @@ func _on_phase_changed(from: int, to: int) -> void:
 
 func _begin_kick(p: int) -> void:
 	Players.set_solo_focus(p)
+	Audio.music("field_loop")
+	Audio.music_level(0)
 	var tee := _marker("Tees", p)
 	for q in [P1, P2]:
 		var k: Kicker = kickers[q]
@@ -235,11 +239,13 @@ func _begin_end() -> void:
 	rig.orbit(center)
 	Audio.play("space")
 	Audio.play("cheer")
+	Audio.music("space_pad", 1.5)
 	end_card.open()
 
 
 func _on_reached_space(p: int) -> void:
 	Audio.play("space")
+	Audio.music("space_pad", 1.5)
 	Fx.puff(balls[p].global_position, Color(1, 1, 0.6), 6.0)
 
 
