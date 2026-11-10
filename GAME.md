@@ -207,6 +207,11 @@ Source: `playtests/2026-11-09-2.md`.
 - 2026-11-09 (Systems): P2 joining mid-run starts from zero upgrades at the next round; the catch-up rule pulls P2 up fast. A pad that drops out during the pick no longer blocks it.
 - 2026-11-09 (Systems): the first Select press shows a small spinning marker and beeps; a second within 1 s restarts. Keyboard keys join players for development, and `-- --demo` plays the game by itself.
 - 2026-11-09 (Systems): **solo mode, playtest only** (Kaden asked so he can test alone). Hold Select + Start together for 2 s on any pad (or launch with `-- --solo`) and that one pad plays both Jeff and Chuck; the same hold turns it off and Chuck goes back to normal drop-in. The pad steers whoever's kick it is, and in the pick it chooses for Jeff then Chuck (B goes back to Jeff's card). A small two-heads icon sits top-left while it is on. Never on by default, and a short or one-button press does nothing, so a kid can't trip it.
+- 2026-11-10 (Showtime menus): the lobby backdrop is `SCREEN` (the live field main.tscn already draws, blurred), not `SCENE` (a second field.tscn in a SubViewport). A second field would run its own crowd, juice and shot-director scripts on the run's signals (double cheers and confetti) and cost a second world.
+- 2026-11-10: the podium Jeff and Chuck are the field's own rigged Jarlings (same rig, Chuck's hat) wearing what they will wear on the field: nothing at the start of a run, or the `--gear` / `--gear2` items. Readied, they cheer until un-readied.
+- 2026-11-10: the round card says "ROUND 1" with "JEFF KICKS FIRST" (or "CHUCK KICKS FIRST" when Chuck starts alone) in the kicker's colour.
+- 2026-11-10: the upgrade pick and the end card keep their own look. They never used the kit's menu bars, so the kit did not restyle them; frames show both still read with big icons and no text. Left alone on playtest night rather than restyled.
+- 2026-11-10: the kit saves "Solo playtest" when it changes, including Select+Start. Kept as the kit designed it (it shows in Settings), flagged for playtest #3.
 
 ## Open questions
 
