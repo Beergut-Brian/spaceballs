@@ -11,15 +11,15 @@ rim_tint = 0.3
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ga55i"]
 material = SubResource("StandardMaterial3D_33tqy")
-radius = 0.06
-height = 0.3
+radius = 0.055
+height = 0.25
 radial_segments = 16
 rings = 6
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_5shgk"]
 material = SubResource("StandardMaterial3D_33tqy")
-radius = 0.06
-height = 0.3
+radius = 0.055
+height = 0.25
 radial_segments = 16
 rings = 6
 
@@ -37,23 +37,23 @@ height = 2.0
 radial_segments = 24
 rings = 12
 
-[node name="Mustache" type="Node3D" unique_id=1528691325]
+[node name="Mustache" type="Node3D" unique_id=341359572]
 script = ExtResource("1_mehnd")
 stack_step = Vector3(0, 0, 0)
 metadata/attach_point = &"head"
 
-[node name="Cap0" type="MeshInstance3D" parent="." unique_id=400347140]
-transform = Transform3D(0.34202015, -0.9396926, 0, 0.9396926, 0.34202015, 0, 0, 0, 1, -0.1, -0.34, -0.36)
+[node name="Cap0" type="MeshInstance3D" parent="." unique_id=472951442]
+transform = Transform3D(0.2419219, -0.9702957, 0, 0.9702957, 0.2419219, 0, 0, 0, 1, -0.085, -0.41, -0.34)
 mesh = SubResource("CapsuleMesh_ga55i")
 
-[node name="Cap1" type="MeshInstance3D" parent="." unique_id=185985459]
-transform = Transform3D(0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 0, 0, 1, 0.1, -0.34, -0.36)
+[node name="Cap1" type="MeshInstance3D" parent="." unique_id=821100191]
+transform = Transform3D(0.2419219, 0.9702957, 0, -0.9702957, 0.2419219, 0, 0, 0, 1, 0.085, -0.41, -0.34)
 mesh = SubResource("CapsuleMesh_5shgk")
 
-[node name="Sph2" type="MeshInstance3D" parent="." unique_id=861398422]
-transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, -0.23, -0.28, -0.33)
+[node name="Sph2" type="MeshInstance3D" parent="." unique_id=912128365]
+transform = Transform3D(0.045, 0, 0, 0, 0.045, 0, 0, 0, 0.045, -0.2, -0.37, -0.3)
 mesh = SubResource("SphereMesh_daqmd")
 
-[node name="Sph3" type="MeshInstance3D" parent="." unique_id=1726142466]
-transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.23, -0.28, -0.33)
+[node name="Sph3" type="MeshInstance3D" parent="." unique_id=1755363582]
+transform = Transform3D(0.045, 0, 0, 0, 0.045, 0, 0, 0, 0.045, 0.2, -0.37, -0.3)
 mesh = SubResource("SphereMesh_xjdkm")

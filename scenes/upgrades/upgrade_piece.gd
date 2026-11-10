@@ -7,7 +7,8 @@ extends Node3D
 const WINDUP := 2   # Kicker.State.WINDUP (kicker.gd: IDLE, APPROACH, WINDUP, ...)
 const SFX_DIR := "res://assets/audio/sfx/"
 
-## How far this piece pushes the next piece on the same attach point.
+## How far this piece pushes the next piece on the same attach point. Zero means worn in place
+## (mustache, butterfly, banana peel): it neither moves nor is moved by the stack.
 @export var stack_step := Vector3(0.0, 0.1, 0.0)
 ## Sound for the gag. Played if the file exists, else `fallback_cue` (an existing cue) at `fallback_pitch`.
 @export var gag_cue: StringName
@@ -79,7 +80,7 @@ func _on_state_changed(state: int) -> void:
 func _stack_offset() -> Vector3:
 	var off := Vector3.ZERO
 	var parent := get_parent()
-	if parent == null:
+	if parent == null or stack_step == Vector3.ZERO:
 		return off
 	for c in parent.get_children():
 		if c == self:
