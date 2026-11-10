@@ -310,6 +310,20 @@ func test_jeff_left_chuck_right_and_ready_cheers() -> void:
 	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
 
 
+func test_end_card_a_goes_to_lobby_and_door_quits() -> void:
+	_play_two()
+	var card: Control = _main.get_node("UI/EndCard")
+	card.open()
+	card.press()
+	await await_idle_frame()   # main.gd goes to the lobby deferred
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	assert_bool(_lobby().visible).is_true()
+	assert_bool(card.visible).is_false()
+	card.open()
+	card._focus_door(true)
+	card.press()
+	assert_int(_quits).is_equal(1)
+
 
 func test_demo_skips_lobby() -> void:
 	Game.demo = true
