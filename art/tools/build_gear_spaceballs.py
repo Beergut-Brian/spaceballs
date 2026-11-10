@@ -580,10 +580,13 @@ def opera_kick(n, side, s):
 
 @item("Foam Finger", ["hand_r"], ["hand_r"])
 def foam_finger(n, side, s):
-    parts = [(sq((0, -0.02, -0.01), (0.05, 0.085, 0.085), 0.55, 0.6), mat("orange", 0.7)), (sq((0, -0.125, 0.065), (0.04, 0.042, 0.12), 0.6, 0.7, rot=R(55)), mat("orange", 0.7)),
-             (sq((-s * 0.01, 0.06, 0.03), (0.04, 0.035, 0.05), 0.7, rot=R(-30)), mat("orange", 0.7)), (loop((0, 0, 0.07), 0.05, 0.06, 0.014), mat("white"))]
-    obj("foam_finger", group(parts, s=1.3), n)
-    obj("trim_foam", group([(prism(star(0.035, 0.015), 0.01, (s * 0.052, -0.02, -0.01), R(0, 0, 90)), GOLD())], s=1.3), n)
+    # A big flat "number one" hand held up in front of the mitten: the broad face looks forward.
+    foam = mat("orange", 0.7)
+    parts = [(sq((s * 0.02, -0.03, 0.0), (0.105, 0.05, 0.095), 0.5, 0.6), foam), (sq((s * 0.03, -0.03, 0.2), (0.045, 0.042, 0.15), 0.6, 0.7), foam),
+             (sq((s * 0.125, -0.03, 0.04), (0.034, 0.036, 0.062), 0.7, 0.7), foam), (loop((s * 0.02, -0.03, -0.055), 0.108, 0.053, 0.012, e=0.5), mat("white")),
+             (sq((s * 0.02, -0.08, 0.005), (0.05, 0.008, 0.05)), mat("white")), (sq((s * 0.02, -0.088, 0.005), (0.012, 0.006, 0.034), 0.4, 0.4), mat("plum"))]
+    obj("foam_finger", parts, n)
+    obj("trim_foam", [(prism(star(0.03, 0.013), 0.01, (s * 0.03, -0.076, 0.25)), GOLD())], n)
 
 
 @item("Rubber Chicken", ["hand_l"])
