@@ -203,3 +203,69 @@ func test_end_card_shelves_hold_each_players_picks() -> void:
 	await get_tree().process_frame
 	assert_bool(_card.shelves.has(P2)).is_false()
 	Run._upgrades[P1] = [] as Array[UpgradeData]
+
+
+# --- A-04: the field music gains a layer per height tier ---------------------------------------
+
+## Where Godot's own decoder wraps the loop (base.get_length() reads the Ogg's last granule, which
+## for field_loop.ogg says 30.600 s while the audio is 30.578 s, so compare real playback instead).
+func _loop_point(path: String) -> float:
+	var s: AudioStreamOggVorbis = load(path)
+	s.loop = true
+	var pb := s.instantiate_playback()
+	pb.start(0.0)
+	var mixed := 0
+	while pb.get_loop_count() == 0 and mixed < 44100 * 40:
+		pb.mix_audio(1.0, 256)
+		mixed += 256
+	return mixed / 44100.0 - pb.get_playback_position()
+
+
+func test_field_loop_layers_wrap_with_the_base_loop() -> void:
+	var base := _loop_point("res://assets/audio/music/field_loop.ogg")
+	assert_float(base).is_between(30.0, 31.0)
+	for i in range(1, 4):
+		var at := _loop_point("res://assets/audio/music/field_loop_layer_%d.ogg" % i)
+		assert_float(at).override_failure_message("layer %d wraps at %f, base at %f" % [i, at, base]) \
+				.is_equal_approx(base, 0.0005)
+
+
+func test_music_level_fades_the_layers_in_and_out() -> void:
+	Audio._music.stop()
+	Audio._track = ""
+	Audio.music("field_loop", 0.01)
+	await get_tree().create_timer(0.1).timeout   # the new track swaps in after the old one fades
+	var sync := Audio._music.stream as AudioStreamSynchronized
+	assert_object(sync).is_not_null()
+	assert_int(sync.stream_count).is_equal(4)
+	for i in range(1, 4):
+		assert_float(sync.get_sync_stream_volume(i)).is_equal(Audio.LAYER_OFF_DB)
+	# Tier 5 (main.gd: (tier - 1) / 2) = level 2: layers 1 and 2 up, 3 still silent.
+	Audio.music_level((5 - 1) / 2, 0.05)
+	await get_tree().create_timer(0.2).timeout
+	assert_float(sync.get_sync_stream_volume(1)).is_equal_approx(0.0, 0.01)
+	assert_float(sync.get_sync_stream_volume(2)).is_equal_approx(0.0, 0.01)
+	assert_float(sync.get_sync_stream_volume(3)).is_equal(Audio.LAYER_OFF_DB)
+	# The next kick (main.gd::_begin_kick) drops back to the base loop.
+	Audio.music_level(0, 0.05)
+	await get_tree().create_timer(0.2).timeout
+	for i in range(1, 4):
+		assert_float(sync.get_sync_stream_volume(i)).is_equal_approx(Audio.LAYER_OFF_DB, 0.01)
+	Audio._music.stop()
+	Audio._track = ""
+
+
+func test_a_level_asked_for_during_the_swap_is_kept() -> void:
+	Audio._music.stop()
+	Audio._track = ""
+	Audio.music("space_pad", 0.01)
+	await get_tree().create_timer(0.1).timeout
+	Audio.music("field_loop", 0.05)
+	Audio.music_level(3)   # a tier crossed while space_pad is still fading out
+	await get_tree().create_timer(0.3).timeout
+	var sync := Audio._music.stream as AudioStreamSynchronized
+	assert_object(sync).is_not_null()
+	for i in range(1, 4):
+		assert_float(sync.get_sync_stream_volume(i)).is_equal_approx(0.0, 0.01)
+	Audio._music.stop()
+	Audio._track = ""

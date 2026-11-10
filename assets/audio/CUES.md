@@ -71,9 +71,13 @@ later from Chatterbox.
 too (Upgrades lane). The **for Gameplay** cues are made ahead of the code that plays them; they
 are listed in `PENDING_DATA` in `tests/test_audio_cues.gd` until something calls them.
 
-## Music (drop-in spec, not made here)
+## Music
 
-The code already asks for these; until the files exist `Audio` warns once and stays quiet.
+`field_loop.ogg` and `space_pad.ogg` are ElevenLabs tracks (CREDITS). The three layers are
+synthesised by `assets/audio/tools/make_music_layers.py` on `field_loop.ogg`'s measured grid (120 BPM,
+first beat 0.032 s, C major, a 16 s chord loop; the Ogg header says 30.600 s but the audio, and Godot's
+loop point, is 30.578 s: the layers match the audio). Measured mixes: base -19.7 LUFS, + layer 1
+-19.1, + 2 -18.4, all -17.6 LUFS, peak -2.6 dBFS. Re-run the script if `field_loop.ogg` ever changes.
 
 | File | Called from | Length | Loop |
 | --- | --- | --- | --- |

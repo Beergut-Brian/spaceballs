@@ -27,6 +27,8 @@ var _layers := 0
 var _level := 0
 var _level_tween: Tween
 var _music_tween: Tween
+## A track waiting for the old one to fade out; music_level() before the swap is kept for it.
+var _pending: AudioStream
 const LAYER_OFF_DB := -60.0
 
 
@@ -133,10 +135,15 @@ func music(track: String, fade: float = 0.5) -> void:
 		_music_tween.kill()
 	_music_tween = create_tween()
 	var tw := _music_tween
+	_pending = stream
 	if _music.playing:
 		tw.tween_property(_music, "volume_db", -40.0, fade)
 	tw.tween_callback(func():
+		_pending = null
 		_music.stream = stream
+		if stream is AudioStreamSynchronized:
+			for i in range(1, _layers + 1):   # a level asked for during the fade-out
+				stream.set_sync_stream_volume(i, 0.0 if i <= _level else LAYER_OFF_DB)
 		_music.volume_db = -40.0
 		_music.play())
 	tw.tween_property(_music, "volume_db", 0.0, fade)
@@ -145,7 +152,7 @@ func music(track: String, fade: float = 0.5) -> void:
 ## Layered music: layers 1..level audible, the rest silent. No-op for a single-file track.
 func music_level(level: int, fade: float = 1.0) -> void:
 	level = clampi(level, 0, _layers)
-	if _layers == 0 or level == _level or not (_music.stream is AudioStreamSynchronized):
+	if _layers == 0 or level == _level or _pending != null or not (_music.stream is AudioStreamSynchronized):
 		_level = level
 		return
 	_level = level
