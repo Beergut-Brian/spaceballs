@@ -166,6 +166,16 @@ Both characters complete a run to space in 10 to 12 rounds, the frog curse works
 
 Versus or scoring between players; aiming the kick (it always goes up); online, more than two players, custom characters; persistent upgrades across runs (every run starts wimpy, that's the joke).
 
+## Playtest 2026-11-09 changes (Kaden; these supersede the sections above)
+
+Source: `playtests/2026-11-09.md`.
+
+- **Free movement (supersedes "Controls" steer row and the auto-approach in Pitch/Core loop):** "I really don't like that it forces you to the ball... I'd love to just be able to run around and then get to the ball when you're ready." The kicker runs freely on the field; the kick fires on its own when the player runs into their ball (still no kick button). The funny wind-up stays, starting when they reach the ball.
+- **Menus and ready-up (every game, from the template):** a main menu with a way back to the launcher, a pause menu with "back to the launcher", and a start screen where both players ready up before round 1.
+- **Upgrades change the play, not just the number (supersedes "power_mult only"):** "Like some shoes might make you run faster, or have some impact on the gameplay." Each upgrade has a visible effect (run speed, run-up, jump, kick style, ball behaviour) that explains the extra height.
+- **Gear is worn, not piled (supersedes "Upgrades stack visually: a walking pile"):** one item per body slot (head, face, back, hands, knees, feet, waist), fitted to the Jarling and following its animation. A new item in a slot replaces the old one; gear you already wear isn't offered again. Built as a shared equipment system in `openjar-characters`.
+- **Upgrade art gets a full redo** (card icons and gear): "The design of the upgrades is really poor though."
+
 ## Decisions made without Kaden
 
 - 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.
