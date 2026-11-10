@@ -23,9 +23,12 @@ const ORBIT_SHOW := 2.0
 const PICK_BEAT := 0.9
 ## Lobby shot: Jeff and Chuck stand this far behind and outside their tees (P2 mirrored), so
 ## each is in the middle of his spot with the ball at his inner side; the camera looks from in front.
-const LOBBY_STAND := Vector3(-0.6, 0, -0.9)
+const LOBBY_STAND := Vector3(-0.8, 0, -1.3)
 const LOBBY_CAMERA := Vector3(0, 1.5, 4.6)
 const LOBBY_LOOK := Vector3(0, 1.05, 0)
+## A kick starts only this close to the ball (flat metres). The kick zone's overlap list can be a
+## physics frame stale after a teleport (lobby -> spawn), which would kick on the round's first frame.
+const KICK_REACH := 1.7
 
 var _turn: TurnMarker
 var _confetti: CPUParticles2D
@@ -254,6 +257,9 @@ func windup_of(p: int) -> UpgradeData:
 
 func _on_kick_zone(body: Node3D, p: int) -> void:
 	if body != kickers[p] or Run.phase != Run.KICK_PHASE[p]:
+		return
+	var gap: Vector3 = body.global_position - balls[p].global_position
+	if Vector2(gap.x, gap.z).length() > KICK_REACH:
 		return
 	balls[p].arm(false)
 	Run.notify_kick_started(p)

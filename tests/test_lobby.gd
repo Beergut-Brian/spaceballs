@@ -310,6 +310,19 @@ func test_jeff_left_chuck_right_and_ready_cheers() -> void:
 	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
 
 
+## Jeff stands by his ball in the lobby; round 1 must not kick for him from the stale overlap.
+func test_round_one_waits_for_the_run_up() -> void:
+	_boot()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	Players.join_virtual(P1)
+	_lobby().hold_step(P1, true, Lobby.HOLD_TO_START)
+	_finish_countdown()
+	for i in 10:
+		await get_tree().physics_frame
+	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
+	assert_int(_main.kickers[P1].state).is_equal(Kicker.State.APPROACH)
+
 func test_end_card_a_goes_to_lobby_and_door_quits() -> void:
 	_play_two()
 	var card: Control = _main.get_node("UI/EndCard")
