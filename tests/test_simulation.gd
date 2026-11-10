@@ -7,6 +7,8 @@ extends GdUnitTestSuite
 const RunScript := preload("res://scripts/autoload/Run.gd")
 const RUNS := 400
 
+var last_mean_curses := 0.0
+
 
 ## policy: "random" picks any card (a five-year-old), "best" the highest power_mult.
 static func simulate(seed: int, players: Array, policy := "random") -> Dictionary:
@@ -35,7 +37,11 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 					for c in cards:
 						if c.power_mult > card.power_mult:
 							card = c
-				if card.is_curse():
+				assert(not card.is_curse(), "a curse was offered in a pick")
+				# Hidden curses: the picked card may turn out to be one.
+				var curse: UpgradeData = r.reveal_curse(p, rng)
+				if curse != null:
+					card = curse
 					curses[p] += 1
 				r.pick(p, card)
 			continue
@@ -85,8 +91,10 @@ func _check(label: String, players: Array, policy: String) -> Array:
 	var rounds: Array = []
 	var gaps: Array = []
 	var floored := 0
+	var curses: Array = []
 	for s in RUNS:
 		var res := simulate(s + 1, players, policy)
+		curses.append(res["curses"].values().reduce(func(a, b): return a + b, 0))
 		assert_bool(res["ended"]).override_failure_message("%s run %d never ended" % [label, s]).is_true()
 		for x in res["rounds"]:
 			assert_int(x).is_between(1, RunScript.MAX_ROUNDS)
@@ -96,6 +104,10 @@ func _check(label: String, players: Array, policy: String) -> Array:
 	print("\n[sim] %s, %d runs, %s picks: median %.1f, min %d, max %d\n%s" % [
 		label, RUNS, policy, median(rounds), rounds.min(), rounds.max(), histogram(rounds)])
 	print("[sim] kicks lifted to space by the round-15 floor: %d of %d player-runs" % [floored, rounds.size()])
+	var mean_curses: float = curses.reduce(func(a, b): return a + b, 0) / float(curses.size())
+	print("[sim] hidden curses per run: mean %.2f, median %.1f, max %d, runs with none: %d" % [
+		mean_curses, median(curses), curses.max(), curses.filter(func(c): return c == 0).size()])
+	last_mean_curses = mean_curses
 	if players.size() == 2:
 		print("[sim] max tier gap after round 6: median %.1f, worst %d, runs with gap > 2: %d" % [
 			median(gaps), gaps.max(), gaps.filter(func(g): return g > 2).size()])
@@ -111,6 +123,8 @@ func test_single_player_random_picks() -> void:
 func test_two_players_random_picks() -> void:
 	var rounds := _check("2P", [0, 1], "random")
 	assert_float(median(rounds)).is_between(10.0, 12.0)
+	# Kaden: "in an average game, let's have two curse cards come up" (both players together).
+	assert_float(last_mean_curses).is_between(1.7, 2.3)
 
 
 func test_best_picks_are_faster_but_capped() -> void:

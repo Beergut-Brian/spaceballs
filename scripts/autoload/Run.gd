@@ -30,7 +30,14 @@ const MAX_ROUNDS := 15
 const STRONG_ONLY_AFTER := 14
 const QUALITY_MIN := 0.8
 const QUALITY_MAX := 1.2
-const KIND_ODDS := { "normal": 0.60, "strong": 0.20, "joke": 0.12, "curse": 0.08 }
+## Card odds per slot. Curses are never offered (playtest 2026-11-09 #2): they hide behind a pick.
+const KIND_ODDS := { "normal": 0.65, "strong": 0.22, "joke": 0.13 }
+## Hidden curses: after a pick, the card turns out to be a curse this often (data/BALANCE.md),
+## about two per run with both players. Never on the first pick, never for a player who is
+## behind (catch-up), never twice in a row, at most CURSE_MAX per player, none in strong-only rounds.
+const CURSE_REVEAL_ODDS := 0.14
+const CURSE_MAX := 2
+const CURSE_FROM_ROUND := 2
 const CATCH_UP_TIERS := 2
 const CATCH_UP_MIN_MULT := 1.7
 const CATCH_UP_STRONG_ODDS := 0.6
@@ -63,6 +70,7 @@ var _active_curse := {}
 var _best := {}
 var _last := {}
 var _picked := {}
+var _curses := {}
 
 
 func _init() -> void:
@@ -227,7 +235,39 @@ func draw_cards(player: int, with_rng: RandomNumberGenerator = null) -> Array[Up
 	return cards
 
 
+## After `player` picks a card: the curse it secretly was, or null (it was what it said).
+## The pick UI flips the card to show it, then calls pick(player, curse).
+func reveal_curse(player: int, with_rng: RandomNumberGenerator = null) -> UpgradeData:
+	_ensure_data()
+	var r := with_rng if with_rng else rng
+	if not rolls_curse(round_index, catch_up_for(player), curses_of(player), curse_of(player) != null, r):
+		return null
+	return pick_curse(pool, round_index, r)
+
+
+## Curses this player has had this run.
+func curses_of(player: int) -> int:
+	return _curses.get(player, 0)
+
+
 # --- draw rules (static so tests and the simulation share them) ------------
+
+## r_index: the round just played (the pick feeds round r_index + 1).
+static func curse_allowed(r_index: int, catch_up: bool, so_far: int, cursed_now: bool) -> bool:
+	return r_index >= CURSE_FROM_ROUND and r_index + 1 < STRONG_ONLY_AFTER and not catch_up \
+			and so_far < CURSE_MAX and not cursed_now
+
+
+static func rolls_curse(r_index: int, catch_up: bool, so_far: int, cursed_now: bool,
+		r: RandomNumberGenerator) -> bool:
+	return curse_allowed(r_index, catch_up, so_far, cursed_now) and r.randf() < CURSE_REVEAL_ODDS
+
+
+static func pick_curse(all: Array[UpgradeData], r_index: int, r: RandomNumberGenerator) -> UpgradeData:
+	var from: Array[UpgradeData] = []
+	from.assign(all.filter(func(c: UpgradeData) -> bool: return c.is_curse()))
+	return _pick_card(from, "curse", band_for_round(r_index), [], false, r)
+
 
 static func band_for_round(r: int) -> int:
 	return 1 if r <= 4 else (2 if r <= 8 else 3)
@@ -242,11 +282,11 @@ static func roll_kind(r: RandomNumberGenerator) -> String:
 	return "normal"
 
 
-## `owned`: the player's gear. Never offered again (curses can repeat).
+## `owned`: the player's gear. Never offered again. Curses are never offered (see reveal_curse).
 static func draw_from(all: Array[UpgradeData], r_index: int, catch_up: bool,
 		r: RandomNumberGenerator, owned: Array[UpgradeData] = []) -> Array[UpgradeData]:
 	var from: Array[UpgradeData] = []
-	from.assign(all.filter(func(c: UpgradeData) -> bool: return c.is_curse() or not owned.has(c)))
+	from.assign(all.filter(func(c: UpgradeData) -> bool: return not c.is_curse() and not owned.has(c)))
 	var band := band_for_round(r_index)
 	var out: Array[UpgradeData] = []
 	var strong_only := r_index >= STRONG_ONLY_AFTER
@@ -270,11 +310,7 @@ static func draw_from(all: Array[UpgradeData], r_index: int, catch_up: bool,
 		if normal != null and out.is_empty():
 			out.append(normal)
 		elif normal != null:
-			var slot := r.randi() % out.size()
-			for i in out.size():
-				if out[i].kind == "curse":
-					slot = i
-			out[slot] = normal
+			out[r.randi() % out.size()] = normal
 	return out
 
 
@@ -330,6 +366,7 @@ func pick(player: int, upgrade: UpgradeData) -> void:
 		return
 	if upgrade.is_curse():
 		_pending_curse[player] = upgrade
+		_curses[player] = curses_of(player) + 1
 	else:
 		_upgrades[player].append(upgrade)
 	_picked[player] = true
@@ -492,6 +529,7 @@ func _clear() -> void:
 		_best[p] = 0.0
 		_last[p] = 0.0
 		_picked[p] = false
+		_curses[p] = 0
 	round_index = 0
 
 

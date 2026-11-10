@@ -202,14 +202,55 @@ func test_every_draw_before_14_has_a_normal_card() -> void:
 		assert_bool(ids[0] != ids[1] and ids[1] != ids[2] and ids[0] != ids[2]).is_true()
 
 
-func test_curse_odds_roughly_eight_percent() -> void:
+func test_kind_odds_never_roll_a_curse() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	var counts := {"normal": 0, "strong": 0, "joke": 0, "curse": 0}
 	for i in 20000:
 		counts[RunScript.roll_kind(rng)] += 1
-	assert_float(counts["curse"] / 20000.0).is_between(0.07, 0.09)
-	assert_float(counts["normal"] / 20000.0).is_between(0.58, 0.62)
+	assert_int(counts["curse"]).is_equal(0)
+	assert_float(counts["normal"] / 20000.0).is_between(0.63, 0.67)
+
+
+## Playtest 2026-11-09 #2: curses are never offered; they hide behind a pick instead.
+func test_curses_never_offered_in_a_pick() -> void:
+	var r: Node = RunScript.new()
+	r._ensure_data()
+	var rng := RandomNumberGenerator.new()
+	for s in 3000:
+		rng.seed = s
+		for c in RunScript.draw_from(r.pool, 1 + s % 15, s % 4 == 0, rng):
+			assert_bool(c.is_curse()).override_failure_message("offered %s" % c.id).is_false()
+	r.free()
+
+
+func test_hidden_curse_rules() -> void:
+	# Never on the first pick, for a player who is behind, twice in a row, past the cap,
+	# or in the strong-only rounds; otherwise allowed.
+	assert_bool(RunScript.curse_allowed(1, false, 0, false)).is_false()
+	assert_bool(RunScript.curse_allowed(2, false, 0, false)).is_true()
+	assert_bool(RunScript.curse_allowed(5, true, 0, false)).is_false()
+	assert_bool(RunScript.curse_allowed(5, false, 0, true)).is_false()
+	assert_bool(RunScript.curse_allowed(5, false, RunScript.CURSE_MAX, false)).is_false()
+	assert_bool(RunScript.curse_allowed(RunScript.STRONG_ONLY_AFTER - 1, false, 0, false)).is_false()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	var hits := 0
+	for i in 20000:
+		hits += 1 if RunScript.rolls_curse(5, false, 0, false, rng) else 0
+	assert_float(hits / 20000.0).is_between(RunScript.CURSE_REVEAL_ODDS - 0.01, RunScript.CURSE_REVEAL_ODDS + 0.01)
+
+
+func test_reveal_gives_a_curse_from_the_band() -> void:
+	var r: Node = RunScript.new()
+	r._ensure_data()
+	var rng := RandomNumberGenerator.new()
+	for s in 200:
+		rng.seed = s
+		var c: UpgradeData = RunScript.pick_curse(r.pool, 3, rng)
+		assert_bool(c.is_curse()).is_true()
+		assert_int(c.tier).is_less_equal(RunScript.band_for_round(3))
+	r.free()
 
 
 func test_strong_only_after_round_14() -> void:
