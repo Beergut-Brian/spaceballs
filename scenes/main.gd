@@ -21,8 +21,9 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 const ORBIT_SHOW := 2.0
 ## After the last card is picked, the split screen stays this long so the item is seen landing.
 const PICK_BEAT := 0.9
-## Lobby shot: Jeff and Chuck stand this far behind their tees, the camera this far in front.
-const LOBBY_STAND := Vector3(0, 0, -0.9)
+## Lobby shot: Jeff and Chuck stand this far behind and outside their tees (P2 mirrored), so
+## each is in the middle of his spot with the ball at his inner side; the camera looks from in front.
+const LOBBY_STAND := Vector3(-0.6, 0, -0.9)
 const LOBBY_CAMERA := Vector3(0, 1.5, 4.6)
 const LOBBY_LOOK := Vector3(0, 1.05, 0)
 
@@ -148,7 +149,8 @@ func _layout_lobby() -> void:
 		balls[p].arm(false)
 		balls[p].visible = true
 		balls[p].place_on_tee(_marker("Tees", p))
-		_place(p, _marker("Tees", p) + LOBBY_STAND, field.global_position + cam_at)
+		var stand := LOBBY_STAND * Vector3(1 if p == P1 else -1, 1, 1)
+		_place(p, _marker("Tees", p) + stand, field.global_position + cam_at)
 		k.set_idle()
 	rig.hold_peak()   # a still shot: the rig leaves the camera alone
 	rig.camera.global_position = field.global_position + cam_at
