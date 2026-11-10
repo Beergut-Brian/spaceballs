@@ -627,9 +627,20 @@ signal mode_changed(mode: Mode)
   the halves to show), `frame(player, target, from)` points a half's camera, `close()`,
   `signal picked(player, upgrade)`, `signal closed()`. Halves: `Halves/P1`, `Halves/P2`, each with
   `View/SubViewport/Camera3D` and `Cards/Card1..3`. Never times out.
-- `scenes/ui/hud.tscn`: `Strip/Blocks` (8 tier blocks, top = space), `Strip/Markers/P1|P2`, `Strip/BestFlag`,
-  `Rounds` (ball stack), `RestartHint`. `track(player, ball)` makes a marker follow a flying ball.
+- `scenes/ui/hud.tscn`: `Strip/Blocks` (8 `TierIcon` blocks, top = space), `Strip/Markers/P1|P2`, `Strip/BestFlag`,
+  `Rounds` (ball stack), `RestartHint`, `Stamp`. `track(player, ball)` makes a marker follow a flying ball.
+  `show_stamp(player, tier)` (also on every `Run.ball_stopped` while the HUD shows): the tier's badge
+  slams in at the top, ~1.4 s. The best flag rides up with a ball that beats `Save` `best_height`.
+- `TierIcon` (`scenes/ui/tier_icon.gd`, `Control`): `tier_id` (a `TierData.id`), `bg`, `round_badge`,
+  `ring`; draws the tier's landmark picture. `TierIcon.has_picture(id)`.
+- `SlowMo` (`scripts/gameplay/slow_mo.gd`, child of main): `trigger()` = `Engine.time_scale` x0.25 for
+  0.5 real s (overlaps extend; leaving the tree restores); `SlowMo.wants(tier, cursed)` = tier >= 7, uncursed.
+- `main.gd`: `frog_kiss(player, scene)` (await, ~1.3 s; the pick runs it after a Kiss the Frog reveal),
+  `visitor` (the waving saucer at an orbit moment, or null).
 - `scenes/ui/end_card.tscn`: `open()`, `close()`, `signal restart_requested()` (A, after 1.2 s).
+  `open()` builds `shelves` (player -> GridContainer, a tile per `Run.upgrades_of(player)`, meta
+  `upgrade_id`) and `collection` (GridContainer, a badge per `Run.pool` card, meta `seen` from `Save`
+  `upgrades_seen`, which `Run` fills on every draw and every revealed curse).
   Two icon buttons: A on the big one (focused) goes back to the lobby (`Game.to_lobby()`), the door
   (stick right, A) to the launcher (`Game.quit()`); `--demo` skips the lobby and restarts straight away.
 - Lobby (`UI/Lobby`, template Showtime kit): skinned by `data/menu_skin.tres` (title, colours,
