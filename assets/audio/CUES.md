@@ -91,3 +91,20 @@ The code already asks for these; until the files exist `Audio` warns once and st
   q5 (`ffmpeg -i in.wav -c:a libvorbis -q:a 5 out.ogg`). Base + all layers together at about
   -20 LUFS integrated (music sits under the -16 LUFS SFX), true peak <= -1 dBTP.
 - With just `field_loop.ogg` (no layers) everything still works; the layers simply never appear.
+
+Sky objects (Sky lane, `scenes/sky/`, `SkyObject.cue` / `near_cue`): the ball bumps into things on the way up.
+
+| Cue (`Audio.play`) | Files | Plays when | Sounds like |
+| --- | --- | --- | --- |
+| sky_pop | sfx/sky_pop_1..2.ogg | the ball pops a balloon (party balloons, lost bunch; weather balloon at pitch 0.7), once per balloon, rising | rubber crack, puff of air, paper bits, a glock ping |
+| sky_bonk | sfx/sky_bonk.ogg | the ball bonks a plane or jet (jet at 0.85); the moon at 0.55 | hollow tin bonk with a wobble, then a cross little "hey!" |
+| sky_flutter | sfx/sky_flutter.ogg | birds, pigeons or a flock scatter | wing flaps thinning out, three panicky tweets |
+| sky_boing | sfx/sky_boing.ogg | a soft bounce: the bouncy cloud, hot-air balloon (0.8), blimp (0.6) | low cushiony sprung boing and a puff of air |
+| sky_twang | sfx/sky_twang.ogg | the ball snags a kite string and the kite whirls round | rubbery string twang, then fwip-fwip-fwip |
+| sky_ping | sfx/sky_ping.ogg | the satellite (or a comet, 1.4) gets hit | bright sonar ping with a shimmer |
+| sky_catch | sfx/sky_catch.ogg | the saucer's alien catches the ball and tosses it back up | beam "vwoom", then a rising "wheee!" |
+| sky_flap | sfx/sky_flap.ogg | the ball snags the flying laundry | wet cloth fwap, a flap, a peg flicking off |
+
+Reused for sky objects: `gag_rooftops` (the chimney cat, hit 1.25, startled 1.1), `squawk` (a bird
+or pigeons startled as the ball goes by), `squeak` (the squirrel), `cheer` (the hot-air balloon's
+rider, 1.4), `gag_space` (the saucer's alien as the ball goes by), `whoosh` (a comet close by).

@@ -1,0 +1,159 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/sky/sky_object.gd" id="1_lm44l"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_whhlx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcrig"]
+albedo_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_385ii"]
+radius = 0.75
+height = 1.5
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_jtp6e"]
+radius = 0.55
+height = 1.1
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_0hvsy"]
+radius = 0.58
+height = 1.16
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_ti1s3"]
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_v8jsu"]
+radius = 0.48
+height = 0.96
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_rxcrw"]
+radius = 0.6
+height = 1.2
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_56eph"]
+albedo_color = Color(0.039215688, 0.039215688, 0.078431375, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_r8j37"]
+radius = 0.088
+height = 0.176
+radial_segments = 32
+rings = 16
+
+[sub_resource type="TorusMesh" id="TorusMesh_esb0x"]
+inner_radius = 0.154
+outer_radius = 0.198
+rings = 32
+ring_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xyb8n"]
+albedo_color = Color(0.99215686, 0.64705884, 0.9078431, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_gkvgo"]
+radius = 0.08
+height = 0.16
+radial_segments = 32
+rings = 16
+
+[node name="BounceCloud" type="Node3D" unique_id=1218348018]
+script = ExtResource("1_lm44l")
+reaction = 3
+cue = &"sky_boing"
+push = 4.0
+hold = 0.2
+shake = 0.06
+puff_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
+
+[node name="Gag" type="Node3D" parent="." unique_id=68472216]
+
+[node name="Bob" type="Node3D" parent="Gag" unique_id=731962512]
+script = ExtResource("2_whhlx")
+amount = 0.1
+speed = 0.4
+
+[node name="Puff0" type="MeshInstance3D" parent="Gag/Bob" unique_id=693721990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_385ii")
+
+[node name="Puff1" type="MeshInstance3D" parent="Gag/Bob" unique_id=1542625874]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.05, 0)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_jtp6e")
+
+[node name="Puff2" type="MeshInstance3D" parent="Gag/Bob" unique_id=1314522388]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.05, 0.05)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_0hvsy")
+
+[node name="Puff3" type="MeshInstance3D" parent="Gag/Bob" unique_id=674500196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.45, -0.1)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ti1s3")
+
+[node name="Puff4" type="MeshInstance3D" parent="Gag/Bob" unique_id=1754344053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.4, -0.1)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_v8jsu")
+
+[node name="Puff5" type="MeshInstance3D" parent="Gag/Bob" unique_id=248052771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0.2)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_rxcrw")
+
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1808304639]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19800001, 0.16000001, 0.78)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_r8j37")
+
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bob" unique_id=674918008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19800001, 0.16000001, 0.78)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_r8j37")
+
+[node name="Smile" type="MeshInstance3D" parent="Gag/Bob" unique_id=1361090563]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -0.5, 0, 1, -2.1855694e-08, 0, -0.015999999, 0.78)
+material_override = SubResource("StandardMaterial3D_56eph")
+cast_shadow = 0
+mesh = SubResource("TorusMesh_esb0x")
+
+[node name="CheekL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1558711745]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 0.4, -0.32, -0.05, 0.7)
+material_override = SubResource("StandardMaterial3D_xyb8n")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_gkvgo")
+
+[node name="CheekR" type="MeshInstance3D" parent="Gag/Bob" unique_id=230129837]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 0.4, 0.32, -0.05, 0.7)
+material_override = SubResource("StandardMaterial3D_xyb8n")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_gkvgo")

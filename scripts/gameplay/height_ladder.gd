@@ -10,6 +10,10 @@ var _tiers: TierSet
 
 func _ready() -> void:
 	_tiers = load(Run.TIERS_PATH)
+	# The busy sky: objects along each flight that the ball bumps into (Sky lane).
+	var sky := SkyField.new()
+	sky.name = "SkyField"
+	add_child(sky)
 	for i in range(1, _tiers.tiers.size()):
 		var t: TierData = _tiers.tiers[i]
 		var y := TierSet.visual_y(t.threshold)

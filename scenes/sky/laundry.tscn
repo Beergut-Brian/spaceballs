@@ -1,0 +1,170 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/sky/sky_object.gd" id="1_bnldq"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_prv4y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_txgin"]
+albedo_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pmkyb"]
+top_radius = 0.015
+bottom_radius = 0.015
+height = 2.2
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4gvq8"]
+albedo_color = Color(0.21960784, 0.7764706, 1, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_pehwl"]
+size = Vector3(0.55, 0.6, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mopq3"]
+size = Vector3(0.28, 0.2, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l8bb2"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_pc8cs"]
+radius = 0.1
+height = 0.2
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bcrig"]
+albedo_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_oj6l5"]
+size = Vector3(0.18, 0.4, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ylki8"]
+size = Vector3(0.32, 0.15, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8c8y6"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_qemfm"]
+size = Vector3(0.19, 0.07, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgkp8"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.7
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_igh5p"]
+size = Vector3(0.06, 0.14, 0.06)
+
+[node name="Laundry" type="Node3D" unique_id=391369930]
+script = ExtResource("1_bnldq")
+reaction = 4
+cue = &"sky_flap"
+hit_radius = 0.8
+push = 2.0
+hold = 0.12
+spin = 20.0
+shake = 0.04
+
+[node name="Gag" type="Node3D" parent="." unique_id=560231792]
+
+[node name="Line" type="Node3D" parent="Gag" unique_id=708958079]
+script = ExtResource("2_prv4y")
+mode = 7
+amount = 0.12
+speed = 0.8
+axis = Vector3(1, 0, 0)
+
+[node name="Rope" type="MeshInstance3D" parent="Gag/Line" unique_id=663389297]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0.4, 0)
+material_override = SubResource("StandardMaterial3D_txgin")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_pmkyb")
+
+[node name="Shirt" type="Node3D" parent="Gag/Line" unique_id=975955389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.4, 0)
+script = ExtResource("2_prv4y")
+mode = 7
+amount = 0.25
+speed = 1.6
+axis = Vector3(1, 0, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=862238256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pehwl")
+
+[node name="SleeveL" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=263621780]
+transform = Transform3D(0.87758255, -0.47942555, 0, 0.47942555, 0.87758255, 0, 0, 0, 1, -0.38, -0.15, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_mopq3")
+
+[node name="SleeveR" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=873003843]
+transform = Transform3D(0.87758255, 0.47942555, 0, -0.47942555, 0.87758255, 0, 0, 0, 1, 0.38, -0.15, 0)
+material_override = SubResource("StandardMaterial3D_4gvq8")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_mopq3")
+
+[node name="Spot" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=1495084428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, 0, -0.32, 0.03)
+material_override = SubResource("StandardMaterial3D_l8bb2")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_pc8cs")
+
+[node name="Sock" type="Node3D" parent="Gag/Line" unique_id=1327644570]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.4, 0)
+script = ExtResource("2_prv4y")
+mode = 7
+amount = 0.35
+speed = 1.9
+axis = Vector3(1, 0, 0)
+phase = 0.3
+
+[node name="Leg" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=519262960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_oj6l5")
+
+[node name="Foot" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=787132362]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, -0.45, 0)
+material_override = SubResource("StandardMaterial3D_bcrig")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ylki8")
+
+[node name="Stripe" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=892088132]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0.01)
+material_override = SubResource("StandardMaterial3D_8c8y6")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_qemfm")
+
+[node name="Peg-0_35" type="MeshInstance3D" parent="Gag/Line" unique_id=58587200]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.42, 0.02)
+material_override = SubResource("StandardMaterial3D_dgkp8")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_igh5p")
+
+[node name="Peg0_45" type="MeshInstance3D" parent="Gag/Line" unique_id=2122493774]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.42, 0.02)
+material_override = SubResource("StandardMaterial3D_dgkp8")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_igh5p")

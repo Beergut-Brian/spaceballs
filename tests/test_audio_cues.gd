@@ -96,6 +96,14 @@ func _all_cues() -> Dictionary:
 		var u := load("res://data/upgrades/" + f.trim_suffix(".remap")) as UpgradeData
 		if u and u.kick_sfx != &"":
 			cues[String(u.kick_sfx)] = true
+	var sky := load("res://data/sky.tres") as SkySet   # sky objects' cues (scenes/sky/, Sky lane)
+	for t in sky.tiers:
+		for e in t.entries:
+			var o := e.scene.instantiate()
+			for key in [&"cue", &"near_cue"]:
+				if o.get(key) != &"":
+					cues[String(o.get(key))] = true
+			o.free()
 	return cues
 
 
