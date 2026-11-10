@@ -172,8 +172,11 @@ func _draw() -> void:
 		UiStyle.draw_show(self, Vector2(nx + 64, cy), "JOIN", 58, Color(UiStyle.CREAM, pulse))
 	else:
 		var name_x := nx + (40.0 if can_change else 0.0)
-		var size_n := int(62 * (1.0 + 0.18 * _pop))
-		var w := UiStyle.draw_show(self, Vector2(name_x, cy), UiStyle.skin().player_name(player), size_n, Color.WHITE)
+		var who := UiStyle.skin().player_name(player)
+		# A long name shrinks to fit between the arrows (and inside the plate).
+		var base := fit_size(who, plate.end.x - name_x - (64.0 if can_change else 20.0), 62)
+		var size_n := int(base * (1.0 + 0.18 * _pop))
+		var w := UiStyle.draw_show(self, Vector2(name_x, cy), who, size_n, Color.WHITE)
 		if can_change:
 			_arrow(Vector2(nx + 12, cy), -1, _kick[-1])
 			_arrow(Vector2(minf(name_x + w + 30, plate.end.x - 30), cy), 1, _kick[1])
@@ -184,6 +187,12 @@ func _draw() -> void:
 		_tag(Vector2(plate.end.x - UiStyle.rich_width(tag_text, UiStyle.Role.HINT, 28) - 50, PLATE_Y - 40), tag_text)
 	if readied:
 		_draw_stamp(Vector2(plate.end.x - 50, PLATE_Y - 14))
+
+
+## The name's font size: `base`, or smaller so `text` fits in `avail` px (never below 28).
+static func fit_size(text: String, avail: float, base: int) -> int:
+	var w := UiStyle.show_font(800).get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, base).x
+	return base if w <= avail else maxi(28, int(base * avail / w))
 
 
 ## A small dark tag above the plate.

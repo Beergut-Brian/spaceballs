@@ -247,3 +247,16 @@ func test_the_stand_in_never_ships() -> void:
 	assert_str(roster).not_contains("standin")
 	for p in ["res://scenes/main.tscn", "res://data/menu_skin.tres", "res://scenes/players/jarling_kicker.tscn"]:
 		assert_str(FileAccess.get_file_as_string(p)).not_contains("tests/")
+
+
+func test_a_long_name_fits_the_plate() -> void:
+	const Spot := preload("res://scenes/ui/lobby_spot.gd")
+	_roster(["--p1-char=standin"])
+	var main := _boot()
+	await await_idle_frame()
+	var spot: Control = main.get_node("UI/Lobby/Spots/P1")
+	var avail: float = spot.size.x - 70.0 + 10.0 - (10.0 + 112.0 + 24.0 + 40.0) - 64.0   # plate end - name_x - arrow
+	assert_int(Spot.fit_size("JEFF", avail, 62)).is_equal(62)
+	var s := Spot.fit_size("STAND-IN", avail, 62)
+	assert_int(s).is_less(62)
+	assert_float(UiStyle.show_font(800).get_string_size("STAND-IN", HORIZONTAL_ALIGNMENT_LEFT, -1, s).x).is_less_equal(avail)
