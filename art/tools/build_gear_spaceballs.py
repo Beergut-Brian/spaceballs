@@ -645,7 +645,7 @@ def sausage(p0, p1, r, m):
 
 @item("Balloon Animal", ["hand_l"])
 def balloon_animal_ball(n, side, s):
-    # A balloon dog floating on a short string, clear of the body.
+    # A balloon dog on a short string, out in front of the hand: anything offset sideways swings across the face in the cheer.
     m = mat("pink", 0.15)
     b = lambda p0, p1, r=0.03: sausage(p0, p1, r, m)
     dog = [b((0, 0.085, 0), (0, -0.085, 0), 0.04), b((0, -0.078, 0.01), (0, -0.098, 0.125)), b((0, -0.07, 0.135), (0, -0.215, 0.11), 0.037),
@@ -654,9 +654,9 @@ def balloon_animal_ball(n, side, s):
     for x in (-1, 1):
         dog += [b((x * 0.03, -0.08, 0.0), (x * 0.046, -0.092, -0.125), 0.029), b((x * 0.03, 0.08, 0.0), (x * 0.046, 0.092, -0.125), 0.029),
                 b((x * 0.02, -0.088, 0.135), (x * 0.058, -0.062, 0.235), 0.027)]
-    at, rot = (s * 0.19, -0.12, 0.12), R(0, 0, s * 30)
-    obj("balloon_dog", group(dog, at, rot, 1.15) + [(tube([(0, 0, 0.03), (s * 0.07, -0.04, 0.05), (s * 0.17, -0.11, 0.08)], 0.005, sm=4), mat("white"))], n)
-    obj("trim_balloon", group([(loop((0, -0.09, 0.075), 0.034, 0.034, 0.01, rot=R(-10)), GOLD())], at, rot, 1.15), n)
+    at, rot = (s * 0.04, -0.19, 0.03), R(0, 0, s * 30)
+    obj("balloon_dog", group(dog, at, rot, 1.0) + [(tube([(0, 0, 0.03), (s * 0.015, -0.08, 0.02), (s * 0.04, -0.17, 0.0)], 0.005, sm=4), mat("white"))], n)
+    obj("trim_balloon", group([(loop((0, -0.09, 0.075), 0.034, 0.034, 0.01, rot=R(-10)), GOLD())], at, rot, 1.0), n)
 
 
 @item("Power Gloves", HANDS, HANDS, level_up={"max": 3, "scale_step": 0.08})
