@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scenes/ui/upgrade_card.gd" id="1_card"]
 
 [sub_resource type="StyleBoxFlat" id="card_style"]
-bg_color = Color(1, 0.98, 0.93, 1)
+bg_color = Color(0.933, 0.973, 1, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -13,15 +13,15 @@ corner_radius_top_left = 28
 corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
-content_margin_left = 24.0
-content_margin_top = 24.0
-content_margin_right = 24.0
-content_margin_bottom = 24.0
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
 shadow_color = Color(0, 0, 0, 0.25)
 shadow_size = 8
 
 [node name="Card" type="PanelContainer"]
-custom_minimum_size = Vector2(240, 300)
+custom_minimum_size = Vector2(264, 300)
 theme_override_styles/panel = SubResource("card_style")
 script = ExtResource("1_card")
 
