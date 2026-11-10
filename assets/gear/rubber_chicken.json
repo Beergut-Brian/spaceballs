@@ -1,0 +1,14 @@
+{
+  "id": "rubber_chicken",
+  "name": "Rubber Chicken",
+  "slots": [
+    "hand_l"
+  ],
+  "scene": "rubber_chicken.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

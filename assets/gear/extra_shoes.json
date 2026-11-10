@@ -1,0 +1,18 @@
+{
+  "id": "extra_shoes",
+  "name": "Extra Shoes",
+  "slots": [
+    "foot_l",
+    "foot_r"
+  ],
+  "scene": "extra_shoes.glb",
+  "replaces_body_part": [
+    "foot_l",
+    "foot_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

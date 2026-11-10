@@ -1,0 +1,14 @@
+{
+  "id": "duck_floatie",
+  "name": "Duck Floatie",
+  "slots": [
+    "waist"
+  ],
+  "scene": "duck_floatie.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

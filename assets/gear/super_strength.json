@@ -1,0 +1,18 @@
+{
+  "id": "super_strength",
+  "name": "Power Gloves",
+  "slots": [
+    "hand_l",
+    "hand_r"
+  ],
+  "scene": "super_strength.glb",
+  "replaces_body_part": [
+    "hand_l",
+    "hand_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.08
+  }
+}

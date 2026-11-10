@@ -1,0 +1,16 @@
+{
+  "id": "giant_foot",
+  "name": "Giant Foot",
+  "slots": [
+    "foot_r"
+  ],
+  "scene": "giant_foot.glb",
+  "replaces_body_part": [
+    "foot_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.1
+  }
+}

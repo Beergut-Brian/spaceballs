@@ -44,6 +44,8 @@ func test_every_sfx_file_is_used() -> void:
 	for c in PENDING_DATA:
 		cues[c] = true
 	cues.merge(_piece_gag_cues())
+	for id in Kicker.GEAR_CUES:   # worn gear's kick sounds (kicker.gd)
+		cues[Kicker.GEAR_CUES[id][0]] = true
 	var re := RegEx.create_from_string("^(.+)_\\d+$")
 	for f in DirAccess.get_files_at(Audio.SFX_DIR):
 		if not f.ends_with(".ogg"):

@@ -1,0 +1,14 @@
+{
+  "id": "running_start",
+  "name": "Running Start",
+  "slots": [
+    "waist"
+  ],
+  "scene": "running_start.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

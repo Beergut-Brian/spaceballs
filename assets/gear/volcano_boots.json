@@ -1,0 +1,18 @@
+{
+  "id": "volcano_boots",
+  "name": "Volcano Boots",
+  "slots": [
+    "foot_l",
+    "foot_r"
+  ],
+  "scene": "volcano_boots.glb",
+  "replaces_body_part": [
+    "foot_l",
+    "foot_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

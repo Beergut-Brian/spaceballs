@@ -1,0 +1,16 @@
+{
+  "id": "propeller_cap",
+  "name": "Propeller Cap",
+  "slots": [
+    "head"
+  ],
+  "scene": "propeller_cap.glb",
+  "replaces_body_part": [
+    "headwear"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}
