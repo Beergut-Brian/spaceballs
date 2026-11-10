@@ -36,7 +36,7 @@ var effects: Array[StringName] = []
 ## Floaty (Helium Ball, Moon Gravity): this much gravity, a longer arc and a longer hang at the top.
 const FLOAT_GRAVITY := 0.4
 const TRAIL_COLOR := {
-	&"rocket": Color(1.0, 0.55, 0.15), &"sparkle": Color(1.0, 0.95, 0.5), &"floaty": Color(1.0, 0.8, 0.95),
+	&"rocket": Color(1.0, 0.3, 0.05), &"sparkle": Color(1.0, 0.95, 0.5), &"floaty": Color(1.0, 0.45, 0.8),
 	&"curve": Color(0.75, 0.9, 1.0),
 }
 var _trail_t := 0.0

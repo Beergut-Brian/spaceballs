@@ -25,6 +25,8 @@ const PICK_BEAT := 0.9
 var _title_t := 0.0
 var _turn: TurnMarker
 var _confetti: CPUParticles2D
+## -- --gear=a,b (P1) / --gear2=c (P2): start every run wearing these (playtests, screenshots).
+var _gear := {P1: [], P2: []}
 
 
 func _ready() -> void:
@@ -60,6 +62,9 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--demo":
 			Run.demo = true
+		elif arg.begins_with("--gear=") or arg.begins_with("--gear2="):
+			var who := P2 if arg.begins_with("--gear2=") else P1
+			_gear[who] = Array(arg.get_slice("=", 1).split(",", false))
 		elif arg.begins_with("--timescale="):
 			Engine.time_scale = clampf(float(arg.trim_prefix("--timescale=")), 0.1, 8.0)
 	if Run.demo:
@@ -121,6 +126,12 @@ func _on_run_started() -> void:
 		kickers[p].set_space_suit(false)
 		kickers[p].dance(false)
 		balls[p].place_on_tee(_marker("Tees", p))
+		for id in _gear[p]:
+			var u := Run.upgrade_by_id(StringName(id))
+			if u:
+				Run.give(p, u)
+				kickers[p].add_upgrade_visual(u)
+		kickers[p].apply_effects(Run.effects_of(p))
 
 
 func _on_phase_changed(from: int, to: int) -> void:

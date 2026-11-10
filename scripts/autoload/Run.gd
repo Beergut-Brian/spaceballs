@@ -338,6 +338,20 @@ func pick(player: int, upgrade: UpgradeData) -> void:
 		_advance_round()
 
 
+## Debug / playtest (`-- --gear=<ids>`): wear an upgrade from the start, no pick needed.
+func give(player: int, upgrade: UpgradeData) -> void:
+	if upgrade != null and not upgrade.is_curse() and not _upgrades[player].has(upgrade):
+		_upgrades[player].append(upgrade)
+
+
+func upgrade_by_id(id: StringName) -> UpgradeData:
+	_ensure_data()
+	for u in pool:
+		if u.id == id:
+			return u
+	return null
+
+
 ## players: who plays from round 1. Empty = P1, plus P2 if a pad is joined.
 func start_run(players: Array = []) -> void:
 	_requested = players

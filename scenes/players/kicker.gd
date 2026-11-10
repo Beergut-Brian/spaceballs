@@ -28,7 +28,7 @@ const SFX_DIR := "res://assets/audio/sfx/"
 const RUNUP_WINDOW := 1.2
 ## Colours of the running trails (run_fx).
 const RUN_FX_COLOR := {
-	&"flame": Color(1.0, 0.55, 0.15), &"wind": Color(0.8, 0.95, 1.0), &"sparkle": Color(1.0, 0.95, 0.5),
+	&"flame": Color(1.0, 0.3, 0.05), &"wind": Color(0.8, 0.95, 1.0), &"sparkle": Color(1.0, 0.95, 0.5),
 }
 
 @export var player: int = Players.P1
@@ -441,8 +441,11 @@ func _run_fx(delta: float, speed01: float) -> void:
 	for k: StringName in kinds:
 		match k:
 			&"flame", &"wind", &"sparkle":
+				var c: Color = RUN_FX_COLOR[k]
+				if k == &"flame" and _rng.randf() < 0.4:
+					c = Color(1.0, 0.75, 0.1)   # yellow tongues in the red
 				Fx.puff(feet + Vector3(_rng.randf_range(-0.1, 0.1), 0.0, _rng.randf_range(-0.1, 0.1)),
-						RUN_FX_COLOR[k], 0.35 if k == &"flame" else 0.25)
+						c, 0.35 if k == &"flame" else 0.25)
 				if k == &"flame" and _rng.randf() < 0.12:
 					Audio.play("whoosh", null, 0.6)
 			&"honk":

@@ -390,3 +390,5 @@ signal mode_changed(mode: Mode)
 
 `--screenshot-after=<s>` (template), `--solo` (one pad plays both, see Solo mode), `--demo` (two virtual players, auto-picks, auto-restarts: the game
 plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heights, picks).
+`--gear=<id,id>` / `--gear2=<id>`: P1 / P2 start every run wearing those upgrades (`Run.give`), for
+playtests and screenshots.
