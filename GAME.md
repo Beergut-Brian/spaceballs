@@ -31,7 +31,7 @@ Kerbal Space Program energy with none of the engineering, dressed like a sunny T
 | Start | Pause | Pause | Pause |
 | Select | Restart the run (two presses within 1 s) | | |
 
-The whole game can be played with the stick alone.
+~~The whole game can be played with the stick alone.~~ **Dropped** (Kaden, 2026-11-10: "menus needing a button is totally fine. If you have Stick Only Play as a requirement for games that needs gone.") Buttons are fine anywhere, menus included. Kicks still trigger on contact (the standing no-auto-steer rule), but no feature has to work stick-only.
 
 ## Core loop
 

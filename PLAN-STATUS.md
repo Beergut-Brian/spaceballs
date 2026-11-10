@@ -70,7 +70,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | K-04 | S1/S2 Controls | Start pauses anywhere | built | tests/test_lobby.gd::test_pause_shows_menu_and_resume | |
 | K-05 | S1/S2 Controls | Select twice within 1 s restarts | built | tests/test_game_restart.gd::test_two_presses_within_a_second_restart | |
 | K-06 | S1/S2 Controls | A skips the end card | built | tests/test_lobby.gd::test_end_card_a_goes_to_lobby_and_door_quits | |
-| K-07 | S1/S2 Controls | Whole game playable with the stick alone | partial | kick, pick, run all stick-only; end card: tests/test_gap_close.gd::test_holding_the_stick_onto_the_big_button_goes_back_to_the_lobby, handoff/frames/k07_end_card_stick_hold.png | gap-close-2: the end card now works with the stick alone (hold left/up onto the big button, a white ring fills with rising ticks, full = back to the lobby; letting go drains it; the door to the launcher still needs A). Still partial: the lobby ready-up needs A (template menu, grown-up side; off-limits to this lane) |
+| K-07 | S1/S2 Controls | Whole game playable with the stick alone | dropped | kick, pick, run all stick-only; end card: tests/test_gap_close.gd::test_holding_the_stick_onto_the_big_button_goes_back_to_the_lobby, handoff/frames/k07_end_card_stick_hold.png | Kaden, 2026-11-10: "menus needing a button is totally fine. If you have Stick Only Play as a requirement for games that needs gone." |
 | K-08 | S1/S2 Kid checks | Only wiggling the stick still kicks every round | built | tests/test_run_style.gd::test_wiggle_at_the_ball_is_a_toe_poke_that_still_kicks, ::test_short_real_run_up_is_the_full_kick, handoff/frames/k08_poke_vs_full_kick.png | polish-2 lane: a wiggle still kicks, as a toe-poke at the lowest run-up quality; the full kick needs a short real run-up (Kicker.has_run_up) |
 | K-09 | S1/S2 Kid checks | A curse is never the only choice; every draw has a normal card | built | tests/test_run.gd::test_every_draw_before_14_has_a_normal_card, ::test_curses_never_offered_in_a_pick | |
 | K-10 | S1/S2 Kid checks | No run lasts past round 15 | built | tests/test_run.gd::test_round_15_always_reaches_space, ::test_strong_only_after_round_14 | |
@@ -123,7 +123,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | V-18 | S1/S2 Art | Props: tee, two balls, lawn chair, landmarks, upgrade attachments | built | scenes/levels/field.tscn | lawn chair kept as scenery |
 | V-19 | S4 | Crowd cheers a good kick (bigger kick, bigger celebration) | built | tests/test_playtest2.gd::test_crowd_reaction_scales_with_the_kick | |
 | V-20 | S1/S2 Art | Store art: grid 600x900, hero 920x430 | built | store/grid.png, store/hero.png | |
-| V-21 | S2 Art | Palette D36 (C Cool Arcade provisional) | later | GAME.md Open questions | Kaden picks |
+| V-21 | S2 Art | Palette D36 (C Cool Arcade provisional) | superseded | GAME.md Open questions | D36 (one master palette) withdrawn 2026-11-10: palettes are picked per game now |
 
 ## A: audio
 
