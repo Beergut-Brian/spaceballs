@@ -16,3 +16,6 @@ windup_anim = &"chase"
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Ooh, a butterfly! The kick can wait."
+slot = "none"
+run_speed_mult = 1.1
+ball_effect = &"sparkle"

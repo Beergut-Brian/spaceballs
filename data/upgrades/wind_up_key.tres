@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.9
 visual = ExtResource("3")
 description = "Wind the kicker up like a toy, then let go."
+slot = "back"
+run_speed_mult = 1.2
+accel_mult = 2.0
+kick_style = &"spin"

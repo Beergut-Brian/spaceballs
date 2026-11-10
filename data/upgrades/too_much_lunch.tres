@@ -16,3 +16,6 @@ windup_anim = &"waddle"
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Three sandwiches and a pie. Too full to kick."
+slot = "none"
+bulk = 1.3
+jump_mult = 0.5

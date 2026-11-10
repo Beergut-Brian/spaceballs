@@ -16,3 +16,6 @@ windup_anim = &"trip"
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Somebody tied your laces together. Hop, hop, bonk."
+slot = "none"
+run_speed_mult = 0.5
+jump_mult = 0.6

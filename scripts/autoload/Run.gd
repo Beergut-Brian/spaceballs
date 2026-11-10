@@ -33,7 +33,7 @@ const QUALITY_MAX := 1.2
 const KIND_ODDS := { "normal": 0.60, "strong": 0.20, "joke": 0.12, "curse": 0.08 }
 const CATCH_UP_TIERS := 2
 const CATCH_UP_MIN_MULT := 1.7
-const CATCH_UP_STRONG_ODDS := 0.4
+const CATCH_UP_STRONG_ODDS := 0.6
 const SPACE_FLOOR := 1.02   # the round-15 kick peaks at least this far over the space line
 
 const TIERS_PATH := "res://data/tiers.tres"
@@ -95,6 +95,55 @@ func upgrades_of(player: int) -> Array[UpgradeData]:
 	var out: Array[UpgradeData] = []
 	out.assign(_upgrades[player])
 	return out
+
+
+## Everything the player's gear does this kick (docs/contracts.md "UpgradeData": stats add up,
+## the look is what you wear). The frog round switches all of it off.
+func effects_of(player: int) -> Dictionary:
+	return resolve_effects(upgrades_of(player), curse_of(player))
+
+
+static func resolve_effects(ups: Array[UpgradeData], curse: UpgradeData = null) -> Dictionary:
+	var fx := {
+		"run_speed_mult": 1.0, "accel_mult": 1.0, "jump_mult": 1.0, "gravity_mult": 1.0,
+		"runup_bonus": 0.0, "kick_style": &"normal", "ball_effects": [] as Array[StringName],
+		"run_fx": [] as Array[StringName], "bulk": 1.0, "shake": 0.0, "worn": {},
+	}
+	if curse != null and curse.scene_override != null:
+		return fx
+	var worn := {}
+	var loose: Array[UpgradeData] = []
+	for u in ups:
+		fx.run_speed_mult *= u.run_speed_mult
+		fx.accel_mult *= u.accel_mult
+		fx.jump_mult *= u.jump_mult
+		fx.gravity_mult *= u.gravity_mult
+		fx.runup_bonus += u.runup_bonus
+		if u.slot == "none":
+			loose.append(u)
+		else:
+			worn[u.slot] = u
+	fx.worn = worn
+	# The looks: worn items in pick order (a replaced item's look is gone), then this kick's curse.
+	var looks: Array[UpgradeData] = []
+	looks.assign(ups.filter(func(u: UpgradeData) -> bool: return loose.has(u) or worn.values().has(u)))
+	if curse != null:
+		looks.append(curse)
+		fx.run_speed_mult *= curse.run_speed_mult
+		fx.accel_mult *= curse.accel_mult
+		fx.jump_mult *= curse.jump_mult
+		fx.gravity_mult *= curse.gravity_mult
+	for u in looks:
+		if u.kick_style != &"normal":
+			fx.kick_style = u.kick_style
+		if u.ball_effect != &"none" and not fx.ball_effects.has(u.ball_effect):
+			fx.ball_effects.append(u.ball_effect)
+		if u.run_fx != &"none" and not fx.run_fx.has(u.run_fx):
+			fx.run_fx.append(u.run_fx)
+		fx.bulk *= u.bulk
+		fx.shake = maxf(fx.shake, u.shake)
+	fx.bulk = minf(fx.bulk, 1.6)
+	return fx
 
 
 static func height_for_power(power: float) -> float:
@@ -167,7 +216,8 @@ func catch_up_for(player: int) -> bool:
 
 func draw_cards(player: int, with_rng: RandomNumberGenerator = null) -> Array[UpgradeData]:
 	_ensure_data()
-	var cards := draw_from(pool, round_index, catch_up_for(player), with_rng if with_rng else rng)
+	var cards := draw_from(pool, round_index, catch_up_for(player), with_rng if with_rng else rng,
+			upgrades_of(player))
 	if save_enabled:
 		var seen: Array = Save.get_value("upgrades_seen", [])
 		for c in cards:
@@ -192,8 +242,11 @@ static func roll_kind(r: RandomNumberGenerator) -> String:
 	return "normal"
 
 
-static func draw_from(from: Array[UpgradeData], r_index: int, catch_up: bool,
-		r: RandomNumberGenerator) -> Array[UpgradeData]:
+## `owned`: the player's gear. Never offered again (curses can repeat).
+static func draw_from(all: Array[UpgradeData], r_index: int, catch_up: bool,
+		r: RandomNumberGenerator, owned: Array[UpgradeData] = []) -> Array[UpgradeData]:
+	var from: Array[UpgradeData] = []
+	from.assign(all.filter(func(c: UpgradeData) -> bool: return c.is_curse() or not owned.has(c)))
 	var band := band_for_round(r_index)
 	var out: Array[UpgradeData] = []
 	var strong_only := r_index >= STRONG_ONLY_AFTER
@@ -206,6 +259,10 @@ static func draw_from(from: Array[UpgradeData], r_index: int, catch_up: bool,
 		var card := _pick_card(from, kind, band, out, catch_up and not strong_only, r)
 		if card == null and not strong_only:
 			card = _pick_card(from, "normal", band, out, catch_up, r)
+		# Gear running out (no duplicates): any other gear, best first.
+		for k in ["strong", "normal", "joke"]:
+			if card == null:
+				card = _pick_card(from, k, band, out, false, r)
 		if card != null:
 			out.append(card)
 	if not strong_only and not out.any(func(c: UpgradeData) -> bool: return c.kind == "normal"):
@@ -279,6 +336,20 @@ func pick(player: int, upgrade: UpgradeData) -> void:
 	upgrade_picked.emit(player, upgrade.id)
 	if pickers().all(has_picked):
 		_advance_round()
+
+
+## Debug / playtest (`-- --gear=<ids>`): wear an upgrade from the start, no pick needed.
+func give(player: int, upgrade: UpgradeData) -> void:
+	if upgrade != null and not upgrade.is_curse() and not _upgrades[player].has(upgrade):
+		_upgrades[player].append(upgrade)
+
+
+func upgrade_by_id(id: StringName) -> UpgradeData:
+	_ensure_data()
+	for u in pool:
+		if u.id == id:
+			return u
+	return null
 
 
 ## players: who plays from round 1. Empty = P1, plus P2 if a pad is joined.

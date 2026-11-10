@@ -14,3 +14,5 @@ kind = "joke"
 power_mult = 1.1
 visual = ExtResource("3")
 description = "Two enormous wobbly eyes stuck on the tummy. No help at all."
+slot = "face"
+ball_effect = &"split"

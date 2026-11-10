@@ -15,3 +15,6 @@ power_mult = 0.3
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Hic! The kick goes hic-wards."
+slot = "none"
+run_fx = &"bounce"
+ball_effect = &"curve"

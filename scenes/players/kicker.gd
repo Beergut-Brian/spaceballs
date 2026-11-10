@@ -1,4 +1,5 @@
-## Kicker: runs crazily at the ball and kicks it automatically. Systems lane owns.
+## Kicker: runs freely round the field; running into his own ball starts the kick. Systems lane owns
+## the node, Gameplay the movement and the upgrade effects (docs/contracts.md "Kicker").
 ## jeff.tscn / chuck.tscn inherit kicker.tscn; Art swaps Body for the Jarling and drives an
 ## AnimationTree from `state`. Keep the node names and the API (docs/contracts.md "Kicker").
 class_name Kicker
@@ -15,28 +16,35 @@ signal gag_started(gag: StringName)
 
 const FROG_FALLBACK := preload("res://scenes/curses/frog.tscn")
 const SLOTS: Array[StringName] = [&"head", &"feet", &"back", &"hands", &"body"]
+const QUALITY_MIN := 0.8
+const QUALITY_MAX := 1.2
 ## Full-body wind-up gags an upgrade's `windup_anim` can name. They change the approach, never the
 ## result: every one ends in exactly one kick_contact.
 const GAGS: Array[StringName] = [&"slip", &"chase", &"waddle", &"trip", &"sneeze"]
 ## Whatever happens to a tween, the foot meets the ball by this many seconds into the wind-up.
 const KICK_DEADLINE := 4.0
 const SFX_DIR := "res://assets/audio/sfx/"
+## Run-up quality looks at this many seconds before contact: roaming first costs nothing.
+const RUNUP_WINDOW := 1.2
+## Colours of the running trails (run_fx).
+const RUN_FX_COLOR := {
+	&"flame": Color(1.0, 0.3, 0.05), &"wind": Color(0.8, 0.95, 1.0), &"sparkle": Color(1.0, 0.95, 0.5),
+}
 
 @export var player: int = Players.P1
-@export_group("Silly approach")
-@export var max_speed := 5.0
-## Low acceleration is what makes him overshoot and swing wide.
-@export var accel := 1.4
-@export var wobble := 0.5
-## A stick pointing within ~55 degrees of the ball gets pulled onto it.
-@export var assist_cone := 0.57
-@export var assist := 0.55
-## Seconds without getting closer before auto-steer starts, and how long it ramps.
-@export var auto_steer_after := 2.0
-@export var auto_steer_ramp := 1.0
-## Whatever happens, auto-steer is fully on by this many seconds into the approach.
-@export var auto_steer_deadline := 5.0
-@export var field_radius := 14.0
+@export_group("Free run")
+@export var max_speed := 5.5
+## Fractions of max_speed per second: speeding up, and stopping when the stick lets go.
+@export var accel := 2.2
+@export var decel := 4.0
+## Pushing against the run brakes this much harder (turn-and-go).
+@export var reverse_boost := 2.5
+@export var turn_speed := 14.0
+## Waiting players roam too, a bit slower.
+@export var roam_speed := 0.75
+## The field (XZ: x, z, width, depth), inside the fence. A soft wall pushes back over `wall_soft` m.
+@export var bounds := Rect2(-5.7, -5.8, 12.6, 16.3)
+@export var wall_soft := 1.2
 @export_group("Moves")
 @export var windup_time := 0.6
 @export var hop_velocity := 4.5
@@ -49,15 +57,23 @@ var frog := false
 var stick_override: Variant = null
 ## This kick's gag source (main.gd: the round's curse, else the newest upgrade with a windup_anim).
 var windup: UpgradeData = null
+## This kick's gear effects (Run.effects_of). Empty = plain kicker.
+var effects: Dictionary = {}
+## Demo: wanders off for a bit, then runs at the ball.
+var bot := false
+## A waiting player (CHEER) moves with the stick when this is on.
+var roam := false
 
 var _ball := Vector3.ZERO
 var _start := Vector3.ZERO
 var _time := 0.0
-var _path := 0.0
-var _best_dist := INF
-var _since_progress := 0.0
-var _auto := 0.0
-var _hopped := false
+var _hist: Array[Vector4] = []   # (x, z, time, hopped) over the last RUNUP_WINDOW s
+var _hopped_t := -10.0
+var _fx_t := 0.0
+var _bot_goals: Array[Vector3] = []
+var _bot_t := 0.0
+var _rest_scale := Vector3.ONE
+var _worn := {}   # UpgradeData.slot -> piece
 var _phase := 0.0
 var _frog_timer := 0.0
 var _anim_t := 0.0
@@ -92,9 +108,11 @@ func _physics_process(delta: float) -> void:
 	if state == State.CLOUD:
 		velocity = Vector3.ZERO
 	elif not is_on_floor():
-		velocity.y -= gravity * delta
+		velocity.y -= gravity * _fx(&"gravity_mult") * delta
 	if state == State.APPROACH:
-		_approach(delta)
+		_approach(delta, 1.0)
+	elif state == State.CHEER and roam and not _dancing:
+		_approach(delta, roam_speed)
 	else:
 		var hv := Vector3(velocity.x, 0.0, velocity.z).move_toward(Vector3.ZERO, 20.0 * delta)
 		velocity.x = hv.x
@@ -109,6 +127,8 @@ func _physics_process(delta: float) -> void:
 	_idle_anim()
 	if state != State.CLOUD:
 		move_and_slide()
+		if state == State.APPROACH or (state == State.CHEER and roam):
+			_keep_in_bounds()
 
 
 # --- API ---------------------------------------------------------------------
@@ -118,16 +138,22 @@ func begin_approach(ball_position: Vector3) -> void:
 	_ball = ball_position
 	_start = global_position
 	_time = 0.0
-	_path = 0.0
-	_best_dist = _flat(_ball - global_position).length()
-	_since_progress = 0.0
-	_auto = 0.0
-	_hopped = false
+	_hist.clear()
+	_hopped_t = -10.0
+	_bot_goals.clear()
+	_bot_t = 0.0
+	if bot:
+		# Demo: wander off to a spot or two first, so the free run shows.
+		for i in 1 + _rng.randi() % 2:
+			_bot_goals.append(Vector3(_rng.randf_range(bounds.position.x + 1.5, bounds.end.x - 1.5), 0.0,
+					_rng.randf_range(bounds.position.y + 2.0, bounds.end.y - 2.0)))
+	roam = false
 	_dancing = false
 	_gag = &""
 	velocity = Vector3.ZERO
 	body.rotation = Vector3.ZERO
 	body.position = Vector3.ZERO
+	apply_effects(effects)
 	_face(_ball - global_position, 1.0)
 	_spawn_prop()
 	_set_state(State.APPROACH)
@@ -161,7 +187,11 @@ func start_windup() -> void:
 	else:
 		_set_state(State.WINDUP)
 		Audio.play("windup", null, 1.3)
-		_kick_moves(_tween, 1.0)
+		var style: StringName = effects.get(&"kick_style", &"normal")
+		if has_method("_style_" + String(style)):
+			call("_style_" + String(style), _tween)
+		else:
+			_kick_moves(_tween, 1.0)
 	_tween.tween_callback(_contact.bind(quality))
 	if gag == &"slip" or gag == &"trip":
 		# Lie there a beat, then scramble back up.
@@ -182,6 +212,7 @@ static func gag_of(upgrade: UpgradeData) -> StringName:
 
 func set_waiting(chair: bool) -> void:
 	_kill_tween()
+	roam = false
 	_clear_prop()
 	_dancing = false
 	_gag = &""
@@ -247,7 +278,20 @@ func attach_point(slot: StringName) -> Node3D:
 	return n if n else attach.get_node("Body")
 
 
+## One item per body slot (UpgradeData.slot): a new one pops the old one off. Its power stays (Run).
 func add_upgrade_visual(upgrade: UpgradeData) -> void:
+	var old: Node3D = _worn.get(upgrade.slot)
+	if upgrade.slot != "none" and is_instance_valid(old):
+		_worn.erase(upgrade.slot)
+		old.get_parent().remove_child(old)   # out of the stack now, so the new piece sits in its place
+		add_child(old)
+		old.top_level = true
+		var fly := old.create_tween()
+		var to := global_position + Vector3(_rng.randf_range(-1.5, 1.5), 2.5, _rng.randf_range(0.5, 1.5))
+		fly.tween_property(old, "global_position", to, 0.4).set_ease(Tween.EASE_OUT)
+		fly.parallel().tween_property(old, "scale", Vector3.ONE * 0.01, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		fly.tween_callback(old.queue_free)
+		Fx.puff(to, Color.WHITE, 0.6)
 	var count := 0
 	for slot in SLOTS:
 		count += attach_point(slot).get_child_count()
@@ -262,6 +306,8 @@ func add_upgrade_visual(upgrade: UpgradeData) -> void:
 		var stacked := attach_point(slot).get_child_count()
 		piece.position = Vector3(0, 0.16 * stacked, 0) if slot == &"head" else Vector3(0.05 * stacked, 0.05 * stacked, 0)
 	attach_point(slot).add_child(piece)
+	if upgrade.slot != "none":
+		_worn[upgrade.slot] = piece
 	piece.scale = Vector3.ONE * 0.01
 	var tw := piece.create_tween()
 	tw.tween_property(piece, "scale", Vector3.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -270,7 +316,15 @@ func add_upgrade_visual(upgrade: UpgradeData) -> void:
 	Fx.pop(body, 1.25)
 
 
+## What is worn in a body slot (UpgradeData.slot), or null.
+func worn_piece(slot: String) -> Node3D:
+	var n: Node3D = _worn.get(slot)
+	return n if is_instance_valid(n) else null
+
+
 func clear_upgrade_visuals() -> void:
+	_worn.clear()
+	apply_effects({})
 	for slot in SLOTS:
 		for c in attach_point(slot).get_children():
 			c.queue_free()
@@ -291,50 +345,129 @@ static func run_up_quality(path_length: float, straight_distance: float,
 
 # --- internals -----------------------------------------------------------------
 
-func _approach(delta: float) -> void:
+func _approach(delta: float, speed_scale: float) -> void:
 	_time += delta
-	var to_ball := _flat(_ball - global_position)
-	var dist := to_ball.length()
-	var want := to_ball.normalized() if dist > 0.01 else Vector3.ZERO
 	var stick := _stick_world()
-	var dir := stick
-	if stick.length() > 0.2 and stick.normalized().dot(want) > assist_cone:
-		dir = stick.normalized().lerp(want, assist).normalized() * stick.length()
-	if dist < _best_dist - 0.3:
-		_best_dist = dist
-		_since_progress = 0.0
-	else:
-		_since_progress += delta
-	# Once it starts helping it ramps all the way (progress must not switch it back off).
-	if _auto > 0.0 or _since_progress > auto_steer_after or _time > auto_steer_deadline - auto_steer_ramp:
-		_auto = minf(_auto + delta / auto_steer_ramp, 1.0)
-	var auto := _auto
-	dir = dir.lerp(want, auto)
-	# The silly part: a heading that never quite settles, worse the faster he goes.
-	var wob := sin(_time * 5.5 + _phase) * wobble + _rng.randf_range(-0.2, 0.2)
-	dir = dir.rotated(Vector3.UP, wob * minf(dir.length(), 1.0) * (1.0 - 0.6 * auto))
-	var from_ball := _flat(global_position - _ball)
-	if from_ball.length() > field_radius:
-		dir = dir.lerp(-from_ball.normalized(), 0.8)
+	if bot and stick_override == null and state == State.APPROACH:
+		stick = _bot_stick(delta)
 	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	var top := max_speed * _fx(&"run_speed_mult") * speed_scale
+	if gag_of(windup) == &"waddle":
+		top *= 0.7
 	if frog:
 		_frog_timer -= delta
-		if is_on_floor() and dir.length() > 0.2 and _frog_timer <= 0.0:
+		if is_on_floor() and stick.length() > 0.2 and _frog_timer <= 0.0:
 			_frog_timer = frog_hop_every
-			hv = dir.normalized() * max_speed * 0.7
+			hv = stick.normalized() * max_speed * 0.7
 			velocity.y = hop_velocity * 0.7
 			Audio.play("frog", null, 1.2)
 		elif is_on_floor():
 			hv = hv.move_toward(Vector3.ZERO, 30.0 * delta)
 	else:
-		# Auto-steer also firms up the feet, so a wanderer turns back quickly.
-		var top := max_speed * (0.7 if gag_of(windup) == &"waddle" else 1.0)
-		hv = hv.move_toward(dir * top, lerpf(accel, accel * 3.0, auto) * max_speed * delta)
+		# Where the stick points, nothing else: no pull toward the ball, no drift with no input.
+		var rate := decel
+		if stick.length() > 0.1:
+			rate = accel * _fx(&"accel_mult")
+			if hv.length() > 0.5 and hv.normalized().dot(stick.normalized()) < -0.2:
+				rate *= reverse_boost
+		hv = hv.move_toward(stick * top, rate * max_speed * delta)
+	hv = _soft_wall(hv, delta)
 	velocity.x = hv.x
 	velocity.z = hv.z
-	_path += hv.length() * delta
-	if hv.length() > 0.3:
+	if stick.length() > 0.2:
+		_face(stick, turn_speed * delta)   # turns on the spot, even from standing
+	elif hv.length() > 0.3:
 		_face(hv, 8.0 * delta)
+	if state == State.APPROACH:
+		_hist.append(Vector4(global_position.x, global_position.z, _time, 0.0))
+		while _hist.size() > 2 and _hist[0].z < _time - RUNUP_WINDOW:
+			_hist.pop_front()
+	_run_fx(delta, hv.length() / maxf(top, 0.01))
+
+
+## Past the soft edge the field pushes back, harder the further out; nothing gets through.
+func _soft_wall(hv: Vector3, delta: float) -> Vector3:
+	var p := Vector2(global_position.x, global_position.z)
+	var inner := bounds.grow(-wall_soft)
+	var push := Vector2(
+		(inner.position.x - p.x) if p.x < inner.position.x else (inner.end.x - p.x if p.x > inner.end.x else 0.0),
+		(inner.position.y - p.y) if p.y < inner.position.y else (inner.end.y - p.y if p.y > inner.end.y else 0.0))
+	if push == Vector2.ZERO:
+		return hv
+	var out := -push.normalized()
+	var v := Vector2(hv.x, hv.z)
+	var outward := v.dot(out)
+	var depth := clampf(push.length() / wall_soft, 0.0, 1.0)
+	if outward > 0.0:
+		v -= out * outward * clampf(depth * 12.0 * delta + depth * depth, 0.0, 1.0)
+	v -= out * depth * 6.0 * delta * max_speed
+	return Vector3(v.x, 0.0, v.y)
+
+
+func _keep_in_bounds() -> void:
+	var p := global_position
+	p.x = clampf(p.x, bounds.position.x, bounds.end.x)
+	p.z = clampf(p.z, bounds.position.y, bounds.end.y)
+	global_position = p
+
+
+## Demo bot: each wander goal in turn, then straight at the ball.
+func _bot_stick(delta: float) -> Vector3:
+	_bot_t += delta
+	while not _bot_goals.is_empty() and (_flat(_bot_goals[0] - global_position).length() < 0.9 or _bot_t > 3.0):
+		_bot_goals.pop_front()
+		_bot_t = 0.0
+	var goal := _bot_goals[0] if not _bot_goals.is_empty() else _ball
+	var d := _flat(goal - global_position)
+	return d.normalized() if d.length() > 0.05 else Vector3.ZERO
+
+
+## The gear while running: flame, wind and sparkle trails, honks, squeaks and the spring-shoe boing.
+func _run_fx(delta: float, speed01: float) -> void:
+	var kinds: Array = effects.get(&"run_fx", [])
+	if kinds.is_empty() or frog or speed01 < 0.35:
+		return
+	_fx_t -= delta
+	var feet := global_position + Vector3.UP * 0.15 - global_basis.z * -0.35
+	for k: StringName in kinds:
+		if k == &"bounce" and is_on_floor() and velocity.y <= 0.0:
+			# Spring shoes: every step is a little boing.
+			velocity.y = hop_velocity * 0.5 * _fx(&"jump_mult")
+			Audio.play("hop", null, 1.5 + _rng.randf() * 0.2)
+			Fx.pop(body, 1.15)
+	if _fx_t > 0.0:
+		return
+	_fx_t = 0.07
+	for k: StringName in kinds:
+		match k:
+			&"flame", &"wind", &"sparkle":
+				var c: Color = RUN_FX_COLOR[k]
+				if k == &"flame" and _rng.randf() < 0.4:
+					c = Color(1.0, 0.75, 0.1)   # yellow tongues in the red
+				Fx.puff(feet + Vector3(_rng.randf_range(-0.1, 0.1), 0.0, _rng.randf_range(-0.1, 0.1)),
+						c, 0.35 if k == &"flame" else 0.25)
+				if k == &"flame" and _rng.randf() < 0.12:
+					Audio.play("whoosh", null, 0.6)
+			&"honk":
+				if _rng.randf() < 0.35:
+					Audio.play("honk", null, 0.9 + _rng.randf() * 0.3)
+			&"squeak":
+				if _rng.randf() < 0.3:
+					Audio.play("squeak", null, 1.0 + _rng.randf() * 0.3)
+
+
+## Takes this kick's gear effects: bulk shows at once, the rest is read while running and kicking.
+func apply_effects(fx: Dictionary) -> void:
+	effects = fx
+	var bulk: float = fx.get(&"bulk", 1.0)
+	_rest_scale = Vector3(bulk, lerpf(1.0, bulk, 0.5), bulk)
+	if is_node_ready():
+		body.scale = _rest_scale
+		body.set_meta(&"fx_base_scale", _rest_scale)
+
+
+func _fx(key: StringName) -> float:
+	return float(effects.get(key, 1.0))
 
 
 func _contact(quality: float) -> void:
@@ -361,7 +494,7 @@ func _buttons() -> void:
 	if Input.is_action_just_pressed(Players.action(player, "jump")) and state != State.WINDUP and state != State.GAG:
 		if _hop(1.0):
 			if state == State.APPROACH:
-				_hopped = true
+				_hopped_t = _time
 			Audio.play("hop")
 			hopped.emit(player)
 	if Input.is_action_just_pressed(Players.action(player, "action")):
@@ -382,7 +515,7 @@ func _hop(strength: float) -> bool:
 		return true
 	if not is_on_floor():
 		return false
-	velocity.y = hop_velocity * strength
+	velocity.y = hop_velocity * strength * _fx(&"jump_mult")
 	Fx.pop(body, 1.2)
 	return true
 
@@ -398,7 +531,7 @@ func _idle_anim() -> void:
 		body.rotation.y = TAU * smoothstep(2.4, 3.0, beat) + sin(_anim_t * 3.0) * 0.35
 		return
 	match state:
-		State.CHEER, State.IDLE:
+		State.CHEER, State.IDLE when not (state == State.CHEER and roam):
 			body.position.y = absf(sin(_anim_t * 5.0 + _phase)) * 0.08
 		State.CHAIR:
 			body.position.y = -0.45 + sin(_anim_t * 1.5) * 0.02
@@ -406,10 +539,15 @@ func _idle_anim() -> void:
 			# Too much lunch: a slow, wide side-to-side waddle.
 			body.position.y = absf(sin(_anim_t * 7.0)) * 0.05
 			body.rotation.z = sin(_anim_t * 7.0) * 0.38
-		State.APPROACH:
-			# Flailing run: bob and side-to-side lean.
-			body.position.y = absf(sin(_anim_t * 14.0)) * 0.12
-			body.rotation.z = sin(_anim_t * 9.0 + _phase) * 0.25
+		State.APPROACH, State.CHEER when state == State.APPROACH or roam:
+			# Flailing run, as wild as he is fast; a little bob standing still.
+			var run := clampf(Vector2(velocity.x, velocity.z).length() / max_speed, 0.0, 1.0)
+			if run < 0.15:
+				body.position.y = absf(sin(_anim_t * 5.0 + _phase)) * 0.06
+				body.rotation.z = lerpf(body.rotation.z, 0.0, 0.2)
+			else:
+				body.position.y = absf(sin(_anim_t * 14.0)) * 0.12 * run
+				body.rotation.z = sin(_anim_t * 9.0 + _phase) * 0.25 * run
 		_:
 			body.position.y = 0.0
 
@@ -465,7 +603,7 @@ func _kill_tween() -> void:
 		_tween.kill()
 	_tween = null
 	if is_node_ready():
-		body.scale = Vector3.ONE
+		body.scale = _rest_scale
 		body.position = Vector3.ZERO
 		frog_slot.scale = Vector3.ONE
 
@@ -487,6 +625,87 @@ func _kick_moves(tw: Tween, speed: float) -> void:
 	tw.tween_property(body, "rotation:x", -0.5, t * 0.4).set_ease(Tween.EASE_OUT)
 	tw.tween_property(body, "rotation:y", TAU * 2.0, t * 0.6).as_relative().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(body, "rotation:x", 0.35, t * 0.6)
+
+
+# --- kick styles (UpgradeData.kick_style): the gear shows in the kick itself ---------------
+
+## Super Strength, Big Boot: up on tiptoe, then a stomp-kick that thumps the ground.
+func _style_stomp(tw: Tween) -> void:
+	tw.tween_property(body, "position:y", 0.7, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(body, "rotation:x", 0.45, 0.3)
+	tw.tween_interval(0.12)
+	tw.tween_property(body, "position:y", 0.0, 0.1).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(body, "rotation:x", -0.5, 0.1)
+	tw.tween_callback(func() -> void:
+		Audio.play("land", null, 0.5)
+		Fx.puff(global_position + Vector3.UP * 0.1, Color(0.85, 0.75, 0.6), 2.2)
+		Fx.pop(body, 1.35))
+
+
+## Cannon Leg: lean back, a fizzing fuse, BOOM, and the kick knocks him back a step.
+func _style_cannon(tw: Tween) -> void:
+	tw.tween_property(body, "rotation:x", 0.5, 0.3).set_ease(Tween.EASE_OUT)
+	for i in 3:
+		tw.tween_callback(Fx.puff.bind(global_position + Vector3.UP * 0.5 - global_basis.z * -0.3, Color(1.0, 0.8, 0.3), 0.25))
+		tw.tween_callback(Audio.play.bind("hop", null, 2.0 + i * 0.2))
+		tw.tween_interval(0.15)
+	tw.tween_property(body, "rotation:x", -0.55, 0.07)
+	tw.tween_callback(func() -> void:
+		_sfx("cannon_boom", "kick_4", 0.6)
+		Fx.puff(global_position + Vector3.UP * 0.4 + global_basis.z * -0.7, Color(0.55, 0.55, 0.58), 2.4)
+		Fx.puff(global_position + Vector3.UP * 0.4 + global_basis.z * -0.7, Color(1.0, 0.7, 0.25), 1.2))
+	tw.tween_property(body, "position:z", 0.5, 0.12).set_ease(Tween.EASE_OUT)
+
+
+## Tornado Spin, Turbo Fan: a whirlwind of spins with wind puffs, rising off the grass.
+func _style_spin(tw: Tween) -> void:
+	tw.tween_callback(_sfx.bind("whoosh", "whoosh", 1.4))
+	tw.tween_method(func(u: float) -> void:
+		body.rotation.y = u * TAU * 5.0
+		body.position.y = sin(u * PI) * 0.6
+		if int(u * 12.0) != int((u - 0.03) * 12.0):
+			Fx.puff(global_position + Vector3(cos(u * 30.0), 0.3, sin(u * 30.0)) * 0.8, RUN_FX_COLOR[&"wind"], 0.35), 0.0, 1.0, 0.8)
+	tw.tween_property(body, "rotation:x", -0.45, 0.08)
+
+
+## Pogo Legs, Kangaroo Tail, Spring Shoes: boing, boing, BOING onto the ball.
+func _style_pogo(tw: Tween) -> void:
+	for i in 3:
+		var h := 0.35 + 0.35 * i
+		tw.tween_callback(Audio.play.bind("hop", null, 1.2 + i * 0.15))
+		tw.tween_property(body, "scale", _rest_scale * Vector3(1.2, 0.75, 1.2), 0.06)
+		tw.tween_property(body, "position:y", h, 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.parallel().tween_property(body, "scale", _rest_scale * Vector3(0.85, 1.25, 0.85), 0.1)
+		tw.tween_property(body, "position:y", 0.0, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.parallel().tween_property(body, "scale", _rest_scale, 0.1)
+	tw.tween_property(body, "rotation:x", -0.5, 0.06)
+
+
+## Jetpack, Rocket Boots: blast off on a column of fire, hang there, dive-kick the ball.
+func _style_jet(tw: Tween) -> void:
+	tw.tween_callback(_sfx.bind("whoosh", "whoosh", 0.7))
+	tw.tween_method(func(u: float) -> void:
+		body.position.y = u * 1.4
+		body.rotation.x = 0.3 * u
+		if int(u * 14.0) != int((u - 0.02) * 14.0):
+			Fx.puff(global_position + Vector3.UP * (u * 1.4 + 0.2), RUN_FX_COLOR[&"flame"], 0.45), 0.0, 1.0, 0.55)
+	tw.tween_interval(0.15)
+	tw.tween_property(body, "position:y", 0.0, 0.12).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(body, "rotation:x", -0.6, 0.12)
+
+
+## Thunder Hat: the cloud rumbles, a flash, and the kick comes with lightning.
+func _style_zap(tw: Tween) -> void:
+	tw.tween_property(body, "rotation:x", 0.35, 0.3)
+	for i in 2:
+		tw.tween_callback(Fx.puff.bind(global_position + Vector3.UP * 2.4, Color(0.6, 0.6, 0.7), 0.6))
+		tw.tween_callback(Audio.play.bind("land", null, 0.4))
+		tw.tween_interval(0.18)
+	tw.tween_callback(func() -> void:
+		Fx.puff(global_position + Vector3.UP * 1.2, Color(1.0, 1.0, 0.5), 1.8)
+		Fx.puff(global_position + Vector3.UP * 0.3 + global_basis.z * -0.6, Color(1.0, 0.95, 0.3), 1.2)
+		Audio.play("kick_4", null, 1.6))
+	tw.tween_property(body, "rotation:x", -0.5, 0.07)
 
 
 ## Banana Peel: a scramble, feet fly out, flat on his back, and the flying foot boots the ball.
@@ -544,10 +763,10 @@ func _gag_waddle(tw: Tween) -> void:
 		_sfx("burp", "frog", 0.55)
 		Fx.puff(global_position + Vector3.UP * 1.6 + global_basis.z * -0.4, Color(0.85, 1.0, 0.7), 0.6))
 	tw.tween_property(body, "rotation:x", 0.35, 0.25).set_ease(Tween.EASE_OUT)
-	tw.tween_property(body, "scale", Vector3(1.25, 0.85, 1.25), 0.12)
+	tw.tween_property(body, "scale", _rest_scale * Vector3(1.25, 0.85, 1.25), 0.12)
 	tw.tween_property(body, "rotation:x", -0.45, 0.12).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(body, "position:z", -0.35, 0.12)
-	tw.parallel().tween_property(body, "scale", Vector3.ONE, 0.12)
+	tw.parallel().tween_property(body, "scale", _rest_scale, 0.12)
 	tw.tween_callback(_sfx.bind("boing", "hop", 0.6))
 
 
@@ -573,7 +792,7 @@ func _gag_sneeze(tw: Tween) -> void:
 	for i in 3:
 		tw.tween_callback(_sfx.bind("inhale", "shout", 1.2 + i * 0.2))
 		tw.tween_property(body, "rotation:x", 0.15 * (i + 1), 0.28).set_ease(Tween.EASE_OUT)
-		tw.parallel().tween_property(body, "scale", Vector3(0.95, 1.06 + 0.05 * i, 0.95), 0.28)
+		tw.parallel().tween_property(body, "scale", _rest_scale * Vector3(0.95, 1.06 + 0.05 * i, 0.95), 0.28)
 		tw.tween_interval(0.12)
 	tw.tween_interval(0.2)
 	tw.tween_callback(func() -> void:
@@ -581,8 +800,8 @@ func _gag_sneeze(tw: Tween) -> void:
 		_set_state(State.WINDUP)   # the tissue box prop pops on WINDUP
 		Fx.puff(global_position + Vector3.UP * 1.5 + global_basis.z * -1.0, Color(0.9, 1.0, 0.95), 0.7))
 	tw.tween_property(body, "rotation:x", -0.7, 0.08)
-	tw.parallel().tween_property(body, "scale", Vector3(1.15, 0.85, 1.15), 0.08)
-	tw.tween_property(body, "scale", Vector3.ONE, 0.15)
+	tw.parallel().tween_property(body, "scale", _rest_scale * Vector3(1.15, 0.85, 1.15), 0.08)
+	tw.tween_property(body, "scale", _rest_scale, 0.15)
 	tw.tween_property(body, "rotation:x", 0.3, 0.18)
 
 
@@ -627,10 +846,19 @@ func _clear_prop() -> void:
 	_prop = null
 
 
+## Run-up over the last RUNUP_WINDOW s: straight and fast is best, a hop adds a pinch.
 func _quality_now() -> float:
-	var straight := _flat(global_position - _start).length()
-	var avg_speed := _path / maxf(_time, 0.01)
-	return run_up_quality(_path, straight, avg_speed, max_speed, _hopped)
+	var path := 0.0
+	for i in range(1, _hist.size()):
+		path += Vector2(_hist[i].x - _hist[i - 1].x, _hist[i].y - _hist[i - 1].y).length()
+	var straight := 0.0
+	var span := 0.01
+	if _hist.size() > 1:
+		straight = Vector2(_hist[-1].x - _hist[0].x, _hist[-1].y - _hist[0].y).length()
+		span = maxf(_hist[-1].z - _hist[0].z, 0.01)
+	var top := max_speed * _fx(&"run_speed_mult")
+	var q := run_up_quality(path, straight, path / span, top, _time - _hopped_t < RUNUP_WINDOW + 0.3)
+	return clampf(q + float(effects.get(&"runup_bonus", 0.0)), QUALITY_MIN, QUALITY_MAX)
 
 
 ## Plays `cue` if the Audio lane has made it, else an existing cue at `pitch`.

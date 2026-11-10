@@ -16,3 +16,5 @@ windup_anim = &"slip"
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Whoops, a banana peel right by the tee. Slip, flip, plop."
+slot = "none"
+accel_mult = 0.6

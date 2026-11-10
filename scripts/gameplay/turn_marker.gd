@@ -4,6 +4,8 @@ class_name TurnMarker
 extends Node3D
 
 const ARROW_GAP := 0.7
+## Further than this from his ball, a big arrow on the grass points the way and the ring glows.
+const FAR := 4.5
 
 var _kicker: Node3D
 var _t := 0.0
@@ -11,6 +13,9 @@ var _top := 2.0
 var _arrow: Node3D
 var _ring: MeshInstance3D
 var _mats: Array[StandardMaterial3D] = []
+var _ball: Node3D
+var _pointer: Node3D
+var _far_t := 0.0
 
 
 func _ready() -> void:
@@ -36,6 +41,21 @@ func _ready() -> void:
 	_ring = _part(torus, Vector3.ZERO)
 	_ring.top_level = true
 	add_child(_ring)
+	# The way-home arrow: lies flat on the grass by his feet, tip toward the ball.
+	_pointer = Node3D.new()
+	_pointer.top_level = true
+	add_child(_pointer)
+	var tip := CylinderMesh.new()
+	tip.top_radius = 0.0
+	tip.bottom_radius = 0.38
+	tip.height = 0.6
+	tip.radial_segments = 16
+	var tail := BoxMesh.new()
+	tail.size = Vector3(0.26, 0.08, 0.6)
+	var t := _part(tip, Vector3(0, 0.12, -0.3))
+	t.rotation.x = -PI * 0.5
+	_pointer.add_child(t)
+	_pointer.add_child(_part(tail, Vector3(0, 0.12, 0.3)))
 	hide_marker()
 
 
@@ -59,10 +79,18 @@ func show_for(kicker: Node3D, tee: Vector3, color: Color) -> void:
 	_process(0.0)
 
 
+## The ball this turn is about (the way-home arrow points at it).
+func set_ball(ball: Node3D) -> void:
+	_ball = ball
+
+
 func hide_marker() -> void:
 	visible = false
+	_ball = null
 	if _ring:
 		_ring.visible = false
+	if _pointer:
+		_pointer.visible = false
 	set_process(false)
 
 
@@ -76,7 +104,24 @@ func _process(delta: float) -> void:
 	_arrow.scale = Vector3.ONE * lerpf(0.01, 1.0, grow) * (1.0 + 0.08 * sin(_t * 8.0))
 	_arrow.global_position = _kicker.global_position + Vector3.UP * (_top + ARROW_GAP + 0.18 * absf(sin(_t * 4.0)))
 	_arrow.rotation.y = _t * 1.5
-	_ring.scale = Vector3(1.0, 1.0, 1.0) * (1.0 + 0.12 * sin(_t * 5.0))
+	var far := 0.0
+	if is_instance_valid(_ball):
+		var d := _ball.global_position - _kicker.global_position
+		d.y = 0.0
+		far = clampf((d.length() - FAR) / 2.0, 0.0, 1.0)
+		_pointer.visible = far > 0.0
+		if _pointer.visible:
+			_pointer.global_position = _kicker.global_position + d.normalized() * (1.3 + 0.15 * sin(_t * 8.0))
+			_pointer.rotation = Vector3(0.0, atan2(-d.x, -d.z), 0.0)
+			_pointer.scale = Vector3.ONE * far
+			# Every few seconds out there, the ball calls him back: a little ping.
+			_far_t += delta
+			if _far_t > 3.0:
+				_far_t = 0.0
+				Audio.play("orbit_chime", null, 1.3)
+		else:
+			_far_t = 2.0
+	_ring.scale = Vector3(1.0, 1.0, 1.0) * (1.0 + 0.12 * sin(_t * 5.0)) * (1.0 + 0.6 * far)
 
 
 func _part(mesh: PrimitiveMesh, at: Vector3) -> MeshInstance3D:

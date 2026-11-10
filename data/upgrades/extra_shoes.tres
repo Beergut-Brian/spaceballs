@@ -14,3 +14,6 @@ kind = "joke"
 power_mult = 1.25
 visual = ExtResource("3")
 description = "Now with four shoes. Nobody knows where the extra feet came from."
+slot = "feet"
+run_speed_mult = 1.15
+run_fx = &"squeak"

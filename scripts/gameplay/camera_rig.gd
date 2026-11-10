@@ -90,6 +90,9 @@ func _process(delta: float) -> void:
 				return
 			var mid := (_kicker.global_position + _tee) * 0.5 + Vector3.UP * (0.6 if _close else 1.0)
 			var off := field_offset
+			# Free roam: pull back as he wanders off, so he and his ball both stay in shot.
+			var spread := Vector2(_kicker.global_position.x - _tee.x, _kicker.global_position.z - _tee.z).length()
+			off *= clampf(spread / 7.0, 1.0, 1.6)
 			if _close:
 				# Starts a little wider while he is still far from the tee, then moves in.
 				var gap := Vector2(_kicker.global_position.x - _tee.x, _kicker.global_position.z - _tee.z).length()

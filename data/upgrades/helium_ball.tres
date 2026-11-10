@@ -14,3 +14,5 @@ kind = "normal"
 power_mult = 1.65
 visual = ExtResource("3")
 description = "Fill the ball with balloon gas. It wants to go up anyway."
+slot = "ball"
+ball_effect = &"floaty"

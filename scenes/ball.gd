@@ -30,6 +30,17 @@ const DRIBBLE_TIME := 0.9
 const FACE_YAW := 1.15
 
 @export var player: int = 0
+## This kick's ball effects (UpgradeData.ball_effect, via Run.effects_of): set before launch().
+var effects: Array[StringName] = []
+
+## Floaty (Helium Ball, Moon Gravity): this much gravity, a longer arc and a longer hang at the top.
+const FLOAT_GRAVITY := 0.4
+const TRAIL_COLOR := {
+	&"rocket": Color(1.0, 0.3, 0.05), &"sparkle": Color(1.0, 0.95, 0.5), &"floaty": Color(1.0, 0.45, 0.8),
+	&"curve": Color(0.75, 0.9, 1.0),
+}
+var _trail_t := 0.0
+var _curve_side := 1.0
 
 var height := 0.0
 var speed := 0.0
@@ -89,6 +100,8 @@ func place_on_tee(tee: Vector3) -> void:
 	visible = true
 	_stop_orbit()
 	mesh.scale = Vector3.ONE
+	gravity_scale = 1.0
+	constant_force = Vector3.ZERO
 
 
 func arm(on: bool) -> void:
@@ -108,9 +121,15 @@ func launch(power: float, peak: float) -> void:
 	_tier = 1
 	_t = 0.0
 	freeze = false
-	var v0 := minf(sqrt(2.0 * Run.GRAVITY * maxf(peak, 0.0)), MAX_PHYSICS_SPEED)
+	var g := Run.GRAVITY * (FLOAT_GRAVITY if has_effect(&"floaty") else 1.0)
+	gravity_scale = g / Run.GRAVITY
+	var v0 := minf(sqrt(2.0 * g * maxf(peak, 0.0)), MAX_PHYSICS_SPEED)
 	var forward := minf(power * 0.35, 3.0)
 	apply_central_impulse(Vector3(0.0, v0, -forward) * mass)
+	if has_effect(&"curve"):
+		_curve_side = -1.0 if randf() < 0.5 else 1.0
+		constant_force = Vector3(_curve_side * 6.0, 0.0, 0.0) * mass
+	_launch_fx()
 	angular_velocity = Vector3(randf_range(-8, 8), randf_range(-4, 4), randf_range(-8, 8))
 	flight = Flight.PHYSICS
 	Audio.play("whoosh", null, clampf(0.7 + v0 / 40.0, 0.7, 1.7))
@@ -119,6 +138,8 @@ func launch(power: float, peak: float) -> void:
 func _physics_process(delta: float) -> void:
 	if _dribbling:
 		return   # the dribble tween owns the ball
+	if flight == Flight.PHYSICS or flight == Flight.SCRIPTED:
+		_trail(delta)
 	match flight:
 		Flight.PHYSICS:
 			_t += delta
@@ -136,6 +157,10 @@ func _physics_process(delta: float) -> void:
 			speed = (vis - _last_vis) / maxf(delta, 0.0001)
 			_last_vis = vis
 			global_position = Vector3(_arc_xz.x, _tee.y + TEE_HEIGHT + vis, _arc_xz.z)
+			if has_effect(&"floaty"):
+				global_position.x += sin(_t * 2.2) * 0.8   # drifting like a balloon
+			if has_effect(&"curve"):
+				global_position.x += _curve_side * sin(u * PI) * 3.0
 			rotate_y(delta * 6.0)
 			height = TierSet.real_height(vis)
 			_check_tiers()
@@ -177,6 +202,10 @@ func _hand_off() -> void:
 	_arc_to = TierSet.visual_y(peak_height)
 	var v := maxf(linear_velocity.y, 1.0)
 	_arc_time = clampf(2.0 * (_arc_to - _arc_from) / v, ARC_TIME_MIN, ARC_TIME_MAX)
+	if has_effect(&"floaty"):
+		_arc_time *= 1.6
+	elif has_effect(&"rocket"):
+		_arc_time *= 0.8
 	_last_vis = _arc_from
 	_t = 0.0
 	flight = Flight.SCRIPTED
@@ -201,6 +230,11 @@ func _reach_peak() -> void:
 	freeze = true
 	speed = 0.0
 	_hold = SPACE_HOLD if height >= Run.tiers.space_height() or peak_height >= Run.tiers.space_height() else PEAK_HOLD
+	constant_force = Vector3.ZERO
+	if has_effect(&"floaty"):
+		_hold += 0.8   # it hangs up there
+	if has_effect(&"confetti"):
+		_confetti_pop()
 	Audio.play("land")
 	Fx.puff(global_position, Color(1, 1, 0.7), 1.5)
 	if Run.in_space(player):
@@ -218,8 +252,17 @@ func _drop() -> void:
 	height = 0.0
 	_kill_tween()
 	_tween = create_tween()
-	_tween.tween_property(self, "global_position", _tee + Vector3.UP * TEE_HEIGHT, DROP_TIME) \
-			.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	var rest := _tee + Vector3.UP * TEE_HEIGHT
+	if has_effect(&"floaty"):
+		_tween.tween_property(self, "global_position", rest, DROP_TIME * 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	else:
+		_tween.tween_property(self, "global_position", rest, DROP_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	if has_effect(&"bouncy"):
+		# Boing, boing, boing back onto the tee.
+		for h in [1.6, 0.7, 0.25]:
+			_tween.tween_callback(Audio.play.bind("hop", null, 1.6 - h * 0.3))
+			_tween.tween_property(self, "global_position", rest + Vector3.UP * h, 0.12 + h * 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_tween.tween_property(self, "global_position", rest, 0.12 + h * 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_tween.tween_callback(func() -> void:
 		Audio.play("land", null, 1.3)
 		Fx.puff(_tee + Vector3.UP * 0.2, Color(0.8, 0.7, 0.55), 1.0)
@@ -313,3 +356,63 @@ func _dribble() -> void:
 		height = peak_height
 		_hold = PEAK_HOLD + 0.6
 		Run.notify_stopped(player, peak_height))
+
+
+func has_effect(e: StringName) -> bool:
+	return effects.has(e)
+
+
+## The kick's ball effects, seen at once: a squash-and-boing, split ghosts, a confetti pop.
+func _launch_fx() -> void:
+	_trail_t = 0.0
+	if has_effect(&"bouncy"):
+		mesh.scale = Vector3(1.5, 0.55, 1.5)
+		var tw := mesh.create_tween()
+		tw.tween_property(mesh, "scale", Vector3(0.8, 1.35, 0.8), 0.1)
+		tw.tween_property(mesh, "scale", Vector3.ONE, 0.35).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		Audio.play("hop", null, 0.8)
+	if has_effect(&"floaty"):
+		Audio.play("squeak", null, 1.4)
+	if has_effect(&"rocket"):
+		Audio.play("whoosh", null, 0.6)
+	if has_effect(&"split"):
+		_split_ghosts()
+	if has_effect(&"confetti"):
+		_confetti_pop()
+
+
+func _trail(delta: float) -> void:
+	_trail_t -= delta
+	if _trail_t > 0.0 or global_position.y - _tee.y > 400.0:
+		return
+	_trail_t = 0.06
+	for e in effects:
+		if TRAIL_COLOR.has(e):
+			Fx.puff(global_position + Vector3(randf_range(-0.15, 0.15), -0.3, randf_range(-0.15, 0.15)),
+					TRAIL_COLOR[e], 0.6 if e == &"rocket" else 0.4)
+
+
+## Two see-through copies peel off sideways and fade: "which one is it?!"
+func _split_ghosts() -> void:
+	Audio.play("confetti_pop", null, 1.4)
+	for side in [-1.0, 1.0]:
+		var g := MeshInstance3D.new()
+		g.mesh = mesh.mesh
+		var mat := StandardMaterial3D.new()
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.albedo_color = Players.COLOR[player].lerp(Color.WHITE, 0.6)
+		mat.albedo_color.a = 0.6
+		g.material_override = mat
+		g.top_level = true
+		add_child(g)
+		g.global_position = global_position
+		var tw := g.create_tween()
+		tw.tween_property(g, "global_position", global_position + Vector3(side * 2.5, 5.0, -1.0), 1.0).set_ease(Tween.EASE_OUT)
+		tw.parallel().tween_property(mat, "albedo_color:a", 0.0, 1.0).set_ease(Tween.EASE_IN)
+		tw.tween_callback(g.queue_free)
+
+
+func _confetti_pop() -> void:
+	Audio.play("confetti_pop")
+	for c in [Color(1, 0.4, 0.5), Color(0.4, 0.8, 1), Color(1, 0.9, 0.3), Color(0.6, 1, 0.5)]:
+		Fx.puff(global_position + Vector3(randf_range(-0.6, 0.6), randf_range(0.0, 0.6), randf_range(-0.6, 0.6)), c, 0.5)

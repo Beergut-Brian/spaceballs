@@ -8,7 +8,12 @@ Content owns this file. Re-run `tests/test_simulation.gd` and update it whenever
   Height = power² / 2g, so every x1.75 normal pick roughly triples the height.
 - Card odds per slot: normal 60 %, strong 20 %, joke 12 %, curse 8 %. Every draw has a normal.
 - Tier band: rounds 1-4 draw tier-1 cards, 5-8 tiers 1-2, 9+ all three (`c.tier <= band`).
-- Catch-up: a player 2+ tiers behind gets normals of x1.7+ and 40 % strong slots.
+- Catch-up: a player 2+ tiers behind gets normals of x1.7+ and 60 % strong slots (was 40 %, see log).
+- No duplicate gear: a draw never offers a non-curse card the player already has; curses can repeat.
+- Run-up: gear `runup_bonus` (Sweatband, Running Start, Foam Finger, Slingshot Buddy...) adds to the
+  run-up quality; the 1.2 cap stays. The simulation adds it too.
+- Effects (speed, hops, kick styles, ball effects) explain the height; they never change it.
+  Height still comes from `power_mult` only.
 - Round 14+: strong-only pool. Round 15: the kick is floored just over the space line.
 
 ## Target curve (GAME.md)
@@ -39,39 +44,94 @@ About one tier per round early, slowing through Clouds and Thin air so the space
 - 2026-11-09: 44 upgrades replace the 16 placeholders. First pass (normals x1.6-1.9, avg 1.74) gave median 12.
   Normals +0.05 -> median 11 but worst P1/P2 gap 3 (joke-heavy early picks). Jokes lifted to x1.1-1.3,
   strongs trimmed to x2.3-2.65 -> median 11, worst gap 2. Green.
+- 2026-11-09 (Gameplay, free roam): no duplicate gear + runup_bonus. Medians unchanged (11 / 11 / best 9) but
+  the 2P worst gap went to 3 (2 of 400 runs: a leader on early strongs while the other drew curses).
+  Catch-up strong odds 40 % -> 60 % (multipliers unchanged) -> worst gap 2. Green.
 
-## Simulation output (2026-11-09)
+## Simulation output (2026-11-09, free roam + no duplicates)
 
 ```
 [sim] 1P, 400 runs, random picks: median 11.0, min 7, max 15
   round  7:    1 #
-  round  8:    1 #
-  round  9:   30 #####
-  round 10:   80 ############
-  round 11:  117 ##################
-  round 12:   80 ############
-  round 13:   56 #########
-  round 14:   20 ###
-  round 15:   15 ###
-[sim] kicks lifted to space by the round-15 floor: 1 of 400 player-runs
+  round  8:    6 #
+  round  9:   44 #######
+  round 10:   96 ###############
+  round 11:  115 ##################
+  round 12:   70 ###########
+  round 13:   40 ######
+  round 14:   18 ###
+  round 15:   10 ##
+[sim] kicks lifted to space by the round-15 floor: 0 of 400 player-runs
 [sim] 2P, 400 runs, random picks: median 11.0, min 8, max 15
-  round  8:    2 #
-  round  9:   41 ####
-  round 10:  159 ############
-  round 11:  258 ####################
-  round 12:  211 ################
-  round 13:   93 #######
-  round 14:   31 ###
-  round 15:    5 #
+  round  8:    5 #
+  round  9:   67 ######
+  round 10:  226 #################
+  round 11:  249 ###################
+  round 12:  184 ##############
+  round 13:   55 #####
+  round 14:   13 #
+  round 15:    1 #
 [sim] kicks lifted to space by the round-15 floor: 0 of 800 player-runs
 [sim] max tier gap after round 6: median 1.0, worst 2, runs with gap > 2: 0
 [sim] 1P, 400 runs, best picks: median 9.0, min 7, max 10
-  round  7:    1 #
-  round  8:  111 #################
-  round  9:  243 #####################################
-  round 10:   45 #######
+  round  7:    2 #
+  round  8:  166 #########################
+  round  9:  212 ################################
+  round 10:   20 ###
 [sim] kicks lifted to space by the round-15 floor: 0 of 400 player-runs
 ```
+
+## Effect table (Gameplay, 2026-11-09)
+
+What each card does you can feel or see. Stats add up across the run; the look is what you wear
+(one item per slot, the newest wins). Curses act on their one kick.
+
+| Kind | x | Card | Slot | Effect |
+| --- | --- | --- | --- | --- |
+| normal | 1.6 | Sweatband | head | speed x1.1, accel x1.2, run-up +0.05, run: wind |
+| normal | 1.65 | Helium Ball | ball | ball: floaty |
+| normal | 1.65 | Lucky Sock | knees | run-up +0.05, run: sparkle, ball: sparkle |
+| normal | 1.7 | Trampoline Tee | ball | kick: pogo, ball: bouncy |
+| normal | 1.75 | Big Boot | feet | speed x0.9, kick: stomp, shake 0.3 |
+| normal | 1.75 | Foam Finger | hands | run-up +0.1, ball: sparkle |
+| normal | 1.75 | Spring Shoes | feet | hop x1.5, run: bounce, kick: pogo |
+| normal | 1.8 | Coach's Whistle | waist | accel x1.35, run-up +0.05, kick sound: whistle |
+| normal | 1.8 | Propeller Cap | head | hop x1.2, gravity x0.6, run: wind |
+| normal | 1.8 | Running Start | waist | speed x1.1, accel x1.8, run-up +0.1, run: wind |
+| normal | 1.8 | Super Strength | hands | kick: stomp, bulk x1.3, shake 0.5 |
+| normal | 1.85 | Bouncy Knee Pads | knees | hop x1.3, kick: pogo, ball: bouncy |
+| normal | 1.85 | Rocket Boots | feet | speed x1.4, accel x1.3, run: flame, kick: jet, ball: rocket |
+| normal | 1.85 | Super Cape | back | speed x1.15, hop x1.2, gravity x0.8, run: wind |
+| normal | 1.9 | Giant Foot | feet | speed x0.9, kick: stomp, shake 0.6 |
+| normal | 1.9 | Wind-Up Key | back | speed x1.2, accel x2.0, kick: spin |
+| strong | 2.3 | Dad Strength | waist | speed x0.95, kick: stomp, bulk x1.25, shake 0.6 |
+| strong | 2.3 | Moon Gravity | head | gravity x0.4, ball: floaty |
+| strong | 2.35 | Slingshot Buddy | back | run-up +0.15, ball: rocket, shake 0.3 |
+| strong | 2.4 | Kangaroo Tail | back | hop x1.6, run: bounce, kick: pogo |
+| strong | 2.4 | Volcano Boots | feet | speed x1.2, run: flame, kick: stomp, ball: rocket, shake 0.5 |
+| strong | 2.45 | Cannon Leg | knees | kick: cannon, shake 0.8 |
+| strong | 2.45 | Pogo Legs | feet | hop x1.8, run: bounce, kick: pogo, ball: bouncy |
+| strong | 2.45 | Tornado Spin | waist | accel x1.3, run: wind, kick: spin, ball: curve |
+| strong | 2.5 | Jetpack | back | hop x1.8, gravity x0.7, kick: jet, ball: rocket |
+| strong | 2.6 | Thunder Hat | head | kick: zap, ball: sparkle, shake 0.7 |
+| strong | 2.65 | Turbo Fan | back | speed x1.5, accel x1.5, run: wind, kick: spin |
+| joke | 1.1 | Googly Eyes | face | ball: split |
+| joke | 1.15 | Mustache | face | run: sparkle |
+| joke | 1.2 | Balloon Animal Ball | hands | ball: split, kick sound: squeak |
+| joke | 1.2 | Honk Horn Shoes | feet | run: honk, kick sound: honk |
+| joke | 1.2 | Rubber Chicken | hands | run: squeak, kick sound: squawk |
+| joke | 1.2 | Tiny Hat | head | hop x1.1, bulk x0.85 |
+| joke | 1.25 | Confetti Kick | none | ball: confetti |
+| joke | 1.25 | Duck Floatie | waist | hop x1.15, gravity x0.85, run: squeak |
+| joke | 1.25 | Extra Shoes | feet | speed x1.15, run: squeak |
+| joke | 1.3 | Opera Kick | face | speed x0.9, ball: sparkle, kick sound: opera |
+| curse | 0.2 | Shoelaces Tied | none | speed x0.5, hop x0.6, gag: trip |
+| curse | 0.2 | Too Much Lunch | none | hop x0.5, bulk x1.3, gag: waddle |
+| curse | 0.25 | Banana Peel | none | accel x0.6, gag: slip |
+| curse | 0.25 | Butterfly | none | speed x1.1, ball: sparkle, gag: chase |
+| curse | 0.25 | Kiss the Frog | none | frog round (all gear off) |
+| curse | 0.3 | Hiccups | none | run: bounce, ball: curve |
+| curse | 0.3 | Sneeze | none | ball: curve, gag: sneeze |
 
 ## Upgrade table
 

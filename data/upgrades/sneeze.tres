@@ -16,3 +16,5 @@ windup_anim = &"sneeze"
 kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Ah... ahh... AHHH-CHOO! Right on the kick."
+slot = "none"
+ball_effect = &"curve"

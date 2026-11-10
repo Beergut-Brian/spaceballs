@@ -14,3 +14,6 @@ kind = "joke"
 power_mult = 1.2
 visual = ExtResource("3")
 description = "Every step honks. Every kick HONKS."
+slot = "feet"
+run_fx = &"honk"
+kick_sfx = &"honk"

@@ -1,5 +1,4 @@
-## Kicker: run-up quality bounds, and the kid check "a player who only wiggles the stick
-## still kicks every round" (within ~10 s), using the real kicker on a flat floor.
+## Kicker: run-up quality bounds and the free run, using the real kicker on a flat floor.
 class_name TestKicker
 extends GdUnitTestSuite
 
@@ -71,20 +70,10 @@ func _time_to_reach(stick: Callable, seed_: int) -> float:
 	return t
 
 
-func test_wiggle_only_still_kicks_within_10_s() -> void:
-	var worst := 0.0
-	for s in 60:
-		var wiggle := func(t: float) -> Vector2:
-			return Vector2(sin(t * 11.0 + s), cos(t * 7.0 + s * 2.0))
-		worst = maxf(worst, _time_to_reach(wiggle, s))
-	print("[kicker] wiggle-only worst time to the ball: %.1f s" % worst)
-	assert_float(worst).is_less(10.0)
-
-
-func test_no_input_still_kicks_within_10_s() -> void:
+func test_no_input_stays_put() -> void:
+	# Free roam (playtest 2026-11-09): no auto-steer, so hands off means he stands still.
 	var t := _time_to_reach(func(_t: float) -> Vector2: return Vector2.ZERO, 1)
-	print("[kicker] hands-off time to the ball: %.1f s" % t)
-	assert_float(t).is_less(10.0)
+	assert_float(t).is_greater_equal(20.0)
 
 
 func test_stick_toward_ball_is_quick() -> void:

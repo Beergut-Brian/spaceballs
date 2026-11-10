@@ -14,3 +14,5 @@ kind = "joke"
 power_mult = 1.25
 visual = ExtResource("3")
 description = "Pop! The kick comes with a party."
+slot = "none"
+ball_effect = &"confetti"

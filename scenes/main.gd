@@ -25,6 +25,8 @@ const PICK_BEAT := 0.9
 var _title_t := 0.0
 var _turn: TurnMarker
 var _confetti: CPUParticles2D
+## -- --gear=a,b (P1) / --gear2=c (P2): start every run wearing these (playtests, screenshots).
+var _gear := {P1: [], P2: []}
 
 
 func _ready() -> void:
@@ -60,6 +62,9 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--demo":
 			Run.demo = true
+		elif arg.begins_with("--gear=") or arg.begins_with("--gear2="):
+			var who := P2 if arg.begins_with("--gear2=") else P1
+			_gear[who] = Array(arg.get_slice("=", 1).split(",", false))
 		elif arg.begins_with("--timescale="):
 			Engine.time_scale = clampf(float(arg.trim_prefix("--timescale=")), 0.1, 8.0)
 	if Run.demo:
@@ -121,6 +126,12 @@ func _on_run_started() -> void:
 		kickers[p].set_space_suit(false)
 		kickers[p].dance(false)
 		balls[p].place_on_tee(_marker("Tees", p))
+		for id in _gear[p]:
+			var u := Run.upgrade_by_id(StringName(id))
+			if u:
+				Run.give(p, u)
+				kickers[p].add_upgrade_visual(u)
+		kickers[p].apply_effects(Run.effects_of(p))
 
 
 func _on_phase_changed(from: int, to: int) -> void:
@@ -158,6 +169,10 @@ func _begin_kick(p: int) -> void:
 		elif Run.in_run(q) or Players.is_active(q):
 			_place(q, _marker("Sidelines", q), tee)
 			k.set_waiting(false)
+			# The other one runs about too (never near enough a ball to matter: only the
+			# kicker's own body starts a kick).
+			k.apply_effects(Run.effects_of(q))
+			k.roam = not Run.demo
 		else:
 			_bench(q)
 	var me: Kicker = kickers[p]
@@ -172,11 +187,14 @@ func _begin_kick(p: int) -> void:
 		Audio.play("curse")
 		Fx.puff(me.global_position + Vector3.UP, Color(0.6, 0.4, 0.9), 1.5)
 	me.windup = windup_of(p)
+	me.effects = Run.effects_of(p)
+	me.bot = Run.demo
 	me.begin_approach(balls[p].global_position)
 	balls[p].arm(true)
 	rig.frame_close(frog_round)
 	rig.frame_field(me, tee)
 	_turn.show_for(me, tee, Players.COLOR[p])
+	_turn.set_ball(balls[p])
 
 
 ## The kick's wind-up gag source: the round's curse if it has a gag, else the newest upgrade with one.
@@ -209,8 +227,13 @@ func _on_kick_contact(quality: float, p: int) -> void:
 	var height := Run.kick_height(p, power)
 	var tier := Run.tier_of_height(height)
 	Audio.play(_kick_cue(p, tier))
+	var fx: Dictionary = kickers[p].effects
+	balls[p].effects.assign(fx.get(&"ball_effects", []) if not kickers[p].frog else [])
 	if not kickers[p].frog:
 		Fx.puff(balls[p].global_position, Color(1, 1, 0.8), 0.8 + tier * 0.3)
+		var juice := field.get_node_or_null("Juice")
+		if juice and juice.has_method("shake") and float(fx.get(&"shake", 0.0)) > 0.0:
+			juice.call_deferred("shake", float(fx.get(&"shake", 0.0)))   # after its own kick shake
 	balls[p].launch(power, height)
 	if not kickers[p].frog:
 		rig.follow(balls[p])   # the frog's dribble stays in the close-up
@@ -321,6 +344,9 @@ func _on_picked(p: int, u: UpgradeData) -> void:
 		Fx.pop(kickers[p].body, 1.4)
 	else:
 		kickers[p].add_upgrade_visual(u)
+		var ups := Run.upgrades_of(p)
+		ups.append(u)
+		kickers[p].apply_effects(Run.resolve_effects(ups))   # Super Strength bulks up right here
 	var last := Run.pickers().all(func(q: int) -> bool: return q == p or Run.has_picked(q))
 	if last:
 		# A beat to watch the new gear pop on before the split screen closes.
