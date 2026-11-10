@@ -43,3 +43,15 @@ New characters are proposed in the design sprint and approved by Kaden before an
   final asset will be, so Gameplay never waits on Art.
 - Every asset gets a line in `assets/CREDITS.md`. Generated art must not depict or imitate
   recognisable characters, brands or artists.
+
+## Upgrade card icons
+
+- The 44 icons in `assets/sprites/upgrades/` are renders, not drawings: `art/tools/render_icons.sh` puts each gear
+  glb (level 1, trim hidden) or, for cards without gear, a small vignette built in `art/tools/render_icons.py`,
+  into one studio: same bounding sphere, 80 mm lens, 3/4 angle, key + fill + rim light. `art/tools/icon_post.py`
+  then fits the silhouette to the same box and adds the Midnight Ink outline and the soft shadow. 512x512, no text.
+- Re-run it whenever a gear model changes (`art/tools/render_icons.sh big_boot,jetpack` for a few, no argument
+  for all 44, about 8 minutes on CPU). The camera angle per icon is the `VIEW` table.
+- The card's kind is on the card back, drawn in `scenes/ui/upgrade_card.gd`: normal is clean ice, strong has
+  gold trim and a turning sunburst, joke has confetti, curse is violet with twinkles. Player green and red are
+  only ever the highlight border.
