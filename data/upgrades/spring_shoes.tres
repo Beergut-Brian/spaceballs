@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.75
 visual = ExtResource("3")
 description = "Boing on the way in, boing on the way out."
+slot = "feet"
+jump_mult = 1.5
+run_fx = &"bounce"
+kick_style = &"pogo"

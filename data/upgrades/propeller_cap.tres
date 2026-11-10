@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.8
 visual = ExtResource("3")
 description = "The propeller spins so fast the whole kick gets lighter."
+slot = "head"
+jump_mult = 1.2
+gravity_mult = 0.6
+run_fx = &"wind"

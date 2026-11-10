@@ -14,3 +14,6 @@ kind = "joke"
 power_mult = 1.2
 visual = ExtResource("3")
 description = "It does nothing. It squawks anyway."
+slot = "hands"
+run_fx = &"squeak"
+kick_sfx = &"squawk"

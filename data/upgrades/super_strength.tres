@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.8
 visual = ExtResource("3")
 description = "Lifts a dumbbell with one hand. Kicks with the other foot."
+slot = "hands"
+bulk = 1.3
+kick_style = &"stomp"
+shake = 0.5

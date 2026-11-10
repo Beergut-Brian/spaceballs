@@ -14,3 +14,6 @@ kind = "strong"
 power_mult = 2.45
 visual = ExtResource("3")
 description = "A leg that is also a cannon. Kaboom, but friendly."
+slot = "knees"
+kick_style = &"cannon"
+shake = 0.8

@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.85
 visual = ExtResource("3")
 description = "Rubber knees. Every kick comes back with a boing."
+slot = "knees"
+jump_mult = 1.3
+kick_style = &"pogo"
+ball_effect = &"bouncy"

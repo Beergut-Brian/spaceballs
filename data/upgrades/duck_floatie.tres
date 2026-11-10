@@ -14,3 +14,7 @@ kind = "joke"
 power_mult = 1.25
 visual = ExtResource("3")
 description = "Ready for the pool. The pool is not here."
+slot = "waist"
+jump_mult = 1.15
+gravity_mult = 0.85
+run_fx = &"squeak"

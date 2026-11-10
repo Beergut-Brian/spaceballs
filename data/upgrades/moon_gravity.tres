@@ -14,3 +14,6 @@ kind = "strong"
 power_mult = 2.3
 visual = ExtResource("3")
 description = "A little moon follows you around and makes everything floaty."
+slot = "head"
+gravity_mult = 0.4
+ball_effect = &"floaty"

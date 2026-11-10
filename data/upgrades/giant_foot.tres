@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.9
 visual = ExtResource("3")
 description = "One normal foot. One foot the size of a sofa."
+slot = "feet"
+run_speed_mult = 0.9
+kick_style = &"stomp"
+shake = 0.6

@@ -14,3 +14,6 @@ kind = "normal"
 power_mult = 1.75
 visual = ExtResource("3")
 description = "Number one kicker, says the giant foam hand."
+slot = "hands"
+runup_bonus = 0.1
+ball_effect = &"sparkle"

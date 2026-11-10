@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.65
 visual = ExtResource("3")
 description = "Never washed. That's where the luck lives."
+slot = "knees"
+runup_bonus = 0.05
+ball_effect = &"sparkle"
+run_fx = &"sparkle"

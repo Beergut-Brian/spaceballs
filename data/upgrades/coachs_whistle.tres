@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.8
 visual = ExtResource("3")
 description = "Tweet! The ball listens to the coach."
+slot = "waist"
+accel_mult = 1.35
+runup_bonus = 0.05
+kick_sfx = &"whistle"

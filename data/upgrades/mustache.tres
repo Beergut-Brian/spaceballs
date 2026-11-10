@@ -14,3 +14,5 @@ kind = "joke"
 power_mult = 1.15
 visual = ExtResource("3")
 description = "A magnificent mustache. Strength unknown, style enormous."
+slot = "face"
+run_fx = &"sparkle"

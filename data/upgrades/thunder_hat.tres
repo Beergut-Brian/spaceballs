@@ -14,3 +14,7 @@ kind = "strong"
 power_mult = 2.6
 visual = ExtResource("3")
 description = "A grumpy little storm cloud. The kick comes with lightning."
+slot = "head"
+kick_style = &"zap"
+ball_effect = &"sparkle"
+shake = 0.7

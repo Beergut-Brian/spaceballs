@@ -14,3 +14,7 @@ kind = "normal"
 power_mult = 1.75
 visual = ExtResource("3")
 description = "A boot the size of a bathtub. Plenty of room for the foot."
+slot = "feet"
+run_speed_mult = 0.9
+kick_style = &"stomp"
+shake = 0.3
