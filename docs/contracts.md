@@ -238,6 +238,8 @@ const BASE_POWER := 8.0                                # round-1 kick, m/s at qu
 func in_run(player: int) -> bool          # playing this round (P1 always; P2 if active at round start)
 func in_space(player: int) -> bool
 func curse_of(player: int) -> UpgradeData # the curse acting on this round's kick, or null
+func reveal_curse(player: int, rng = null) -> UpgradeData  # after a pick: the curse it secretly was, or null
+func curses_of(player: int) -> int        # curses this player has had this run
 func best_height(player: int) -> float    # this run
 func last_height(player: int) -> float
 func tier_of_height(height: float) -> int # 1..8 via data/tiers.tres
@@ -271,11 +273,17 @@ Rules the code implements (tests in `tests/test_run.gd`):
 - Save keys (per profile): `best_height` (float, metres), `runs_completed` (int),
   `upgrades_seen` (Array of `id` strings, every card ever drawn).
 
-Draw rules (`draw_cards`): three different cards. Per card the kind is rolled 60 % normal,
-20 % strong, 12 % joke, 8 % curse; an upgrade of `tier` <= the round band (1: rounds 1-4,
+Draw rules (`draw_cards`): three different cards. Per card the kind is rolled 65 % normal,
+22 % strong, 13 % joke; **curses are never offered** (playtest 2026-11-09 #2); an upgrade of `tier` <= the round band (1: rounds 1-4,
 2: 5-8, 3: 9+) is picked, falling back to any tier. At least one `normal` card in every draw
 before round 14. Catch-up (2+ tiers behind): only `normal` / `strong` cards with
 `power_mult >= 1.7`. Picks after round 14: `strong` only.
+
+Hidden curses: after a pick, `main.gd` asks `reveal_curse(p)`. With `CURSE_REVEAL_ODDS` (14 %) the
+card turns out to be a curse of the round's band: the pick UI flips it (`UpgradePick.reveal_curse`,
+awaitable) and `main.gd` calls `pick(p, curse)` instead of the picked card. Never on the first pick
+(round 1), never for a player on catch-up, never two rounds running, at most `CURSE_MAX` (2) per
+player, none in the strong-only rounds. About two per two-player run (`tests/test_simulation.gd`).
 
 ### `UpgradeData` (`scripts/gameplay/upgrade_data.gd`, `class_name UpgradeData extends Resource`)
 
@@ -390,8 +398,13 @@ no input. The kick starts when *his own* armed ball's `KickZone` sees him (`main
 body). `effects: Dictionary` (from `Run.effects_of`, set by `main.gd` before `begin_approach`)
 scales speed/accel/hop/gravity and picks the run fx and kick style. Run-up quality is measured over
 the last `RUNUP_WINDOW` seconds before contact (roaming first costs nothing). The field is bounded by
-a soft wall (`bounds: Rect2` on XZ, default inside the fence). `bot: bool` (demo) roams a little,
-then runs in. Waiting players (`CHEER`) roam too, slower, and can never touch a ball.
+a soft wall (`bounds: Rect2` on XZ, default inside the fence; the spawns are 30 m from the tees,
+about 5.6 s of running at base speed). `bot: bool` (demo) swerves once, then runs in. The bystander
+(`CHEER` with `roam`) runs at full speed with all his gear, his own ball is hidden until his turn,
+and touching the kicker's ball only bumps him off it. A hop over his own ball no higher than
+`main.gd` `SNAP_OVER` above its top snaps him down in front of it and kicks; higher, he flies over.
+Banana peel (`slip`): the peel lies `PEEL_GAP` before the ball; stepping on it emits `slipped()`
+and `main.gd` starts the kick there: he slides into the ball, which dribbles (`ball.dribbles()`).
 
 Wind-up gags: `main.gd` sets `windup` to the round's curse, else the newest upgrade with a
 `windup_anim`. `start_windup()` then enters `GAG` (emits `gag_started`), plays the full-body gag on

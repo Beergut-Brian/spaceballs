@@ -24,14 +24,34 @@ const PICK_BEAT := 0.9
 ## Lobby shot: Jeff and Chuck stand this far behind and outside their tees (P2 mirrored), so
 ## each is in the middle of his spot with the ball at his inner side; the camera looks from in front.
 const LOBBY_KICKER := preload("res://scenes/ui/lobby_kicker.gd")
+const BallScript := preload("res://scenes/ball.gd")
 const LOBBY_STAND := Vector3(-0.8, 0, -1.3)
 const LOBBY_CAMERA := Vector3(0, 1.5, 4.6)
 const LOBBY_LOOK := Vector3(0, 1.05, 0)
 ## A kick starts only this close to the ball (flat metres). The kick zone's overlap list can be a
 ## physics frame stale after a teleport (lobby -> spawn), which would kick on the round's first frame.
 const KICK_REACH := 1.7
+## A hop over his own ball: within this flat distance of it and no higher than this over its top
+## (about one ball-height, plus the kick zone's reach), he is snapped down in front and kicks anyway.
+## Higher (a jetpack or rocket jump), he flies over.
+const SNAP_REACH := 1.0
+const SNAP_OVER := 0.8
+const BALL_TOP := 0.65
+## Where he lands when snapped: this far before the ball, on the side he came from.
+const SNAP_GAP := 0.75
+## The bystander bumping the kicker's ball: a boop and a little shove, nothing else.
+const BUMP_PUSH := 4.0
+## The field's picket fence is 30 m long; the long run-up (spawns 30 m out) gets a second length.
+const FENCE_LENGTH := 30.0
+## A great kick holds the shot this long on the kicker and the cheering crowd before following the ball.
+const CROWD_BEAT := 0.35
 
 var _turn: TurnMarker
+var _crowd: CrowdReactions
+var _bystander_arrow: OffscreenArrow
+var _bump_t := 0.0
+## The highest tier any ball has reached this run (a new one gets the crowd's roar).
+var _run_top_tier := 1
 var _confetti: CPUParticles2D
 ## -- --gear=a,b (P1) / --gear2=c (P2): start every run wearing these (playtests, screenshots).
 var _gear := {P1: [], P2: []}
@@ -55,12 +75,21 @@ func _ready() -> void:
 		balls[p].kick_zone_entered.connect(_on_kick_zone.bind(p))
 		balls[p].returned.connect(_on_ball_returned.bind(p))
 		kickers[p].kick_contact.connect(_on_kick_contact.bind(p))
+		kickers[p].slipped.connect(_start_kick.bind(p))
 		hud.track(p, balls[p])
 	pick_ui.picked.connect(_on_picked)
 	end_card.restart_requested.connect(_on_end_accepted)
 	Run.ball_stopped.connect(_on_ball_stopped)
 	_turn = TurnMarker.new()
 	add_child(_turn)
+	_lengthen_field()
+	_crowd = CrowdReactions.new()
+	add_child(_crowd)
+	_crowd.setup(field.find_child("Crowd", true, false))
+	Run.ball_tier_reached.connect(_on_tier_reached)
+	_bystander_arrow = OffscreenArrow.new()
+	$UI.add_child(_bystander_arrow)
+	_bystander_arrow.hide_arrow()
 	_confetti = end_card.get_node("Confetti").duplicate()
 	_confetti.one_shot = true
 	_confetti.explosiveness = 0.6
@@ -163,6 +192,7 @@ func _layout_lobby() -> void:
 # --- phases ----------------------------------------------------------------------
 
 func _on_run_started() -> void:
+	_run_top_tier = 1
 	end_card.close()
 	pick_ui.close()
 	hud.visible = true
@@ -186,6 +216,8 @@ func _on_phase_changed(from: int, to: int) -> void:
 		rig.split(false)
 	if to != Run.Phase.KICK_P1 and to != Run.Phase.KICK_P2:
 		_turn.hide_marker()
+	if to == Run.Phase.PICK or to == Run.Phase.END or to == Run.Phase.IDLE:
+		_bystander_arrow.hide_arrow()
 	match to:
 		Run.Phase.KICK_P1:
 			_begin_kick(P1)
@@ -210,19 +242,25 @@ func _begin_kick(p: int) -> void:
 		balls[q].visible = not Run.in_space(q)
 		if q == p:
 			continue
+		# The bystander's ball is not on its tee yet: nothing of his to kick.
+		balls[q].visible = false
+		balls[q].arm(false)
 		if Run.in_space(q):
 			_to_cloud(q)
 		elif Run.in_run(q) or Players.is_active(q):
 			_place(q, _marker("Sidelines", q), tee)
 			k.set_waiting(false)
-			# The other one runs about too (never near enough a ball to matter: only the
-			# kicker's own body starts a kick).
+			# The bystander runs about with all his gear (trails, bounce, jets); only the
+			# kicker's own body starts a kick, so he can't kick anything.
 			k.apply_effects(Run.effects_of(q))
-			k.roam = not Run.demo
+			k.roam = true
+			k.bot = Run.demo
+			_bystander_arrow.show_for(k, Players.COLOR[q])
 		else:
 			_bench(q)
+			_bystander_arrow.hide_arrow()
 	var me: Kicker = kickers[p]
-	_place(p, _marker("Spawns", p), tee)
+	_place(p, spawn_for(p, tee), tee)
 	balls[p].place_on_tee(tee)
 	var curse := Run.curse_of(p)
 	var frog_round := curse != null and curse.scene_override != null
@@ -243,6 +281,16 @@ func _begin_kick(p: int) -> void:
 	_turn.set_ball(balls[p])
 
 
+## Where his run starts: the spawn, 30 m out. A slowing curse (tied laces, too much lunch, the frog)
+## starts him closer so the run still lasts about as long, never dead air.
+func spawn_for(p: int, tee: Vector3) -> Vector3:
+	var curse := Run.curse_of(p)
+	var slow := 1.0
+	if curse != null:
+		slow = 0.55 if curse.scene_override != null else clampf(curse.run_speed_mult * (0.7 if Kicker.gag_of(curse) == &"waddle" else 1.0), 0.5, 1.0)
+	return tee.lerp(_marker("Spawns", p), slow)
+
+
 ## The kick's wind-up gag source: the round's curse if it has a gag, else the newest upgrade with one.
 func windup_of(p: int) -> UpgradeData:
 	var curse := Run.curse_of(p)
@@ -256,10 +304,24 @@ func windup_of(p: int) -> UpgradeData:
 
 
 func _on_kick_zone(body: Node3D, p: int) -> void:
-	if body != kickers[p] or Run.phase != Run.KICK_PHASE[p]:
+	if Run.phase != Run.KICK_PHASE[p]:
+		return
+	if body is Kicker and body != kickers[p]:
+		_bump(body as Kicker, p)
+		return
+	if body != kickers[p]:
 		return
 	var gap: Vector3 = body.global_position - balls[p].global_position
 	if Vector2(gap.x, gap.z).length() > KICK_REACH:
+		return
+	if not kickers[p].is_on_floor():
+		_snap_in_front(p)
+	_start_kick(p)
+
+
+## The kick starts: his own ball's zone, a low hop over it, or a banana peel a few metres out.
+func _start_kick(p: int) -> void:
+	if Run.phase != Run.KICK_PHASE[p] or not balls[p].is_armed() or kickers[p].state != Kicker.State.APPROACH:
 		return
 	balls[p].arm(false)
 	Run.notify_kick_started(p)
@@ -267,6 +329,55 @@ func _on_kick_zone(body: Node3D, p: int) -> void:
 	_turn.hide_marker()
 	if Kicker.gag_of(kickers[p].windup) != &"" and not kickers[p].frog:
 		rig.frame_close(true)   # move in so the gag reads
+
+
+func _physics_process(delta: float) -> void:
+	_bump_t = maxf(_bump_t - delta, 0.0)
+	var p := Run.phase_player()
+	if p < 0 or Run.phase != Run.KICK_PHASE[p] or not balls[p].is_armed():
+		return
+	if over_ball(kickers[p], balls[p]):
+		_snap_in_front(p)
+		_start_kick(p)
+
+
+## Kaden: "if you're close to the top of the ball and you're having to jump over it, maybe we just
+## snap the animation to in front of the ball and still have you kick it anyway."
+static func over_ball(k: Kicker, ball: Node3D) -> bool:
+	if k.is_on_floor() or k.state != Kicker.State.APPROACH or k.is_slipping():
+		return false
+	var gap := k.global_position - ball.global_position
+	var top := ball.global_position.y - BallScript.TEE_HEIGHT + BALL_TOP
+	return Vector2(gap.x, gap.z).length() < SNAP_REACH and k.global_position.y - top <= SNAP_OVER
+
+
+func _snap_in_front(p: int) -> void:
+	var k: Kicker = kickers[p]
+	var ball: Vector3 = balls[p].global_position
+	var come := Vector3(k.velocity.x, 0.0, k.velocity.z)
+	if come.length() < 0.3:
+		come = Vector3(ball.x - k.global_position.x, 0.0, ball.z - k.global_position.z)
+	if come.length() < 0.01:
+		come = Vector3.FORWARD
+	var ground := _marker("Tees", p).y
+	k.global_position = Vector3(ball.x, ground, ball.z) - come.normalized() * SNAP_GAP
+	k.velocity = Vector3.ZERO
+	Fx.puff(k.global_position + Vector3.UP * 0.2, Color(0.85, 0.75, 0.6), 0.6)
+	Audio.play("land", null, 1.2)
+
+
+## The bystander ran into the kicker's ball: a boop, the ball wobbles, he bounces off.
+func _bump(k: Kicker, p: int) -> void:
+	if _bump_t > 0.0:
+		return
+	_bump_t = 0.6
+	var away: Vector3 = k.global_position - balls[p].global_position
+	away.y = 0.0
+	away = away.normalized() if away.length() > 0.01 else Vector3.BACK
+	k.velocity = away * BUMP_PUSH + Vector3.UP * 3.0
+	Audio.play("squeak", null, 0.8)
+	Fx.pop(balls[p].mesh, 1.25)
+	Fx.puff(balls[p].global_position, Players.COLOR[k.player].lightened(0.4), 0.4)
 
 
 func _on_kick_contact(quality: float, p: int) -> void:
@@ -284,11 +395,23 @@ func _on_kick_contact(quality: float, p: int) -> void:
 		if juice and juice.has_method("shake") and float(fx.get(&"shake", 0.0)) > 0.0:
 			juice.call_deferred("shake", float(fx.get(&"shake", 0.0)))   # after its own kick shake
 	balls[p].launch(power, height)
-	if not kickers[p].frog:
-		rig.follow(balls[p])   # the frog's dribble stays in the close-up
+	var cursed := Run.curse_of(p) != null
+	var level := CrowdReactions.kick_level(tier, Run.tier_of_height(Run.best_height(p)), quality, cursed)
+	if not cursed and tier > _run_top_tier:
+		# Headed for a height nobody has reached this run: the crowd roars.
+		_run_top_tier = tier
+		level = CrowdReactions.Level.ROAR
+	_crowd.react(level)
 	var other := P2 if p == P1 else P1
 	if kickers[other].state == Kicker.State.CHEER or kickers[other].state == Kicker.State.CLOUD:
 		kickers[other].cheer()
+	if not balls[p].dribbles(Run.curse_of(p)):
+		# A big one: a beat on the kick and the crowd going up, then off after the ball.
+		if level >= CrowdReactions.Level.GREAT:
+			await get_tree().create_timer(CROWD_BEAT).timeout
+			if Run.phase != Run.FLIGHT_PHASE[p]:
+				return
+		rig.follow(balls[p])   # the frog's and the banana's dribble stays in the close-up
 
 
 func _kick_cue(p: int, tier: int) -> String:
@@ -311,21 +434,28 @@ func _on_ball_returned(p: int) -> void:
 	Run.end_flight(p)
 
 
-## The frog round's payoff: the ball plops a few feet, "bloop", and the whole crowd goes "awww".
+## A new tier for the whole run: the crowd roars.
+func _on_tier_reached(p: int, tier: int) -> void:
+	if tier > _run_top_tier and Run.phase == Run.FLIGHT_PHASE[p] and Run.curse_of(p) == null:
+		_run_top_tier = tier
+		_crowd.react(CrowdReactions.Level.ROAR)
+
+
+## A curse's payoff: the ball goes nowhere and the whole crowd goes "awww". The frog also
+## plops a "bloop" and laughs it off.
 func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 	if Run.in_space(p) and balls[p].flight == balls[p].Flight.FLOATING:
 		rig.orbit(balls[p].orbit_center, 4.4, 1.2, false)
 		_celebrate_orbit()
 		return
 	var curse := Run.curse_of(p)
-	if curse == null or curse.scene_override == null:
+	if curse == null:
+		return
+	_crowd.react(CrowdReactions.Level.AWW)
+	if curse.scene_override == null:
 		return
 	_sfx("bloop", "frog", 0.6)
-	_sfx("aww", "cheer", 0.7)
 	Fx.puff(balls[p].global_position + Vector3.UP * 0.3, Color(0.6, 0.9, 0.4), 0.4)
-	var crowd := field.find_child("Crowd", true, false)
-	if crowd and crowd.has_method("cheer"):
-		crowd.cheer(2.0)
 	# Both of them laugh it off: the frog does a happy hop, the other one cheers.
 	kickers[p].cheer()
 	var other := P2 if p == P1 else P1
@@ -387,6 +517,13 @@ func _stack_height(k: Kicker) -> float:
 
 
 func _on_picked(p: int, u: UpgradeData) -> void:
+	# Hidden curses: now and then the card turns out to be a curse (Run decides, the card flips).
+	var curse := Run.reveal_curse(p) if not u.is_curse() else null
+	if curse != null:
+		await pick_ui.reveal_curse(p, curse)
+		if Run.phase != Run.Phase.PICK:
+			return
+		u = curse
 	if u.is_curse():
 		Audio.play("curse")
 		Fx.puff(kickers[p].global_position + Vector3.UP, Color(0.6, 0.4, 0.9), 2.0)
@@ -484,6 +621,17 @@ func _sfx(cue: String, fallback: String, pitch: float = 1.0) -> void:
 		Audio.play(cue)
 	else:
 		Audio.play(fallback, null, pitch)
+
+
+## The long run-up: a second length of picket fence along the back of the lawn.
+func _lengthen_field() -> void:
+	var fence := field.get_node_or_null("Fence") as Node3D
+	if fence == null or field.has_node("Fence2"):
+		return
+	var more := fence.duplicate() as Node3D
+	more.name = "Fence2"
+	field.add_child(more)
+	more.position = fence.position + Vector3(0, 0, FENCE_LENGTH)
 
 
 func _bench(p: int) -> void:

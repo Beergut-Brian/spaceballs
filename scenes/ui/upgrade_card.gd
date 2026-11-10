@@ -28,6 +28,8 @@ var _bits: Array = []
 var _t := 0.0
 var bounce := false
 var highlighted := false
+## A tween owns the scale (the hidden-curse flip).
+var flipping := false
 
 @onready var icon: TextureRect = $Icon
 
@@ -122,7 +124,8 @@ func _process(delta: float) -> void:
 	var target := 1.15 if highlighted else 0.95
 	if bounce and highlighted:
 		target += absf(sin(_t * 5.0)) * 0.12
-	scale = scale.lerp(Vector2.ONE * target, clampf(delta * 12.0, 0.0, 1.0))
+	if not flipping:
+		scale = scale.lerp(Vector2.ONE * target, clampf(delta * 12.0, 0.0, 1.0))
 	# Curses look tempting: the twinkles on the back do the work, the icon only breathes a little.
 	if upgrade and upgrade.is_curse():
 		icon.modulate = Color(1, 1, 1).lerp(Color(1.15, 1.08, 1.2), 0.5 + 0.5 * sin(_t * 8.0))

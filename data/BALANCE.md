@@ -6,10 +6,14 @@ Content owns this file. Re-run `tests/test_simulation.gd` and update it whenever
 
 - Kick power = `BASE_POWER x product(power_mult of every upgrade picked) x run-up quality (0.8 to 1.2)`.
   Height = power² / 2g, so every x1.75 normal pick roughly triples the height.
-- Card odds per slot: normal 60 %, strong 20 %, joke 12 %, curse 8 %. Every draw has a normal.
+- Card odds per slot: normal 65 %, strong 22 %, joke 13 %. Every draw has a normal. Curses are never offered.
+- Hidden curses (playtest 2026-11-09 #2): after a pick, 14 % (`CURSE_REVEAL_ODDS`) that the card turns out
+  to be a curse instead (the card flips). Not on the first pick, not on catch-up, not two rounds
+  running, max 2 per player, none in the strong-only rounds. Simulation: **1.99 curses per 2P run**
+  (median 2, 40 of 400 runs have none, max 4), 1.05 per 1P run.
 - Tier band: rounds 1-4 draw tier-1 cards, 5-8 tiers 1-2, 9+ all three (`c.tier <= band`).
 - Catch-up: a player 2+ tiers behind gets normals of x1.7+ and 60 % strong slots (was 40 %, see log).
-- No duplicate gear: a draw never offers a non-curse card the player already has; curses can repeat.
+- No duplicate gear: a draw never offers a card the player already has; a hidden curse can repeat.
 - Run-up: gear `runup_bonus` (Sweatband, Running Start, Foam Finger, Slingshot Buddy...) adds to the
   run-up quality; the 1.2 cap stays. The simulation adds it too.
 - Effects (speed, hops, kick styles, ball effects) explain the height; they never change it.
@@ -19,7 +23,7 @@ Content owns this file. Re-run `tests/test_simulation.gd` and update it whenever
 ## Target curve (GAME.md)
 
 Median 11 rounds to space, 10 to 12 OK; two early strongs can do it in 7 or 8; three curses
-stretch to 14 or 15; nobody passes round 15; P1 and P2 stay within 2 tiers after round 6.
+stretch to 14 or 15 (hidden curses: about two per run, both players together); nobody passes round 15; P1 and P2 stay within 2 tiers after round 6.
 
 ### Best tier reached by round (1P, 400 random-pick runs)
 
@@ -47,8 +51,48 @@ About one tier per round early, slowing through Clouds and Thin air so the space
 - 2026-11-09 (Gameplay, free roam): no duplicate gear + runup_bonus. Medians unchanged (11 / 11 / best 9) but
   the 2P worst gap went to 3 (2 of 400 runs: a leader on early strongs while the other drew curses).
   Catch-up strong odds 40 % -> 60 % (multipliers unchanged) -> worst gap 2. Green.
+- 2026-11-09 (Gameplay, playtest #2): curses leave the card odds (renormalised 65/22/13) and hide behind a
+  pick instead. 13 % reveal -> 1.90 curses per 2P run; 14 % -> 1.99. Medians unchanged (11 / 11 / best 9),
+  worst gap 2, max round 15, nobody lifted by the floor. Green.
 
-## Simulation output (2026-11-09, free roam + no duplicates)
+## Simulation output (2026-11-09, playtest #2: hidden curses)
+
+```
+[sim] 1P, 400 runs, random picks: median 11.0, min 8, max 15
+  round  8:    4 #
+  round  9:   24 ####
+  round 10:   71 ###########
+  round 11:  127 ####################
+  round 12:  102 ################
+  round 13:   53 ########
+  round 14:   16 ###
+  round 15:    3 #
+[sim] kicks lifted to space by the round-15 floor: 0 of 400 player-runs
+[sim] hidden curses per run: mean 1.05, median 1.0, max 2, runs with none: 109
+[sim] 2P, 400 runs, random picks: median 11.0, min 8, max 15
+  round  8:    9 #
+  round  9:   64 #####
+  round 10:  190 ###############
+  round 11:  252 ###################
+  round 12:  202 ################
+  round 13:   64 #####
+  round 14:   17 ##
+  round 15:    2 #
+[sim] kicks lifted to space by the round-15 floor: 0 of 800 player-runs
+[sim] hidden curses per run: mean 1.99, median 2.0, max 4, runs with none: 40
+[sim] max tier gap after round 6: median 1.0, worst 2, runs with gap > 2: 0
+[sim] 1P, 400 runs, best picks: median 9.0, min 7, max 12
+  round  7:    8 ##
+  round  8:   90 ##############
+  round  9:  145 ######################
+  round 10:  102 ################
+  round 11:   51 ########
+  round 12:    4 #
+[sim] kicks lifted to space by the round-15 floor: 0 of 400 player-runs
+[sim] hidden curses per run: mean 0.84, median 1.0, max 2, runs with none: 150
+```
+
+## Simulation output (2026-11-09, free roam + no duplicates; before hidden curses)
 
 ```
 [sim] 1P, 400 runs, random picks: median 11.0, min 7, max 15

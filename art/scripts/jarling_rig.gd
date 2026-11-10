@@ -28,6 +28,8 @@ var _face_mat: StandardMaterial3D
 var _hat: Node3D
 var _hat_rest := Transform3D.IDENTITY
 var _hat_tween: Tween
+var _pop_node: Node3D
+var _pop_rest := Transform3D.IDENTITY
 var _squash: Tween
 var _sitting := false
 var _base_y := 0.0
@@ -114,18 +116,31 @@ func _pop_hat() -> void:
 		return
 	if _hat_tween and _hat_tween.is_valid():
 		_hat_tween.kill()
-	_hat.transform = _hat_rest
-	var up := _hat_rest.origin + Vector3(0.0, hat_pop_height, 0.15)
-	_hat_tween = create_tween()
-	_hat_tween.tween_property(_hat, "position", up, 0.32).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	_hat_tween.parallel().tween_property(_hat, "rotation:y", TAU, 0.6).as_relative()
-	_hat_tween.parallel().tween_property(_hat, "rotation:x", -0.5, 0.3)
-	_hat_tween.tween_property(_hat, "position", _hat_rest.origin, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	_hat_tween.parallel().tween_property(_hat, "rotation:x", 0.0, 0.28)
+	if is_instance_valid(_pop_node):
+		_pop_node.transform = _pop_rest
+	_pop_node = _hat
+	_pop_rest = _hat_rest
+	if not _hat.is_visible_in_tree() and _kicker and _kicker.equipment:
+		# A head item took the hat's place: that pops instead, propeller and all.
+		var worn := _kicker.equipment.equipped(&"head")
+		var holder := _kicker.equipment.slot_node(&"head").get_node_or_null("gear_%s" % worn.id) if worn else null
+		_pop_node = holder.get_node_or_null("pop") if holder else null
+		_pop_rest = Transform3D.IDENTITY
+	if _pop_node == null:
+		return
+	var hat := _pop_node
+	var rest := _pop_rest
+	var up := rest.origin + Vector3(0.0, hat_pop_height, 0.15)
+	_hat_tween = hat.create_tween()
+	_hat_tween.tween_property(hat, "position", up, 0.32).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_hat_tween.parallel().tween_property(hat, "rotation:y", TAU, 0.6).as_relative()
+	_hat_tween.parallel().tween_property(hat, "rotation:x", -0.5, 0.3)
+	_hat_tween.tween_property(hat, "position", rest.origin, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_hat_tween.parallel().tween_property(hat, "rotation:x", 0.0, 0.28)
 	# Plonk: a little squash when it lands back on his head.
-	_hat_tween.tween_property(_hat, "scale", Vector3(1.2, 0.75, 1.2), 0.05)
-	_hat_tween.tween_property(_hat, "scale", Vector3.ONE, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	_hat_tween.tween_callback(func() -> void: _hat.transform = _hat_rest)
+	_hat_tween.tween_property(hat, "scale", Vector3(1.2, 0.75, 1.2), 0.05)
+	_hat_tween.tween_property(hat, "scale", Vector3.ONE, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_hat_tween.tween_callback(func() -> void: hat.transform = rest)
 
 
 func _play(anim: StringName) -> void:
