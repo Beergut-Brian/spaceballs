@@ -39,7 +39,7 @@ func _ready() -> void:
 		_members.append([ap, face, 0.0])
 	var run := get_node_or_null("/root/Run")
 	if run:
-		run.kicked.connect(func(_p: int, _power: float) -> void: cheer(3.0))
+		# The kick itself: scenes/main.gd scales the reaction (scripts/gameplay/crowd_reactions.gd).
 		run.ball_tier_reached.connect(func(_p: int, _t: int) -> void: cheer(2.0))
 		run.reached_space.connect(func(_p: int) -> void: cheer(6.0))
 

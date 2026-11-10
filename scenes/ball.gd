@@ -24,7 +24,7 @@ const TIER_GAGS: Array[StringName] = [&"rooftops", &"treetops", &"clouds", &"edg
 ## Space: the orbit the ball settles into (visual metres, seconds per lap).
 const ORBIT_RADIUS := 1.8
 const ORBIT_PERIOD := 4.0
-## Frog round: the ball dribbles this far along the grass instead of flying.
+## Frog round and banana slip: the ball dribbles this far along the grass instead of flying.
 const DRIBBLE_DISTANCE := 1.4
 const DRIBBLE_TIME := 0.9
 const FACE_YAW := 1.15
@@ -104,6 +104,15 @@ func place_on_tee(tee: Vector3) -> void:
 	constant_force = Vector3.ZERO
 
 
+func is_armed() -> bool:
+	return _armed
+
+
+## The frog round and the banana slip: the ball barely goes anywhere.
+static func dribbles(curse: UpgradeData) -> bool:
+	return curse != null and (curse.scene_override != null or curse.windup_anim == &"slip")
+
+
 func arm(on: bool) -> void:
 	_armed = on
 	if on:
@@ -114,8 +123,7 @@ func arm(on: bool) -> void:
 func launch(power: float, peak: float) -> void:
 	_armed = false
 	peak_height = peak
-	var curse := Run.curse_of(player)
-	if curse != null and curse.scene_override != null:
+	if dribbles(Run.curse_of(player)):
 		_dribble()
 		return
 	_tier = 1

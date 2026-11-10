@@ -13,6 +13,7 @@ const STICK_PRESS := 0.6
 const STICK_RELEASE := 0.3
 const DEMO_PICK_AFTER := 0.8
 const WAITING_DIM := Color(0.45, 0.45, 0.45)
+const CURSE_PURPLE := Color(0.62, 0.32, 0.95)
 
 var _draws := {}
 var _sel := {P1: 1, P2: 1}
@@ -160,6 +161,34 @@ func _pick(p: int) -> void:
 			for c in cards_of(q):
 				c.bounce = true   # gently nudge the slower side, never a timer
 	picked.emit(p, u)
+
+
+## Hidden curse (playtest 2026-11-09 #2): the picked card shivers, flips over and turns out to be
+## `curse`. Await it; about 1.9 s.
+func reveal_curse(p: int, curse: UpgradeData) -> void:
+	var card: Control = cards_of(p)[_sel[p]]
+	card.flipping = true
+	card.pivot_offset = card.size * 0.5
+	var tw := create_tween()
+	tw.tween_interval(0.3)
+	# Uh oh: it shivers first.
+	tw.tween_callback(Audio.play.bind("card_move", null, 0.55))
+	for i in 6:
+		tw.tween_property(card, "rotation", 0.09 * (1.0 if i % 2 == 0 else -1.0), 0.06)
+	tw.tween_property(card, "rotation", 0.0, 0.05)
+	tw.tween_property(card, "scale", Vector2(0.0, 1.25), 0.16).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func() -> void:
+		card.set_upgrade(curse)
+		card.scale = Vector2(0.0, 1.25)
+		card.set_highlight(true, CURSE_PURPLE)
+		Audio.play("curse")
+		Fx.flash(card, CURSE_PURPLE))
+	tw.tween_property(card, "scale", Vector2.ONE * 1.3, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(Audio.play.bind("crowd_aww"))
+	tw.tween_property(card, "scale", Vector2.ONE * 1.15, 0.3)
+	tw.tween_interval(0.75)
+	await tw.finished
+	card.flipping = false
 
 
 ## Solo, P2's turn: B undoes P1's held choice and hands the pad back to P1.

@@ -16,6 +16,7 @@ var _mats: Array[StandardMaterial3D] = []
 var _ball: Node3D
 var _pointer: Node3D
 var _far_t := 0.0
+var _last_d := 0.0
 
 
 func _ready() -> void:
@@ -114,8 +115,9 @@ func _process(delta: float) -> void:
 			_pointer.global_position = _kicker.global_position + d.normalized() * (1.3 + 0.15 * sin(_t * 8.0))
 			_pointer.rotation = Vector3(0.0, atan2(-d.x, -d.z), 0.0)
 			_pointer.scale = Vector3.ONE * far
-			# Every few seconds out there, the ball calls him back: a little ping.
-			_far_t += delta
+			# Every few seconds out there and not heading in, the ball calls him back: a ping.
+			_far_t = 0.0 if d.length() < _last_d - 0.002 else _far_t + delta
+			_last_d = d.length()
 			if _far_t > 3.0:
 				_far_t = 0.0
 				Audio.play("orbit_chime", null, 1.3)
