@@ -12,5 +12,6 @@ icon = ExtResource("2")
 tier = 1
 kind = "curse"
 power_mult = 0.25
+kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Whoops, a banana peel right by the tee. Slip, flip, plop."

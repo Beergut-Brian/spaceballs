@@ -12,5 +12,6 @@ icon = ExtResource("2")
 tier = 1
 kind = "curse"
 power_mult = 0.25
+kick_sfx = &"frog"
 scene_override = ExtResource("3")
 description = "Mwah. Ribbit. One round as a frog."

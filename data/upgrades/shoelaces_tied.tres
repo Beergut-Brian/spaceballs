@@ -12,5 +12,6 @@ icon = ExtResource("2")
 tier = 2
 kind = "curse"
 power_mult = 0.2
+kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Somebody tied your laces together. Hop, hop, bonk."

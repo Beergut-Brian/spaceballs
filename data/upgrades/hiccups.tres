@@ -12,5 +12,6 @@ icon = ExtResource("2")
 tier = 3
 kind = "curse"
 power_mult = 0.3
+kick_sfx = &"curse"
 visual = ExtResource("3")
 description = "Hic! The kick goes hic-wards."
