@@ -176,6 +176,17 @@ Source: `playtests/2026-11-09.md`.
 - **Gear is worn, not piled (supersedes "Upgrades stack visually: a walking pile"):** one item per body slot (head, face, back, hands, knees, feet, waist), fitted to the Jarling and following its animation. A new item in a slot replaces the old one; gear you already wear isn't offered again. Built as a shared equipment system in `openjar-characters`.
 - **Upgrade art gets a full redo** (card icons and gear): "The design of the upgrades is really poor though."
 
+## Playtest 2026-11-09 #2 changes (Kaden; these supersede the sections above)
+
+Source: `playtests/2026-11-09-2.md`.
+
+- **A long run-up:** the ball sits "way further away", so the run to it lasts long enough to enjoy the upgrade effects (bouncing, trails, jets). The camera follows the run.
+- **Curses are not cards you pick** (supersedes "curse 8 % per card, a choice that looks tempting"): curse cards never appear in the pick. Instead, a picked card has a chance to turn out to be a curse (a reveal: the card flips to the curse). It should average **two curses per run**.
+- **Banana peel:** the peel lies further out from the ball; you visibly slip, slide/tumble into the ball, and it barely goes anywhere.
+- **The sky is busier and the ball interacts with it:** more objects per tier, and the ball pops balloons, bonks planes, scatters birds, bounces off things, each with a sound and a little reaction.
+- **The other player is a bystander, not benched:** during the other's turn they run around with all their upgrades and effects, but can't kick any ball.
+- **The crowd reacts:** spectators cheer and celebrate a good kick (bigger kick, bigger celebration).
+
 ## Decisions made without Kaden
 
 - 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.
