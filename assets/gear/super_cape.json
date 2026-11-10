@@ -1,0 +1,24 @@
+{
+  "id": "super_cape",
+  "name": "Super Cape",
+  "slots": [
+    "back"
+  ],
+  "scene": "super_cape.glb",
+  "replaces_body_part": [
+    "tail"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  },
+  "spring": {
+    "node": "cape_pivot",
+    "stiffness": 45.0,
+    "damping": 7.0,
+    "gain": 0.25,
+    "rest_deg": 5.0,
+    "max_deg": 65.0
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "lucky_sock",
+  "name": "Lucky Sock",
+  "slots": [
+    "knee_l"
+  ],
+  "scene": "lucky_sock.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

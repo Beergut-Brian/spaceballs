@@ -1,0 +1,16 @@
+{
+  "id": "wind_up_key",
+  "name": "Wind-Up Key",
+  "slots": [
+    "back"
+  ],
+  "scene": "wind_up_key.glb",
+  "replaces_body_part": [
+    "tail"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "foam_finger",
+  "name": "Foam Finger",
+  "slots": [
+    "hand_r"
+  ],
+  "scene": "foam_finger.glb",
+  "replaces_body_part": [
+    "hand_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "thunder_hat",
+  "name": "Thunder Hat",
+  "slots": [
+    "head"
+  ],
+  "scene": "thunder_hat.glb",
+  "replaces_body_part": [
+    "headwear"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

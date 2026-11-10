@@ -1,0 +1,16 @@
+{
+  "id": "turbo_fan",
+  "name": "Turbo Fan",
+  "slots": [
+    "back"
+  ],
+  "scene": "turbo_fan.glb",
+  "replaces_body_part": [
+    "tail"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

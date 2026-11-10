@@ -1,0 +1,14 @@
+{
+  "id": "cannon_leg",
+  "name": "Cannon Leg",
+  "slots": [
+    "knee_r"
+  ],
+  "scene": "cannon_leg.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

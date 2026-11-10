@@ -1,0 +1,15 @@
+{
+  "id": "knee_pads",
+  "name": "Knee Pads",
+  "slots": [
+    "knee_l",
+    "knee_r"
+  ],
+  "scene": "knee_pads.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

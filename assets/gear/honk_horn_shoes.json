@@ -1,0 +1,18 @@
+{
+  "id": "honk_horn_shoes",
+  "name": "Honk Horn Shoes",
+  "slots": [
+    "foot_l",
+    "foot_r"
+  ],
+  "scene": "honk_horn_shoes.glb",
+  "replaces_body_part": [
+    "foot_l",
+    "foot_r"
+  ],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}

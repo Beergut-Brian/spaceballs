@@ -1,0 +1,14 @@
+{
+  "id": "googly_eyes",
+  "name": "Googly Eyes",
+  "slots": [
+    "face"
+  ],
+  "scene": "googly_eyes.glb",
+  "replaces_body_part": [],
+  "fit": {},
+  "level_up": {
+    "max": 3,
+    "scale_step": 0.06
+  }
+}
