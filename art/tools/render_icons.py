@@ -201,7 +201,7 @@ def v_helium_ball():
 
 def v_trampoline_tee():
     torus((0, 0, 0), 0.8, 0.085, "sky3")
-    cyl((0, 0, -0.03), (0, 0, 0.0), 0.74, "hat_black")
+    cyl((0, 0, -0.03), (0, 0, 0.0), 0.74, "ink", rough=0.95)
     torus((0, 0, 0.0), 0.66, 0.03, "jeff_yellow")
     for a in (45, 135, 225, 315):
         x, y = 0.74 * math.cos(math.radians(a)), 0.74 * math.sin(math.radians(a))
@@ -279,8 +279,8 @@ def v_kiss_the_frog():
          0.028, "ink")
     # The lipstick kiss, big on the cheek.
     k = Vector((0.4, -0.52, -0.1))
-    for dx, dz, r, s in ((-0.1, 0.07, 0.14, (1.15, 0.35, 0.75)), (0.1, 0.07, 0.14, (1.15, 0.35, 0.75)),
-                         (0, -0.07, 0.15, (1.6, 0.35, 0.7))):
+    for dx, dz, r, s in ((-0.09, 0.06, 0.13, (1.25, 0.35, 0.6)), (0.09, 0.06, 0.13, (1.25, 0.35, 0.6)),
+                         (0, -0.065, 0.13, (2.1, 0.35, 0.6))):
         ball(k + Vector((dx, 0.03 * abs(dx) / 0.1, dz)), r, "comb", s, (0, 0, 28), rough=0.25)
     star((-0.86, -0.3, 0.72), 0.2, "jeff_yellow", glow=0.4)
     star((0.9, -0.3, 0.25), 0.15, "jeff_yellow", glow=0.4)
