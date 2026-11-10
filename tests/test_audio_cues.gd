@@ -4,8 +4,11 @@ class_name TestAudioCues
 extends GdUnitTestSuite
 
 const CODE_DIRS := ["res://scenes", "res://scripts"]
-## Files made for upgrade kick_sfx lines the Upgrades lane has not written yet (see CUES.md).
-const PENDING_DATA := ["honk", "opera"]
+const CUES_DOC := "res://assets/audio/CUES.md"
+## Files made ahead of the code that will play them (see CUES.md): an upgrade kick_sfx the
+## Upgrades lane has not written yet, and gags the Gameplay lane asked for.
+const PENDING_DATA := ["opera", "frog_bloop", "crowd_aww", "orbit_chime", "crowd_wild", "trip",
+		"waddle", "butterfly"]
 
 
 func test_every_cue_resolves_to_a_stream() -> void:
@@ -17,10 +20,30 @@ func test_every_cue_resolves_to_a_stream() -> void:
 				.is_not_null()
 
 
+## Every cue in the CUES.md table has a file, so the doc never promises a sound that is missing.
+func test_every_documented_cue_resolves() -> void:
+	var cues := _doc_cues()
+	assert_int(cues.size()).is_greater(40)
+	for cue in cues:
+		assert_object(_load_cue(cue)).override_failure_message(
+				"CUES.md lists '%s' but sfx/ has no file for it" % cue).is_not_null()
+
+
+## upgrade_piece.gd only plays gag_cue when sfx/<cue>.ogg itself exists (no _N variants), and
+## falls back silently otherwise, so check that exact file.
+func test_every_piece_gag_cue_has_a_single_file() -> void:
+	var gags := _piece_gag_cues()
+	assert_int(gags.size()).is_greater(0)
+	for cue in gags:
+		assert_bool(ResourceLoader.exists(Audio.SFX_DIR + cue + ".ogg")) \
+				.override_failure_message("piece gag_cue '%s' needs sfx/%s.ogg" % [cue, cue]).is_true()
+
+
 func test_every_sfx_file_is_used() -> void:
 	var cues := _all_cues()
 	for c in PENDING_DATA:
 		cues[c] = true
+	cues.merge(_piece_gag_cues())
 	var re := RegEx.create_from_string("^(.+)_\\d+$")
 	for f in DirAccess.get_files_at(Audio.SFX_DIR):
 		if not f.ends_with(".ogg"):
@@ -69,6 +92,28 @@ func _all_cues() -> Dictionary:
 		var u := load("res://data/upgrades/" + f.trim_suffix(".remap")) as UpgradeData
 		if u and u.kick_sfx != &"":
 			cues[String(u.kick_sfx)] = true
+	return cues
+
+
+## First-column names of the cue table in CUES.md.
+func _doc_cues() -> Dictionary:
+	var cues := {}
+	var row := RegEx.create_from_string("^\\| ([a-z0-9_]+) \\|")
+	for line in FileAccess.get_file_as_string(CUES_DOC).split("\n"):
+		var m := row.search(line)
+		if m:
+			cues[m.get_string(1)] = true
+	return cues
+
+
+## gag_cue values set on the upgrade piece scenes.
+func _piece_gag_cues() -> Dictionary:
+	var cues := {}
+	var re := RegEx.create_from_string("gag_cue = &\"([a-z0-9_]+)\"")
+	for f in DirAccess.get_files_at("res://scenes/upgrades"):
+		if f.ends_with(".tscn"):
+			for m in re.search_all(FileAccess.get_file_as_string("res://scenes/upgrades/" + f)):
+				cues[m.get_string(1)] = true
 	return cues
 
 
