@@ -51,7 +51,7 @@ Eight tiers, about one per round on a normal run. Sky colour steps per tier and 
 
 1. Backyard (fence, washing line) · 2. Rooftops (chimney, a startled cat) · 3. Treetops and birds · 4. Kite and hot-air balloon height · 5. Clouds (a plane drones past) · 6. Thin air (jet, a lost party balloon) · 7. Edge of space (aurora, a satellite) · 8. Space (stars, the Moon, an alien who waves).
 
-Landmarks are where local jokes go, but **this repo is public**: no real addresses, house photos or town names here. Personal landmarks, if Kaden wants them, go in a private content pack later (open question below).
+Landmarks are generic, invented gags only. Kaden (2026-11-09): no personal info or real local places in any game, so there is no private content pack.
 
 ## Upgrades
 
@@ -199,5 +199,4 @@ Source: `playtests/2026-11-09.md`.
 - Chuck's personality and both voices: D37 on Docket.
 - Palette: D36 (C provisional).
 - The Jarling style itself: Kaden approves from the style mock (Docket, once the renders are in).
-- Personal landmarks (house, shop, water tower): only in a private add-on pack, if wanted. Ask after the first playable.
 - Name: Spaceballs is fine while private; pick another if it ever goes public.
