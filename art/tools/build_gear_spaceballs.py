@@ -278,7 +278,9 @@ def flame(name, parent, at, length=0.09, r=0.03, rot=None):
     return obj(name, parts, parent, at)
 
 
-GOLD = lambda: mat("gold", 0.3, 0.0, 0.6)
+# The two metals: only lightly metallic, so they stay bright without sky reflections.
+GOLD = lambda: mat("gold", 0.32, 0.0, 0.3)
+STEEL = lambda: mat("steel", 0.3, 0.0, 0.35)
 ITEMS = {}
 
 
@@ -312,7 +314,7 @@ def shaft(col, cuff, top=0.15, r=0.078):
 @item("Rocket Boots", FEET, FEET)
 def rocket_boots(n, side, s):
     parts = shoe("white", "dark", "orange") + shaft("white", "orange")
-    parts += [(cyl((0, 0.06, 0.1), (0, 0.105, 0.045), 0.03, 0.046), mat("steel", 0.25, 0, 0.7)),          # nozzle bell
+    parts += [(cyl((0, 0.06, 0.1), (0, 0.105, 0.045), 0.03, 0.046), STEEL()),          # nozzle bell
               (sq((0, 0.108, 0.041), (0.036, 0.012, 0.036), rot=R(40)), mat("cyan", 0.5, 3.0))]            # glowing throat
     for a in (-1, 0, 1):   # three swept fins
         parts.append((prism([(0, 0.06), (0.062, -0.035), (0.062, -0.075), (0, -0.03)], 0.014, (a * 0.07, 0.03 + (0.03 if a == 0 else 0), 0.105),
@@ -325,7 +327,7 @@ def rocket_boots(n, side, s):
 @item("Spring Shoes", FEET, FEET)
 def spring_shoes(n, side, s):
     parts = group(shoe("cyan", "white", "white", H=0.05), (0, 0, 0.062))
-    parts += [(coil((0, -0.03, 0.012), 0.05, 0.062, 2.6, 0.011), mat("steel", 0.25, 0, 0.7)),
+    parts += [(coil((0, -0.03, 0.012), 0.05, 0.062, 2.6, 0.011), STEEL()),
               (sq((0, -0.03, 0.01), (0.07, 0.085, 0.012), 0.5), mat("pink")),
               (loop((0, 0, 0.165), 0.066, 0.066, 0.016), mat("pink")),
               (cyl((0, 0, 0.09), (0, 0, 0.165), 0.064), mat("cyan"))]
@@ -371,7 +373,7 @@ def extra_shoes(n, side, s):
 def honk_horn_shoes(n, side, s):
     parts = shoe("yellow", "white", L=0.14) + [(sq((0, -0.15, 0.07), (0.088, 0.09, 0.07), floor=0.02), mat("pink")),
                                                (loop((0, 0, 0.112), 0.056, 0.056, 0.013), mat("white"))]
-    horn = [(rev([(0, 0), (0.0, 0.05), (0.012, 0.052), (0.05, 0.02), (0.1, 0.014), (0.1, 0)]), mat("gold", 0.25, 0, 0.6)),
+    horn = [(rev([(0, 0), (0.0, 0.05), (0.012, 0.052), (0.05, 0.02), (0.1, 0.014), (0.1, 0)]), GOLD()),
             (sq((0, 0, 0.125), 0.036), mat("indigo")), (sq((0, 0, 0.004), (0.04, 0.04, 0.006)), mat("dark"))]
     parts += group(horn, (s * 0.03, -0.215, 0.165), R(105, 0, s * 20))
     obj("honk_shoe_" + side, parts, n)
@@ -381,8 +383,8 @@ def honk_horn_shoes(n, side, s):
 @item("Pogo Legs", FEET, FEET)
 def pogo_legs(n, side, s):
     parts = [(cyl((0, 0, 0.085), (0, 0, 0.19), 0.07), mat("indigo")), (loop((0, 0, 0.185), 0.07, 0.07, 0.014), mat("yellow")),
-             (loop((0, 0, 0.095), 0.07, 0.07, 0.014), mat("yellow")), (cyl((0, 0, 0.02), (0, 0, 0.1), 0.022), mat("steel", 0.25, 0, 0.7)),
-             (coil((0, 0, 0.03), 0.042, 0.055, 3.2, 0.009), mat("steel", 0.25, 0, 0.7)), (sq((0, 0, 0.024), (0.05, 0.05, 0.026), floor=0.0), mat("pink")),
+             (loop((0, 0, 0.095), 0.07, 0.07, 0.014), mat("yellow")), (cyl((0, 0, 0.02), (0, 0, 0.1), 0.022), STEEL()),
+             (coil((0, 0, 0.03), 0.042, 0.055, 3.2, 0.009), STEEL()), (sq((0, 0, 0.024), (0.05, 0.05, 0.026), floor=0.0), mat("pink")),
              (cyl((-s * 0.12, 0, 0.14), (s * 0.02, 0, 0.14), 0.016), mat("yellow"))]                       # foot peg
     obj("pogo_leg_" + side, parts, n)
     obj("trim_pogo_" + side, [(loop((0, 0, 0.14), 0.073, 0.073, 0.008), GOLD())], n)
@@ -391,7 +393,7 @@ def pogo_legs(n, side, s):
 @item("Volcano Boots", FEET, FEET)
 def volcano_boots(n, side, s):
     # Dark rock with glowing cracks; the leg stands in the crater.
-    rock, lava, hot = mat("dark", 0.9), mat("orange", 0.5, 1.7), mat("orange", 0.5, 2.6)
+    rock, lava, hot = mat("dark", 0.9), mat("orange", 0.5, 0.9), mat("orange", 0.5, 1.4)
     prof = [(0.02, 0.108), (0.07, 0.1), (0.13, 0.082), (0.185, 0.068)]
     def rad(z):
         for (z0, r0), (z1, r1) in zip(prof, prof[1:]):
@@ -431,7 +433,7 @@ def jetpack(n, side, s):
     for x in (-0.068, 0.068):
         parts += [(cyl((x, 0.095, -0.23), (x, 0.095, 0.0), 0.058), mat("white", 0.35)), (sq((x, 0.095, 0.005), (0.056, 0.056, 0.085), floor=0.005), mat("orange")),
                   (loop((x, 0.095, -0.07), 0.06, 0.06, 0.009), mat("cyan")), (loop((x, 0.095, -0.15), 0.06, 0.06, 0.009), mat("cyan")),
-                  (cyl((x, 0.095, -0.22), (x, 0.095, -0.275), 0.03, 0.048), mat("dark", 0.35, 0, 0.5)),
+                  (cyl((x, 0.095, -0.22), (x, 0.095, -0.275), 0.03, 0.048), mat("dark", 0.35, 0, 0.3)),
                   (sq((x, 0.095, -0.272), (0.04, 0.04, 0.008)), mat("cyan", 0.5, 3.0)),
                   (tube([(x, 0.0, -0.03), (x, -0.01, 0.045), (x * 1.05, -0.06, 0.09), (x * 1.08, -0.14, 0.082), (x * 1.08, -0.215, 0.03), (x * 1.06, -0.235, -0.04)], 0.013, sm=3), mat("dark", 0.7))]
     parts.append((sq((0, 0.088, -0.1), (0.022, 0.02, 0.03)), mat("pink", 0.5, 2.0)))
@@ -441,7 +443,7 @@ def jetpack(n, side, s):
     obj("trim_jetpack", [(loop((x, 0.095, -0.11), 0.061, 0.061, 0.008), GOLD()) for x in (-0.068, 0.068)], n)
 
 
-@item("Super Cape", ["back"], ["tail"], spring={"node": "cape_pivot", "stiffness": 45.0, "damping": 7.0, "gain": 0.25, "rest_deg": 5.0, "max_deg": 65.0})
+@item("Super Cape", ["back"], ["tail"], spring={"node": "cape_pivot", "stiffness": 40.0, "damping": 5.0, "gain": 0.14, "rest_deg": 5.0, "max_deg": 48.0})
 def super_cape(n, side, s):
     pivot = empty("cape_pivot", n, (0, 0.006, 0.035))
     def pt(u, v, off=0.0):
@@ -517,7 +519,7 @@ def dome(col, z0=0.08, r=0.262, top=0.305):
 def propeller_cap(n, side, s):
     obj("cap", [dome("blue"), (loop((0, 0, 0.09), 0.264, 0.264, 0.02), mat("yellow")),
                 (sq((0, -0.3, 0.085), (0.19, 0.14, 0.016), rot=R(-8)), mat("pink")), (sq((0, 0, 0.31), 0.035), mat("yellow")),
-                (cyl((0, 0, 0.31), (0, 0, 0.4), 0.012), mat("steel", 0.25, 0, 0.7))], n)
+                (cyl((0, 0, 0.31), (0, 0, 0.4), 0.012), STEEL())], n)
     spin = empty("fx_spin_prop", n, (0, 0, 0.4))
     obj("propeller", [(sq((x * 0.11, 0, 0), (0.115, 0.04, 0.009), rot=R(x * 22)), mat(c)) for x, c in ((-1, "pink"), (1, "yellow"))]
         + [(sq((0, 0, 0.004), 0.026), mat("orange"))], spin)
@@ -631,8 +633,8 @@ def rubber_chicken(n, side, s):
     for x in (-1, 1):
         parts += [(sq((x * 0.042, -0.034, 0.404), 0.013), mat("ink", 0.3)), (sq((x * 0.064, 0.008, 0.15), (0.016, 0.046, 0.062), rot=R(-15)), skin),
                   (tube([(x * 0.022, 0, 0.07), (x * 0.026, 0, -0.045)], 0.011), beak), (sq((x * 0.026, -0.012, -0.05), (0.02, 0.032, 0.009)), beak)]
-    obj("rubber_chicken", group(parts, (0, -0.005, 0), R(55), 1.0), n)
-    obj("trim_chicken", group([(loop((0, -0.01, 0.3), 0.031, 0.031, 0.009), GOLD())], (0, -0.005, 0), R(55), 1.0), n)
+    obj("rubber_chicken", group(parts, (0, -0.005, 0), R(55), 0.9), n)
+    obj("trim_chicken", group([(loop((0, -0.01, 0.3), 0.031, 0.031, 0.009), GOLD())], (0, -0.005, 0), R(55), 0.9), n)
 
 
 def sausage(p0, p1, r, m):
@@ -652,8 +654,8 @@ def balloon_animal_ball(n, side, s):
     for x in (-1, 1):
         dog += [b((x * 0.03, -0.08, 0.0), (x * 0.046, -0.092, -0.125), 0.029), b((x * 0.03, 0.08, 0.0), (x * 0.046, 0.092, -0.125), 0.029),
                 b((x * 0.02, -0.088, 0.135), (x * 0.058, -0.062, 0.235), 0.027)]
-    at, rot = (s * 0.13, -0.1, 0.2), R(0, 0, s * 30)
-    obj("balloon_dog", group(dog, at, rot, 1.15) + [(tube([(0, 0, 0.03), (s * 0.05, -0.03, 0.08), (s * 0.12, -0.09, 0.15)], 0.005, sm=4), mat("white"))], n)
+    at, rot = (s * 0.19, -0.12, 0.12), R(0, 0, s * 30)
+    obj("balloon_dog", group(dog, at, rot, 1.15) + [(tube([(0, 0, 0.03), (s * 0.07, -0.04, 0.05), (s * 0.17, -0.11, 0.08)], 0.005, sm=4), mat("white"))], n)
     obj("trim_balloon", group([(loop((0, -0.09, 0.075), 0.034, 0.034, 0.01, rot=R(-10)), GOLD())], at, rot, 1.15), n)
 
 
@@ -684,7 +686,7 @@ def along(prof, p0, p1, **kw):
 @item("Cannon Leg", ["knee_r"])
 def cannon_leg(n, side, s):
     # A cannon strapped across the knee: barrel forward, gold bands, a wheel on the outside, a lit fuse.
-    iron, wood = mat("dark", 0.35, 0, 0.6), mat("brown", 0.6)
+    iron, wood = mat("dark", 0.35, 0, 0.3), mat("brown", 0.6)
     p0, p1 = Vector((0, 0.1, -0.012)), Vector((0, -0.245, 0.07))
     d = (p1 - p0).normalized()
     band = lambda t, r: (along([(t - 0.014, r - 0.004), (t - 0.008, r + 0.008), (t + 0.008, r + 0.008), (t + 0.014, r - 0.004)], p0, p1), GOLD())
@@ -769,7 +771,7 @@ def coachs_whistle(n, side, s):
     lan = [(0, 0.1, 0.31), (0.125, 0.0, 0.28), (0.1, -0.135, 0.18), (0, -0.165, 0.09), (-0.1, -0.135, 0.18), (-0.125, 0.0, 0.28)]
     obj("whistle", [(tube(lan, 0.009, cyc=True, sm=5), mat("pink")), (cyl((-0.03, -0.185, 0.045), (0.03, -0.185, 0.045), 0.045), mat("yellow", 0.3)),
                     (sq((0.0, -0.2, 0.095), (0.028, 0.03, 0.05), 0.5, 0.5, rot=R(-20)), mat("yellow", 0.3)), (sq((0, -0.228, 0.05), (0.02, 0.008, 0.016)), mat("ink")),
-                    (loop((0, -0.172, 0.085), 0.014, 0.014, 0.005, rot=R(0, 90, 0)), mat("steel", 0.25, 0, 0.7))], n)
+                    (loop((0, -0.172, 0.085), 0.014, 0.014, 0.005, rot=R(0, 90, 0)), STEEL())], n)
     obj("trim_whistle", [(loop((0, -0.185, 0.045), 0.047, 0.047, 0.006, rot=R(0, 90, 0)), GOLD())], n)
 
 
