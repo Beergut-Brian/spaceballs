@@ -29,6 +29,7 @@ func after_test() -> void:
 	Players.reset()
 	Engine.time_scale = 1.0
 	Run.demo = false
+	Game.demo = false
 	Run.save_enabled = true
 	Run.phase = Run.Phase.IDLE
 	Game._set_state(Game.State.TITLE)

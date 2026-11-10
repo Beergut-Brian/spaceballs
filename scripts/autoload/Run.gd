@@ -361,6 +361,27 @@ func start_run(players: Array = []) -> void:
 		_begin_round(1)
 
 
+## The lobby: these players play from the next round 1 (Game.finish_lobby starts it).
+func plan_run(players: Array) -> void:
+	_requested = players.duplicate()
+
+
+## A pad that is joined but not in the run (it did not ready up in the lobby) plays from next round.
+func join_next_round(player: int) -> void:
+	if player == P1 or in_run(player) or _join_next[player]:
+		return
+	_join_next[player] = true
+	player_will_join.emit(player)
+
+
+## Back to the lobby: the run is over, nobody is in it, phase IDLE.
+func stop_run() -> void:
+	_clear()
+	_requested = []
+	if phase != Phase.IDLE:
+		_set_phase(Phase.IDLE)
+
+
 # --- flow ------------------------------------------------------------------
 
 func _on_round_started(index: int) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://openjar_main"]
+[gd_scene load_steps=14 format=3 uid="uid://openjar_main"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/levels/field.tscn" id="2_field"]
@@ -10,6 +10,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_pick.tscn" id="9_pick"]
 [ext_resource type="PackedScene" path="res://scenes/ui/end_card.tscn" id="10_end"]
+[ext_resource type="PackedScene" path="res://scenes/ui/lobby.tscn" id="11_lobby"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="12_pause"]
+[ext_resource type="Script" path="res://scenes/ui/lobby_kicker.gd" id="13_lobby_kicker"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -51,31 +54,40 @@ current = true
 
 [node name="EndCard" parent="UI" instance=ExtResource("10_end")]
 
-[node name="Title" type="CenterContainer" parent="UI"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="Lobby" parent="UI" instance=ExtResource("11_lobby")]
+title_texture = null
 
-[node name="Prompt" type="Label" parent="UI/Title"]
-layout_mode = 2
+[node name="Backdrop" parent="UI/Lobby" index="0"]
+visible = false
+
+[node name="TitleArt" parent="UI/Lobby" index="1"]
+visible = false
+
+[node name="Title" type="Label" parent="UI/Lobby" index="2"]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 40.0
+offset_right = 1460.0
+offset_bottom = 200.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.15, 0.3, 1)
-theme_override_constants/outline_size = 16
-theme_override_font_sizes/font_size = 96
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 120
 text = "SPACEBALLS"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Pause" type="CenterContainer" parent="UI"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="P1" parent="UI/Lobby/Spots" index="0"]
+fill_alpha = 0.18
 
-[node name="Label" type="Label" parent="UI/Pause"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 160
-text = "||"
+[node name="Character" parent="UI/Lobby/Spots/P1" index="0"]
+script = ExtResource("13_lobby_kicker")
+
+[node name="P2" parent="UI/Lobby/Spots" index="1"]
+fill_alpha = 0.18
+
+[node name="Character" parent="UI/Lobby/Spots/P2" index="0"]
+script = ExtResource("13_lobby_kicker")
+player = 1
+
+[node name="PauseMenu" parent="UI" instance=ExtResource("12_pause")]

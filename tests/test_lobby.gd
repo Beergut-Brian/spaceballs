@@ -1,0 +1,379 @@
+## Lobby (ready-up, hold to start alone, solo), pause menu (restart -> lobby, door -> Game.quit),
+## mid-game joins, --demo skipping the lobby. Boots main.tscn with virtual players.
+## From the template; Spaceballs: who plays is Run.in_run, Jeff and Chuck are the lobby characters,
+## the end card goes back to the lobby or out of the door.
+class_name TestLobby
+extends GdUnitTestSuite
+
+const P1 := Players.P1
+const P2 := Players.P2
+const Lobby := preload("res://scenes/ui/lobby.gd")
+const PauseMenu := preload("res://scenes/ui/pause_menu.gd")
+
+var _main: Node
+var _quits := 0
+var _readies: Array = []
+
+
+func before() -> void:
+	Game.quit_exits = false
+	Game.quit_requested.connect(_on_quit)
+	Game.lobby_ready.connect(_on_lobby_ready)
+
+
+func after() -> void:
+	Game.quit_requested.disconnect(_on_quit)
+	Game.lobby_ready.disconnect(_on_lobby_ready)
+	Game.quit_exits = true
+
+
+func before_test() -> void:
+	Players.reset()
+	Run.stop_run()
+	Run.demo = false
+	Run.save_enabled = false
+	Game.demo = false
+	Game.round_index = 0
+	Game._set_state(Game.State.LOBBY)
+	get_tree().paused = false
+	_quits = 0
+	_readies.clear()
+
+
+func after_test() -> void:
+	if is_instance_valid(_main):
+		_main.free()
+	Players.reset()
+	Run.stop_run()
+	Run.demo = false
+	Run.save_enabled = true
+	Game.demo = false
+	get_tree().root.get_viewport().disable_3d = false
+	Game._set_state(Game.State.LOBBY)
+	get_tree().paused = false
+
+
+func _on_quit() -> void:
+	_quits += 1
+
+
+func _on_lobby_ready(players: Array) -> void:
+	_readies.append(players)
+
+
+func _boot() -> Node:
+	_main = load("res://scenes/main.tscn").instantiate()
+	add_child(_main)
+	return _main
+
+
+func _lobby() -> Lobby:
+	return _main.get_node("UI/Lobby")
+
+
+func _pause_menu() -> PauseMenu:
+	return _main.get_node("UI/PauseMenu")
+
+
+func _finish_countdown() -> void:
+	_lobby().count_step(Lobby.COUNT_STEP * Lobby.COUNT_DOTS + 0.01)
+
+
+# --- lobby ---------------------------------------------------------------------
+
+func test_boots_into_lobby() -> void:
+	_boot()
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	assert_bool(_lobby().visible).is_true()
+	assert_bool(_pause_menu().visible).is_false()
+	assert_int(Game.State.TITLE).is_equal(Game.State.LOBBY)
+
+
+func test_join_readies_and_b_unreadies() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	assert_bool(lobby.readied[P1]).is_true()
+	assert_bool(lobby.get_node("Spots/P1").readied).is_true()
+	assert_bool(lobby.counting).is_false()   # one player alone has to hold A
+	lobby.press_b(P1)
+	assert_bool(lobby.readied[P1]).is_false()
+	assert_bool(lobby.get_node("Spots/P1").joined).is_true()
+	lobby.press_a(P1)
+	assert_bool(lobby.readied[P1]).is_true()
+
+
+func _pad(device: int, button: JoyButton) -> void:
+	for down in [true, false]:
+		var ev := InputEventJoypadButton.new()
+		ev.device = device
+		ev.button_index = button
+		ev.pressed = down
+		Input.parse_input_event(ev)
+		Input.flush_buffered_events()
+		await await_idle_frame()
+
+
+func test_real_pad_a_joins_ready_b_unreadies() -> void:
+	_boot()
+	var lobby := _lobby()
+	await _pad(5, JOY_BUTTON_A)
+	assert_int(Players.device_of(P1)).is_equal(5)
+	assert_bool(lobby.readied[P1]).is_true()
+	await _pad(5, JOY_BUTTON_B)
+	assert_bool(lobby.readied[P1]).is_false()
+	await _pad(6, JOY_BUTTON_B)   # joining with B: in, but not ready
+	assert_int(Players.device_of(P2)).is_equal(6)
+	assert_bool(lobby.readied[P2]).is_false()
+	assert_bool(lobby.get_node("Spots/P2").joined).is_true()
+
+
+func test_both_ready_counts_down_then_starts() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	Players.join_virtual(P2)
+	assert_bool(lobby.counting).is_true()
+	lobby.count_step(Lobby.COUNT_STEP * 1.5)
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	lobby.count_step(Lobby.COUNT_STEP * 2.0)
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+	assert_array(_readies).is_equal([[P1, P2]])
+	assert_bool(Run.in_run(P1) and Run.in_run(P2)).is_true()
+	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
+	assert_int(Run.round_index).is_equal(1)
+	assert_bool(lobby.visible).is_false()
+	assert_bool(_main.get_node("UI/HUD").visible).is_true()
+
+
+func test_unready_cancels_countdown() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	Players.join_virtual(P2)
+	lobby.press_b(P2)
+	assert_bool(lobby.counting).is_false()
+	_finish_countdown()
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+
+
+func test_hold_a_starts_alone() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	assert_bool(lobby.hold_step(P1, true, 1.0)).is_false()
+	assert_bool(lobby.hold_step(P1, false, 0.1)).is_false()   # let go: starts over
+	assert_bool(lobby.hold_step(P1, true, 1.0)).is_false()
+	assert_float(lobby.get_node("Spots/P1").hold).is_greater(0.5)
+	assert_bool(lobby.hold_step(P1, true, 0.6)).is_true()
+	assert_bool(lobby.counting).is_true()
+	_finish_countdown()
+	assert_array(_readies).is_equal([[P1]])
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+	assert_bool(Run.in_run(P1)).is_true()
+	assert_bool(Run.in_run(P2)).is_false()
+	assert_int(_main.kickers[P2].state).is_equal(Kicker.State.CHAIR)   # Chuck in the lawn chair
+
+
+func test_hold_does_nothing_until_ready() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	lobby.press_b(P1)
+	assert_bool(lobby.hold_step(P1, true, 5.0)).is_false()
+	assert_bool(lobby.counting).is_false()
+
+
+func test_solo_readies_both() -> void:
+	_boot()
+	Players.set_solo(true)
+	var lobby := _lobby()
+	assert_bool(lobby.readied[P1]).is_true()
+	assert_bool(lobby.readied[P2]).is_true()
+	assert_bool(lobby.counting).is_true()
+
+
+func test_lobby_door_quits() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.join_virtual(P1)
+	lobby._set_focus(Lobby.Choice.DOOR)
+	lobby.press_a(P1)
+	assert_int(_quits).is_equal(1)
+
+
+# --- pause menu ----------------------------------------------------------------
+
+func _play_two() -> void:
+	_boot()
+	Players.join_virtual(P1)
+	Players.join_virtual(P2)
+	_finish_countdown()
+
+
+func test_pause_shows_menu_and_resume() -> void:
+	_play_two()
+	Game.pause()
+	assert_bool(_pause_menu().visible).is_true()
+	assert_bool(get_tree().paused).is_true()
+	_pause_menu().press(PauseMenu.Choice.RESUME)
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+	assert_bool(get_tree().paused).is_false()
+	assert_bool(_pause_menu().visible).is_false()
+
+
+func test_pause_door_calls_quit() -> void:
+	_play_two()
+	Save.set_value("menus_quit", 1)
+	Game.pause()
+	_pause_menu().move_focus(1)
+	_pause_menu().move_focus(1)
+	_pause_menu().move_focus(1)   # bumps the end, stays on the door
+	assert_int(_pause_menu().focus).is_equal(PauseMenu.Choice.DOOR)
+	_pause_menu().press()
+	assert_int(_quits).is_equal(1)
+	assert_bool(Save._dirty).is_false()   # quit saved first
+	Save.wipe()
+
+
+func test_restart_returns_to_lobby() -> void:
+	_play_two()
+	Game.pause()
+	_pause_menu().press(PauseMenu.Choice.RESTART)
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	assert_int(Game.round_index).is_equal(0)
+	assert_bool(get_tree().paused).is_false()
+	var lobby := _lobby()
+	assert_bool(lobby.visible).is_true()
+	assert_bool(lobby.readied[P1]).is_false()
+	assert_bool(lobby.get_node("Spots/P2").joined).is_true()   # pads stay joined
+	await await_idle_frame()
+	assert_int(Run.phase).is_equal(Run.Phase.IDLE)
+	assert_bool(Run.in_run(P1)).is_false()
+	assert_bool(_main.get_node("UI/HUD").visible).is_false()
+	lobby.press_a(P1)
+	lobby.press_a(P2)
+	_finish_countdown()
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+	assert_int(Game.round_index).is_equal(1)
+
+
+# --- joins mid-game, demo ------------------------------------------------------
+
+func test_late_joiner_plays_from_next_round() -> void:
+	_boot()
+	Players.join_virtual(P1)
+	_lobby().hold_step(P1, true, Lobby.HOLD_TO_START)
+	_finish_countdown()
+	Players.join_virtual(P2)
+	assert_bool(Run.in_run(P2)).is_false()
+	assert_int(_main.kickers[P2].state).is_not_equal(Kicker.State.CHAIR)   # up out of the chair
+	Game.end_round()
+	Game.start_round()
+	assert_bool(Run.in_run(P2)).is_true()
+
+
+func test_joined_but_not_ready_plays_from_round_two() -> void:
+	_boot()
+	Players.join_virtual(P1)
+	Players.join_virtual(P2)
+	_lobby().press_b(P2)
+	_lobby().hold_step(P1, true, Lobby.HOLD_TO_START)
+	_finish_countdown()
+	assert_array(_readies).is_equal([[P1]])
+	assert_bool(Run.in_run(P2)).is_false()
+	Game.end_round()
+	Game.start_round()
+	assert_bool(Run.in_run(P2)).is_true()
+
+
+# --- Spaceballs: Jeff and Chuck on the field, end card ----------------------------
+
+func test_jeff_left_chuck_right_and_ready_cheers() -> void:
+	_boot()
+	await await_idle_frame()
+	var cam: Camera3D = _main.rig.camera
+	var jeff: Kicker = _main.kickers[P1]
+	var chuck: Kicker = _main.kickers[P2]
+	assert_str(jeff.name).is_equal("Jeff")
+	var jx := cam.unproject_position(jeff.global_position + Vector3.UP).x
+	var cx := cam.unproject_position(chuck.global_position + Vector3.UP).x
+	var vw := get_tree().root.get_visible_rect().size.x
+	assert_float(jx).is_less(vw * 0.5)
+	assert_float(cx).is_greater(vw * 0.5)
+	assert_bool(cam.is_position_in_frustum(jeff.global_position + Vector3.UP)).is_true()
+	assert_bool(cam.is_position_in_frustum(chuck.global_position + Vector3.UP)).is_true()
+	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
+	Players.join_virtual(P1)
+	assert_int(jeff.state).is_equal(Kicker.State.CHEER)   # waving
+	_lobby().press_b(P1)
+	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
+
+
+## Jeff stands by his ball in the lobby; round 1 must not kick for him from the stale overlap.
+func test_round_one_waits_for_the_run_up() -> void:
+	_boot()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	Players.join_virtual(P1)
+	_lobby().hold_step(P1, true, Lobby.HOLD_TO_START)
+	_finish_countdown()
+	for i in 10:
+		await get_tree().physics_frame
+	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
+	assert_int(_main.kickers[P1].state).is_equal(Kicker.State.APPROACH)
+
+func test_end_card_a_goes_to_lobby_and_door_quits() -> void:
+	_play_two()
+	var card: Control = _main.get_node("UI/EndCard")
+	card.open()
+	card.press()
+	await await_idle_frame()   # main.gd goes to the lobby deferred
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	assert_bool(_lobby().visible).is_true()
+	assert_bool(card.visible).is_false()
+	card.open()
+	card._focus_door(true)
+	card.press()
+	assert_int(_quits).is_equal(1)
+
+
+func test_demo_skips_lobby() -> void:
+	Game.demo = true
+	_boot()
+	await await_idle_frame()
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+	assert_array(Players.active_players()).is_equal([P1, P2])
+	assert_bool(_lobby().visible).is_false()
+
+
+# --- solo mode (Players) -------------------------------------------------------
+
+func test_solo_flag_parsing() -> void:
+	assert_bool(Players.solo_from_args(PackedStringArray(["--solo"]))).is_true()
+	assert_bool(Players.solo_from_args(PackedStringArray([]))).is_false()
+	assert_bool(Players.solo).is_false()
+
+
+func test_select_start_hold_toggles_solo() -> void:
+	assert_bool(Players.hold_step(3, true, 1.0)).is_false()
+	assert_bool(Players.hold_step(3, true, 1.1)).is_true()
+	assert_bool(Players.solo).is_true()
+	assert_array(Players.active_players()).is_equal([P1, P2])
+	assert_bool(Players.hold_step(3, true, 5.0)).is_false()   # same hold: no second toggle
+	Players.hold_step(3, false, 0.1)
+	Players.hold_step(3, true, 2.1)
+	assert_bool(Players.solo).is_false()
+	assert_array(Players.active_players()).is_equal([P1])
+
+
+func test_solo_focus_moves_the_pad() -> void:
+	Players.set_solo(true, 3)
+	var pad := func(a: String) -> int:
+		return InputMap.action_get_events(a).filter(
+				func(e): return e is InputEventJoypadButton).size()
+	assert_int(pad.call("p1_action")).is_equal(1)
+	assert_int(pad.call("p2_action")).is_equal(0)
+	Players.set_solo_focus(P2)
+	assert_int(pad.call("p1_action")).is_equal(0)
+	assert_int(pad.call("p2_action")).is_equal(1)

@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://openjar_lobby"]
+
+[ext_resource type="Script" path="res://scenes/ui/lobby.gd" id="1_lobby"]
+[ext_resource type="Script" path="res://scenes/ui/lobby_spot.gd" id="2_spot"]
+[ext_resource type="Script" path="res://scenes/ui/lobby_character.gd" id="3_char"]
+[ext_resource type="Script" path="res://scenes/ui/icon_button.gd" id="4_btn"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="5_title"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+title_texture = ExtResource("5_title")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.14, 1)
+
+[node name="TitleArt" type="TextureRect" parent="."]
+texture_filter = 2
+layout_mode = 0
+offset_left = 660.0
+offset_top = 30.0
+offset_right = 1260.0
+offset_bottom = 330.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Spots" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="P1" type="Control" parent="Spots"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 330.0
+offset_right = 760.0
+offset_bottom = 1040.0
+script = ExtResource("2_spot")
+
+[node name="Character" type="Control" parent="Spots/P1"]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 50.0
+offset_right = 470.0
+offset_bottom = 470.0
+script = ExtResource("3_char")
+
+[node name="P2" type="Control" parent="Spots"]
+layout_mode = 0
+offset_left = 1160.0
+offset_top = 330.0
+offset_right = 1800.0
+offset_bottom = 1040.0
+script = ExtResource("2_spot")
+player = 1
+
+[node name="Character" type="Control" parent="Spots/P2"]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 50.0
+offset_right = 470.0
+offset_bottom = 470.0
+script = ExtResource("3_char")
+player = 1
+
+[node name="Countdown" type="Control" parent="."]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 360.0
+offset_right = 1160.0
+offset_bottom = 460.0
+pivot_offset = Vector2(200, 50)
+
+[node name="Buttons" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="Play" type="Control" parent="Buttons"]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 500.0
+offset_right = 1100.0
+offset_bottom = 780.0
+script = ExtResource("4_btn")
+tint = Color(0.35, 0.75, 1, 1)
+
+[node name="Door" type="Control" parent="Buttons"]
+layout_mode = 0
+offset_left = 870.0
+offset_top = 850.0
+offset_right = 1050.0
+offset_bottom = 1030.0
+script = ExtResource("4_btn")
+icon = 2
+tint = Color(1, 0.62, 0.25, 1)

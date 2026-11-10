@@ -22,6 +22,7 @@ func after_test() -> void:
 		_main.free()
 	Engine.time_scale = 1.0
 	Run.demo = false
+	Game.demo = false
 	Run.save_enabled = true
 	Run.phase = Run.Phase.IDLE
 	Players._device_of = {Players.P1: -1, Players.P2: -1}
@@ -49,7 +50,7 @@ func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void
 	var kicked := []
 	Run.kicked.connect(func(p, _power): kicked.append(p))
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.KICK_P1, 3.0)).is_true()
-	assert_bool(_main.get_node("UI/Title").visible).is_false()
+	assert_bool(_main.get_node("UI/Lobby").visible).is_false()
 	assert_bool(_main.get_node("UI/HUD").visible).is_true()
 	var reached := await _wait_for(func(): return Run.phase == Run.Phase.PICK, 20.0)
 	if not reached:   # diagnostics for CI, where this has failed while passing locally

@@ -22,6 +22,7 @@ func after_test() -> void:
 		_main.free()
 	Engine.time_scale = 1.0
 	Run.demo = false
+	Game.demo = false
 	Run.save_enabled = true
 	Run.phase = Run.Phase.IDLE
 	Players._device_of = {Players.P1: -1, Players.P2: -1}
@@ -88,6 +89,7 @@ func test_end_card_flow(timeout := 240000) -> void:
 	Run.reached_space.connect(func(p): spaced.append(p))
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.END, 60.0)).is_true()
 	Run.demo = false   # from here a person has to press A
+	Game.demo = false
 	assert_array(spaced).contains_exactly_in_any_order([Players.P1, Players.P2])
 	var card: Control = _main.get_node("UI/EndCard")
 	assert_bool(card.visible).is_true()
@@ -104,22 +106,23 @@ func test_end_card_flow(timeout := 240000) -> void:
 	var y: float = _main.kickers[Players.P1].global_position.y
 	await _wait_for(func(): return false, 1.0)
 	assert_float(_main.kickers[Players.P1].global_position.y).is_equal_approx(y, 0.01)
-	# A (after the short guard) goes back to the title card.
+	# A (after the short guard) goes back to the lobby.
 	await _wait_for(func(): return card._t > card.ACCEPT_AFTER, 3.0)
 	Input.action_press(Players.action(Players.P1, "action"))
 	await get_tree().process_frame
 	await get_tree().process_frame
 	Input.action_release(Players.action(Players.P1, "action"))
-	assert_int(Game.state).is_equal(Game.State.TITLE)
-	assert_bool(_main.get_node("UI/Title").visible).is_true()
+	await get_tree().process_frame
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+	var lobby: Control = _main.get_node("UI/Lobby")
+	assert_bool(lobby.visible).is_true()
+	assert_bool(lobby.readied[Players.P1]).is_false()   # the end card's A does not ready too
 	assert_bool(card.visible).is_false()
 	assert_bool(_main.kickers[Players.P1].helmet.visible).is_false()
-	# And A on the title starts a fresh run from round 1.
-	await _wait_for(func(): return false, 0.7)
-	Input.action_press(Players.action(Players.P1, "action"))
-	await get_tree().process_frame
-	await get_tree().process_frame
-	Input.action_release(Players.action(Players.P1, "action"))
+	# Both ready up in the lobby: a fresh run from round 1.
+	lobby.press_a(Players.P1)
+	lobby.press_a(Players.P2)
+	lobby.count_step(10.0)
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.KICK_P1, 3.0)).is_true()
 	assert_int(Run.round_index).is_equal(1)
 	assert_bool(Run.in_space(Players.P1)).is_false()

@@ -1,37 +1,40 @@
 ## Session state machine. Autoload: Game.
+## LOBBY (start screen / main menu) -> PLAYING <-> PAUSED, ROUND_END between rounds.
+## CLI (after --): --demo skips the lobby and plays with two virtual players.
 extends Node
 
-enum State { TITLE, PLAYING, PAUSED, ROUND_END }
+## TITLE is the old name of LOBBY, kept so games written against it still compile.
+enum State { LOBBY, PLAYING, PAUSED, ROUND_END, TITLE = 0 }
 
 signal state_changed(from: State, to: State)
 signal round_started(round_index: int)
 signal round_ended(round_index: int, result: Dictionary)
+signal lobby_ready(players: Array)
+signal back_to_lobby()
+signal quit_requested()
 signal restarted()
 signal restart_armed()
 
 ## Select restarts the run on two presses within this many seconds (GAME.md Controls).
 const RESTART_WINDOW := 1.0
 
-var state: State = State.TITLE
+var state: State = State.LOBBY
 var round_index: int = 0
+var demo := false
+## Tests turn this off so quit() does everything but exit.
+var quit_exits := true
 var _restart_armed_at := -INF
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().auto_accept_quit = false
+	demo = OS.get_cmdline_user_args().has("--demo")
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		quit()
-
-
-## Clean exit (code 0 for the launcher): save, silence audio so nothing leaks, quit.
-func quit(code: int = 0) -> void:
-	Save.flush()
-	await Audio.silence()
-	get_tree().quit(code)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -40,7 +43,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			pause()
 		elif state == State.PAUSED:
 			resume()
-	elif event.is_action_pressed("restart") and state != State.TITLE:
+	elif event.is_action_pressed("restart") and state in [State.PLAYING, State.ROUND_END]:
 		press_restart(Time.get_ticks_msec() / 1000.0)
 
 
@@ -83,6 +86,7 @@ func resume() -> void:
 	_set_state(State.PLAYING)
 
 
+## Spaceballs: Select twice restarts the whole run in place (main.gd resets it on restarted).
 func restart() -> void:
 	get_tree().paused = false
 	Audio.play("ui_confirm")
@@ -91,12 +95,30 @@ func restart() -> void:
 	start_round()
 
 
-## Spaceballs end card: back to the title card (main.gd lays it out; A there starts a new run).
-func to_title() -> void:
+## Back to the start screen: the game clears its level on back_to_lobby.
+func to_lobby() -> void:
 	get_tree().paused = false
-	Audio.play("ui_confirm")
+	Save.flush()
 	round_index = 0
-	_set_state(State.TITLE)
+	_set_state(State.LOBBY)
+	back_to_lobby.emit()
+
+
+## The lobby countdown finished.
+func finish_lobby(players: Array) -> void:
+	lobby_ready.emit(players)
+	start_round()
+
+
+## Clean exit, code 0 for the launcher, which resumes when the process ends.
+## Silences audio first so nothing leaks at exit.
+func quit(code: int = 0) -> void:
+	quit_requested.emit()
+	Save.flush()
+	if not quit_exits:
+		return
+	await Audio.silence()
+	get_tree().quit(code)
 
 
 func _set_state(to: State) -> void:

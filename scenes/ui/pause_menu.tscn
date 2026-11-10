@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://openjar_pause_menu"]
+
+[ext_resource type="Script" path="res://scenes/ui/pause_menu.gd" id="1_pause"]
+[ext_resource type="Script" path="res://scenes/ui/icon_button.gd" id="2_btn"]
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pause")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.08, 0.75)
+
+[node name="Buttons" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="Resume" type="Control" parent="Buttons"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 400.0
+offset_right = 700.0
+offset_bottom = 700.0
+script = ExtResource("2_btn")
+tint = Color(0.35, 0.75, 1, 1)
+
+[node name="Restart" type="Control" parent="Buttons"]
+layout_mode = 0
+offset_left = 810.0
+offset_top = 400.0
+offset_right = 1110.0
+offset_bottom = 700.0
+script = ExtResource("2_btn")
+icon = 1
+tint = Color(1, 0.85, 0.3, 1)
+
+[node name="Door" type="Control" parent="Buttons"]
+layout_mode = 0
+offset_left = 1220.0
+offset_top = 400.0
+offset_right = 1520.0
+offset_bottom = 700.0
+script = ExtResource("2_btn")
+icon = 2
+tint = Color(1, 0.62, 0.25, 1)

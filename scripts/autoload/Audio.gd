@@ -9,6 +9,13 @@ const SFX_DIR := "res://assets/audio/sfx/"
 const MUSIC_DIR := "res://assets/audio/music/"
 const VOICE_DIR := "res://addons/openjar/characters/"
 const POOL_SIZE := 12
+## Template menu cues with no file of their own play one of ours: cue -> [our cue, pitch].
+## A real file for the cue (Audio lane) wins over the alias.
+const ALIASES := {
+	"ui_move": ["card_move", 1.0], "ui_back": ["ui_confirm", 0.75],
+	"player_ready": ["player_join", 1.0], "player_unready": ["player_join", 0.7],
+	"count_tick": ["card_move", 1.5], "solo_on": ["player_join", 1.5], "solo_off": ["player_join", 0.6],
+}
 
 var _pool: Array[AudioStreamPlayer] = []
 var _music: AudioStreamPlayer
@@ -61,6 +68,9 @@ func _exit_tree() -> void:
 func play(cue: String, _position = null, pitch: float = 1.0) -> void:
 	if _silenced:
 		return
+	if ALIASES.has(cue) and not _has_file(cue):
+		pitch *= ALIASES[cue][1]
+		cue = ALIASES[cue][0]
 	var stream := _resolve(SFX_DIR, cue)
 	if stream == null:
 		return
@@ -140,6 +150,10 @@ func stop_music(fade: float = 0.5) -> void:
 	tw.tween_property(_music, "volume_db", -40.0, fade)
 	tw.tween_callback(_music.stop)
 	_track = ""
+
+
+func _has_file(cue: String) -> bool:
+	return ResourceLoader.exists(SFX_DIR + cue + ".ogg") or ResourceLoader.exists(SFX_DIR + cue + "_1.ogg")
 
 
 func bark(character: String, bark_name: String) -> void:
