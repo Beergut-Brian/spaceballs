@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/confirm_dialog.gd" id="1_confirm"]
+[ext_resource type="Script" path="res://scenes/ui/kit/menu_item.gd" id="2_item"]
+[ext_resource type="Script" path="res://scenes/ui/kit/hint_line.gd" id="3_hint"]
+[ext_resource type="Theme" path="res://assets/ui/theme.tres" id="4_theme"]
+
+[node name="Confirm" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_theme")
+script = ExtResource("1_confirm")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.03, 0.1, 0.72)
+
+[node name="Card" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 560.0
+offset_top = 320.0
+offset_right = 1360.0
+offset_bottom = 760.0
+
+[node name="Heading" type="Label" parent="Card"]
+layout_mode = 0
+offset_left = 70
+offset_top = 34
+offset_right = 760
+offset_bottom = 150
+theme_type_variation = &"HeadingLabel"
+text = "Leave the game?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Body" type="Label" parent="Card"]
+layout_mode = 0
+offset_left = 70
+offset_top = 150
+offset_right = 760
+offset_bottom = 196
+theme_type_variation = &"BodyLabel"
+text = "Progress is saved. You'll go back to Open Jar."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Card"]
+layout_mode = 0
+offset_left = 90
+offset_top = 236
+offset_right = 720
+offset_bottom = 340
+theme_override_constants/separation = 32
+
+[node name="Cancel" type="Control" parent="Card/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_item")
+text = "Stay"
+bleed = 0
+height = 92.0
+height_focused = 104.0
+text_size = 54
+text_size_focused = 62
+
+[node name="Confirm" type="Control" parent="Card/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_item")
+text = "Leave"
+bleed = 0
+height = 92.0
+height_focused = 104.0
+text_size = 54
+text_size_focused = 62
+
+[node name="Hint" type="Control" parent="Card"]
+layout_mode = 0
+offset_left = 40
+offset_top = 372
+offset_right = 760
+offset_bottom = 412
+script = ExtResource("3_hint")
+text = "[a] Choose    [b] Stay"

@@ -1,5 +1,6 @@
-## Lobby (ready-up, hold to start alone, solo), pause menu (restart -> lobby, door -> Game.quit),
-## mid-game joins, --demo skipping the lobby. Boots main.tscn with virtual players.
+## Lobby (ready-up, hold to start alone, solo), pause menu (restart -> lobby, door -> confirm ->
+## Game.quit), settings (persist, solo), focus by both pads, B backs out, mid-game joins, --demo.
+## Boots main.tscn with virtual players and synthetic pad events.
 ## From the template; Spaceballs: who plays is Run.in_run, Jeff and Chuck are the lobby characters,
 ## the end card goes back to the lobby or out of the door.
 class_name TestLobby
@@ -15,7 +16,12 @@ var _quits := 0
 var _readies: Array = []
 
 
+var _real_settings := ""
+
+
 func before() -> void:
+	_real_settings = Save.settings_path
+	Save.settings_path = "user://test_settings.json"
 	Game.quit_exits = false
 	Game.quit_requested.connect(_on_quit)
 	Game.lobby_ready.connect(_on_lobby_ready)
@@ -25,9 +31,13 @@ func after() -> void:
 	Game.quit_requested.disconnect(_on_quit)
 	Game.lobby_ready.disconnect(_on_lobby_ready)
 	Game.quit_exits = true
+	Save.wipe_settings()
+	Save.settings_path = _real_settings
+	Save.reload_settings()
 
 
 func before_test() -> void:
+	Save.wipe_settings()
 	Players.reset()
 	Run.stop_run()
 	Run.demo = false
@@ -73,6 +83,14 @@ func _lobby() -> Lobby:
 
 func _pause_menu() -> PauseMenu:
 	return _main.get_node("UI/PauseMenu")
+
+
+func _settings_of(menu: Node) -> SettingsPanel:
+	return menu.get_node("Settings")
+
+
+func _confirm_of(menu: Node) -> ConfirmDialog:
+	return menu.get_node("Confirm")
 
 
 func _finish_countdown() -> void:
@@ -193,13 +211,135 @@ func test_solo_readies_both() -> void:
 	assert_bool(lobby.counting).is_true()
 
 
-func test_lobby_door_quits() -> void:
+func test_lobby_door_asks_then_quits() -> void:
 	_boot()
 	var lobby := _lobby()
+	var confirm := _confirm_of(lobby)
 	Players.join_virtual(P1)
-	lobby._set_focus(Lobby.Choice.DOOR)
+	lobby.focus_item(Lobby.Choice.DOOR)
 	lobby.press_a(P1)
+	assert_bool(confirm.active).is_true()
+	assert_int(confirm.focus).is_equal(ConfirmDialog.Choice.CANCEL)   # Stay first
+	assert_int(_quits).is_equal(0)
+	confirm.handle({ "move": Vector2i.ZERO, "a": P1, "b": -1 })   # A on Stay
+	assert_bool(confirm.active).is_false()
+	assert_int(_quits).is_equal(0)
+	lobby.press_a(P1)
+	confirm.move_focus(1)
+	confirm.handle({ "move": Vector2i.ZERO, "a": P1, "b": -1 })   # A on Leave
 	assert_int(_quits).is_equal(1)
+
+
+func test_lobby_menu_has_text_labels() -> void:
+	_boot()
+	var labels := []
+	for item in _lobby().get_node("Buttons").get_children():
+		labels.append(item.text)
+	assert_array(labels).is_equal(["Play", "Settings", "Back to Open Jar"])
+	assert_str(_lobby().get_node("TitleArt/TitleLabel").text).is_not_empty()
+	assert_array(UiStyle.PLAYER_COLORS).is_equal([Players.COLOR[P1], Players.COLOR[P2]])
+
+
+func _stick(device: int, y: float) -> void:
+	for v in [y, 0.0]:
+		var ev := InputEventJoypadMotion.new()
+		ev.device = device
+		ev.axis = JOY_AXIS_LEFT_Y
+		ev.axis_value = v
+		Input.parse_input_event(ev)
+		Input.flush_buffered_events()
+		await await_idle_frame()
+
+
+func test_focus_moves_with_either_pad() -> void:
+	_boot()
+	var lobby := _lobby()
+	await _pad(5, JOY_BUTTON_B)   # join without readying: no countdown
+	await _pad(6, JOY_BUTTON_B)
+	assert_int(lobby.focus).is_equal(Lobby.Choice.PLAY)
+	await _stick(6, 1.0)
+	assert_int(lobby.focus).is_equal(Lobby.Choice.SETTINGS)
+	await _stick(5, 1.0)
+	assert_int(lobby.focus).is_equal(Lobby.Choice.DOOR)
+	await _stick(5, 1.0)   # bumps the end
+	assert_int(lobby.focus).is_equal(Lobby.Choice.DOOR)
+	await _stick(6, -1.0)
+	assert_int(lobby.focus).is_equal(Lobby.Choice.SETTINGS)
+	await _pad(6, JOY_BUTTON_A)   # P2 opens Settings
+	assert_bool(_settings_of(lobby).active).is_true()
+	await _stick(5, 1.0)   # P1 moves inside it
+	assert_int(_settings_of(lobby).focus).is_equal(SettingsPanel.Row.SOUND)
+
+
+func test_b_goes_back() -> void:
+	_boot()
+	var lobby := _lobby()
+	var settings := _settings_of(lobby)
+	var confirm := _confirm_of(lobby)
+	await _pad(5, JOY_BUTTON_B)
+	lobby.focus_item(Lobby.Choice.SETTINGS)
+	await _pad(5, JOY_BUTTON_A)
+	assert_bool(settings.active).is_true()
+	await _pad(5, JOY_BUTTON_B)
+	assert_bool(settings.active).is_false()
+	assert_int(lobby.focus).is_equal(Lobby.Choice.SETTINGS)
+	lobby.focus_item(Lobby.Choice.DOOR)
+	await _pad(5, JOY_BUTTON_A)
+	assert_bool(confirm.active).is_true()
+	await _pad(5, JOY_BUTTON_B)
+	assert_bool(confirm.active).is_false()
+	assert_int(_quits).is_equal(0)
+	await _pad(5, JOY_BUTTON_B)   # nothing open, not ready: back to Play
+	assert_int(lobby.focus).is_equal(Lobby.Choice.PLAY)
+
+
+# --- settings ------------------------------------------------------------------
+
+func test_settings_persist() -> void:
+	_boot()
+	var lobby := _lobby()
+	var settings := _settings_of(lobby)
+	Players.join_virtual(P1)
+	lobby.focus_item(Lobby.Choice.SETTINGS)
+	lobby.press_a(P1)
+	settings.adjust(-1)                       # music 0.8 -> 0.7
+	settings.move_focus(1)
+	settings.adjust(-1)                       # sound 1.0 -> 0.9
+	settings.move_focus(1)
+	settings.adjust(-1)                       # screen shake off
+	assert_float(Audio.get_volume("Music")).is_equal_approx(0.7, 0.01)
+	assert_bool(FileAccess.file_exists(Save.settings_path)).is_true()
+	Save.reload_settings()                    # as on the next boot
+	assert_float(Save.get_setting(SettingsPanel.MUSIC)).is_equal_approx(0.7, 0.001)
+	assert_float(Save.get_setting(SettingsPanel.SOUND)).is_equal_approx(0.9, 0.001)
+	assert_bool(SettingsPanel.screen_shake()).is_false()
+	settings.adjust(1)
+	assert_bool(SettingsPanel.screen_shake()).is_true()
+
+
+func test_settings_solo_toggle_saves_and_readies_on_close() -> void:
+	_boot()
+	var lobby := _lobby()
+	var settings := _settings_of(lobby)
+	Players.join_virtual(P1)
+	lobby.focus_item(Lobby.Choice.SETTINGS)
+	lobby.press_a(P1)
+	for i in 3:
+		settings.move_focus(1)
+	assert_int(settings.focus).is_equal(SettingsPanel.Row.SOLO)
+	settings.adjust(1, true)
+	assert_bool(Players.solo).is_true()
+	assert_bool(Save.get_setting(SettingsPanel.SOLO)).is_true()
+	assert_bool(lobby.counting).is_false()    # not behind the open panel
+	settings.close()
+	assert_bool(lobby.counting).is_true()
+
+
+func test_saved_solo_stays_off_at_boot() -> void:
+	Save.set_setting(SettingsPanel.SOLO, true)
+	_boot()
+	await await_idle_frame()
+	assert_bool(Players.solo).is_false()
 
 
 # --- pause menu ----------------------------------------------------------------
@@ -222,18 +362,51 @@ func test_pause_shows_menu_and_resume() -> void:
 	assert_bool(_pause_menu().visible).is_false()
 
 
-func test_pause_door_calls_quit() -> void:
+func test_pause_door_asks_then_quits() -> void:
 	_play_two()
 	Save.set_value("menus_quit", 1)
 	Game.pause()
-	_pause_menu().move_focus(1)
-	_pause_menu().move_focus(1)
-	_pause_menu().move_focus(1)   # bumps the end, stays on the door
-	assert_int(_pause_menu().focus).is_equal(PauseMenu.Choice.DOOR)
-	_pause_menu().press()
+	var pm := _pause_menu()
+	for i in 4:
+		pm.move_focus(1)   # the last one bumps the end, stays on the door
+	assert_int(pm.focus).is_equal(PauseMenu.Choice.DOOR)
+	pm.press()
+	var confirm := _confirm_of(pm)
+	assert_bool(confirm.active).is_true()
+	assert_int(_quits).is_equal(0)
+	pm.back()   # B: Stay
+	assert_bool(confirm.active).is_false()
+	assert_int(Game.state).is_equal(Game.State.PAUSED)
+	pm.press()
+	confirm.choose(true)
 	assert_int(_quits).is_equal(1)
 	assert_bool(Save._dirty).is_false()   # quit saved first
 	Save.wipe()
+
+
+func test_pause_b_backs_out_then_resumes() -> void:
+	_play_two()
+	Game.pause()
+	var pm := _pause_menu()
+	pm.press(PauseMenu.Choice.SETTINGS)
+	assert_bool(_settings_of(pm).active).is_true()
+	pm.back()
+	assert_bool(_settings_of(pm).active).is_false()
+	assert_int(Game.state).is_equal(Game.State.PAUSED)
+	pm.back()
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+
+
+func test_pause_shows_who_paused() -> void:
+	_boot()
+	await _pad(5, JOY_BUTTON_B)
+	await _pad(6, JOY_BUTTON_B)
+	_lobby().press_a(P1)
+	_lobby().press_a(P2)
+	_finish_countdown()
+	await _pad(6, JOY_BUTTON_START)
+	assert_int(Game.state).is_equal(Game.State.PAUSED)
+	assert_int(_pause_menu().paused_by).is_equal(P2)
 
 
 func test_restart_returns_to_lobby() -> void:
@@ -304,10 +477,14 @@ func test_jeff_left_chuck_right_and_ready_cheers() -> void:
 	assert_bool(cam.is_position_in_frustum(jeff.global_position + Vector3.UP)).is_true()
 	assert_bool(cam.is_position_in_frustum(chuck.global_position + Vector3.UP)).is_true()
 	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
+	# The podium Jeff (data/menu_skin.tres) cheers when P1 joins and readies, idles on B.
+	var podium: Node = _lobby().get_node("Spots/P1/Character").character
+	var anim: AnimationPlayer = podium.get_node("Jarling/Model").find_child("AnimationPlayer", true, false)
 	Players.join_virtual(P1)
-	assert_int(jeff.state).is_equal(Kicker.State.CHEER)   # waving
+	assert_str(anim.current_animation).is_equal("cheer")
 	_lobby().press_b(P1)
-	assert_int(jeff.state).is_equal(Kicker.State.IDLE)
+	assert_str(anim.current_animation).is_equal("idle")
+	assert_int(jeff.state).is_equal(Kicker.State.IDLE)   # the field Jeff behind stays put
 
 
 ## Jeff stands by his ball in the lobby; round 1 must not kick for him from the stale overlap.

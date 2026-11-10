@@ -1,0 +1,81 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/nunito/Nunito-Variable.ttf" id="1_ib6tx"]
+[ext_resource type="FontFile" path="res://assets/fonts/fredoka/Fredoka-Variable.ttf" id="2_fenpc"]
+
+[sub_resource type="FontVariation" id="FontVariation_omlnh"]
+base_font = ExtResource("1_ib6tx")
+variation_opentype = {
+2003265652: 600
+}
+
+[sub_resource type="FontVariation" id="FontVariation_lvrds"]
+base_font = ExtResource("1_ib6tx")
+variation_opentype = {
+2003265652: 900
+}
+spacing_glyph = 3
+
+[sub_resource type="FontVariation" id="FontVariation_im0sm"]
+base_font = ExtResource("2_fenpc")
+variation_opentype = {
+2003265652: 600
+}
+
+[sub_resource type="FontVariation" id="FontVariation_7h6bm"]
+base_font = ExtResource("1_ib6tx")
+variation_opentype = {
+2003265652: 700
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_86uey"]
+bg_color = Color(0.13333334, 0.105882354, 0.09411765, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2901961, 0.24313726, 0.21568628, 0.8)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+corner_detail = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 40
+shadow_offset = Vector2(0, 14)
+
+[sub_resource type="FontVariation" id="FontVariation_5jbdf"]
+base_font = ExtResource("2_fenpc")
+variation_opentype = {
+2003265652: 650
+}
+
+[resource]
+default_font = SubResource("FontVariation_omlnh")
+default_font_size = 32
+BodyLabel/base_type = &"Label"
+BodyLabel/colors/font_color = Color(0.76862746, 0.7137255, 0.6509804, 1)
+BodyLabel/font_sizes/font_size = 32
+BodyLabel/fonts/font = SubResource("FontVariation_omlnh")
+CaptionLabel/base_type = &"Label"
+CaptionLabel/colors/font_color = Color(0.52156866, 0.46666667, 0.42352942, 1)
+CaptionLabel/font_sizes/font_size = 24
+CaptionLabel/fonts/font = SubResource("FontVariation_lvrds")
+HeadingLabel/base_type = &"Label"
+HeadingLabel/colors/font_color = Color(0.972549, 0.9411765, 0.8980392, 1)
+HeadingLabel/font_sizes/font_size = 64
+HeadingLabel/fonts/font = SubResource("FontVariation_im0sm")
+HintLabel/base_type = &"Label"
+HintLabel/colors/font_color = Color(0.76862746, 0.7137255, 0.6509804, 1)
+HintLabel/font_sizes/font_size = 27
+HintLabel/fonts/font = SubResource("FontVariation_7h6bm")
+Label/colors/font_color = Color(0.972549, 0.9411765, 0.8980392, 1)
+Panel/styles/panel = SubResource("StyleBoxFlat_86uey")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_86uey")
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(0.972549, 0.9411765, 0.8980392, 1)
+TitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0.35)
+TitleLabel/constants/shadow_offset_x = 0
+TitleLabel/constants/shadow_offset_y = 6
+TitleLabel/font_sizes/font_size = 132
+TitleLabel/fonts/font = SubResource("FontVariation_5jbdf")

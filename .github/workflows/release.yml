@@ -73,6 +73,7 @@ jobs:
           JSON
           cp -r store build/   # grid, hero and jar.glb (the launcher's jar world) ship next to the binary
           test -s build/store/jar.glb
+          cat build/openjar.json
       - name: Zip
         run: cd build && zip -r "../${GITHUB_REPOSITORY#*/}-${GITHUB_REF_NAME}-linux.zip" .
       - name: Release

@@ -11,6 +11,14 @@ var _main: Node
 var _setup_cb: Callable
 
 
+func before() -> void:
+	SettingsSandbox.enter()
+
+
+
+func after() -> void:
+	SettingsSandbox.leave()
+
 func before_test() -> void:
 	Run.phase = Run.Phase.IDLE
 	Players._device_of = {P1: -1, P2: -1}

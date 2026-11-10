@@ -32,29 +32,62 @@ func finish_lobby(players: Array) -> void   # the lobby calls this: emits lobby_
 func quit(code: int = 0) -> void            # Save.flush(), silence audio (no exit leaks), exit; the launcher resumes
 ```
 
-Start (`pause`) toggles `PLAYING` <-> `PAUSED`. The pause menu (`scenes/ui/pause_menu.tscn`) shows
-three icon buttons: Resume, Restart (`to_lobby()`), Back to the launcher (`quit()`). Either pad
-moves the cursor; A presses; B or Start resumes. Window close also goes through `quit()`.
+Start (`pause`) toggles `PLAYING` <-> `PAUSED`. The pause menu (`scenes/ui/pause_menu.tscn`) is a
+text menu over the blurred game: Resume, Restart (`to_lobby()`), Settings, Back to Open Jar
+("Leave the game?" Stay / Leave, then `quit()`). It shows who paused (`paused_by`). Either pad
+moves the cursor; A selects; B backs out of Settings / the question, else resumes; Start resumes.
+Window close also goes through `quit()`. Menus are for the grown-up: see `docs/ui.md`.
 
 ### Lobby (`scenes/ui/lobby.tscn`, `scenes/ui/lobby.gd`)
 
-Start screen and main menu in one, no text. Two player spots (P1 green left, P2 red right), the
-game's title art on top, two icon buttons below: Play and Back to the launcher (a door).
+Start screen and main menu in one, the Showtime menu kit (`docs/ui.md`): the game's slanted title
+over a stage (sunburst, and the game's world blurred behind it if the skin asks), Jeff (P1 green,
+left) and Chuck (P2 red, right) on podiums with name plates and READY! stamps, and a wedge of
+slanted bars: Play / Settings / Back to Open Jar.
 
-- A on Play: that pad joins (if new) and is ready; its spot lights up and its character waves.
-- B: un-ready. Both players ready: a 3-dot countdown, then `Game.finish_lobby(ready_players)`.
-- A held on Play for 1.5 s by a ready player starts without the other (a ring fills round the spot).
+- A on a new pad: that pad joins and is ready; its podium lights up and its character waves.
+- B: un-ready (or back out of Settings / the question). Both ready: a 3-beat countdown; on the last
+  beat the stamps say GO!, both characters cheer, the three-stripe wipe covers the screen and
+  `Game.finish_lobby(ready_players)` starts round 1 (with the skin's "ROUND 1" card). Un-readying
+  cancels, except during the last beat.
+- A held on Play for 1.5 s by a ready player starts without the other (Play fills up).
+- Back to Open Jar asks "Leave the game?" (Stay focused first), Leave calls `Game.quit()`.
 - Solo mode readies both. A pad that joins mid-game plays from the next round.
 
-Hooks a game uses (keep the node names):
+The look per game comes from one resource, `MenuSkin` (`scenes/ui/kit/menu_skin.gd`): title,
+accent / sunburst / deep colours, the two character scenes and names, the backdrop
+(`SUNBURST`, `SCENE` live world, `TEXTURE` still, `SCREEN` the level behind), the round card.
+`res://data/menu_skin.tres` is used automatically; or `UiStyle.use_skin(skin)` in code.
 
 ```gdscript
-@export var title_texture: Texture2D        # the title art; or replace the TitleArt node
+@export var title_texture: Texture2D        # wins over the skin's title
+@export var title_text: String              # wins over the skin's title
+var round_card_subtitle: String             # "JEFF KICKS FIRST" under ROUND 1; set in code
+var round_card_color: Color                 # its strip colour (default the skin's accent2)
 signal player_readied(player: int, ready: bool)
 signal countdown_started()
 signal countdown_cancelled()
-# Spots/P1/Character, Spots/P2/Character: swap in your character. The lobby calls
-# set_joined(on: bool) and wave() on it if it has them.
+signal launching()                          # the last beat: the wipe is starting
+# Spots/P1/Character, Spots/P2/Character: CharacterSlots hosting the skin's characters; the lobby
+# calls set_joined(on: bool), wave() and cheer() on the character if it has them.
+# Backdrop, Wedge, TitleArt, Buttons/Play, Buttons/Settings, Buttons/Door, Settings, Confirm.
+```
+
+`ShowtimeWipe.run(on_cover, title, subtitle, color)` plays the same wipe anywhere (between rounds).
+`UiSound.play(cue, pitch)` plays a menu cue: the `.ogg` in `assets/audio/sfx/` if there is one,
+else a synthesized stand-in (cue list in `docs/ui.md`).
+
+### Settings (`scenes/ui/settings_panel.gd`, class `SettingsPanel`)
+
+Music volume, sound volume, screen shake, solo playtest mode; in the lobby and the pause menu.
+Per install, through `Save.set_setting()`, written the moment a value changes.
+
+```gdscript
+const MUSIC := "music_volume"     # 0..1, default 0.8 -> Audio "Music" bus
+const SOUND := "sound_volume"     # 0..1, default 1.0 -> Audio "SFX" bus
+const SHAKE := "screen_shake"     # bool, default true
+const SOLO := "solo_playtest"     # bool, default false; on at boot turns Players solo on
+static func screen_shake() -> bool  # games check this before shaking the camera
 ```
 
 ### `Players` (`scripts/autoload/Players.gd`)
@@ -106,6 +139,13 @@ func get_value(key: String, default = null)
 func set_value(key: String, value) -> void   # marks dirty
 func flush() -> void                         # writes if dirty; Game.end_round() calls this
 func wipe() -> void
+
+# Per install, not per profile: user://settings.json, written on every set_setting().
+var settings_path: String                    # tests point this elsewhere
+func get_setting(key: String, default = null)
+func set_setting(key: String, value) -> void
+func reload_settings() -> void
+func wipe_settings() -> void
 ```
 
 ### `Audio` (`scripts/autoload/Audio.gd`)
@@ -118,7 +158,12 @@ func stop_music(fade: float = 0.5) -> void
 func stop_all() -> void                 # await: stop everything, let the audio thread release it
 func silence() -> void                  # await: stop_all() and ignore play() from now on (quit)
 func bark(character: String, bark: String) -> void   # from openjar-characters voice packs
+func set_volume(bus: String, linear: float) -> void  # "Music" / "SFX", 0..1; Settings calls it
+func get_volume(bus: String) -> float
 ```
+
+Audio creates the `Music` and `SFX` buses at start if the project has no bus layout, and applies
+the saved volumes.
 
 Every action must call `Audio.play`. Missing cue files log a warning, never crash.
 
@@ -507,9 +552,10 @@ signal mode_changed(mode: Mode)
 - `scenes/ui/end_card.tscn`: `open()`, `close()`, `signal restart_requested()` (A, after 1.2 s).
   Two icon buttons: A on the big one (focused) goes back to the lobby (`Game.to_lobby()`), the door
   (stick right, A) to the launcher (`Game.quit()`); `--demo` skips the lobby and restarts straight away.
-- Lobby (`UI/Lobby`, template): Jeff and Chuck are the real kickers standing on the tees, the field
-  behind, see-through spots (`fill_alpha`); `Spots/P*/Character` is `scenes/ui/lobby_kicker.gd`,
-  which cheers the kicker on `wave()`. `Game.lobby_ready` -> `Run.plan_run(players)`, round 1.
+- Lobby (`UI/Lobby`, template Showtime kit): skinned by `data/menu_skin.tres` (title, colours,
+  backdrop `SCREEN` = the live field behind it, blurred). Jeff and Chuck on the podiums are
+  `scenes/ui/lobby_jeff.tscn` / `lobby_chuck.tscn` (`lobby_jarling.gd`: the field rig, idle/cheer,
+  `dress(items)` with the run's `--gear`). `main.gd` sets the round card line ("JEFF KICKS FIRST"). `Game.lobby_ready` -> `Run.plan_run(players)`, round 1.
   A pad joined but not readied when the countdown ends sits out round 1 and plays from round 2.
 - `scenes/ui/upgrade_card.tscn`: one card (`Icon`), themed by Art.
 

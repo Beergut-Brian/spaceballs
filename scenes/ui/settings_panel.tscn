@@ -1,0 +1,119 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/settings_panel.gd" id="1_panel"]
+[ext_resource type="Script" path="res://scenes/ui/kit/setting_row.gd" id="2_row"]
+[ext_resource type="Script" path="res://scenes/ui/kit/hint_line.gd" id="3_hint"]
+[ext_resource type="Theme" path="res://assets/ui/theme.tres" id="4_theme"]
+[ext_resource type="Script" path="res://scenes/ui/kit/wedge.gd" id="5_wedge"]
+
+[node name="Settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("4_theme")
+script = ExtResource("1_panel")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.05, 0.04, 0.12, 0.25)
+
+[node name="Wedge" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_wedge")
+edge = 946.0
+opacity = 1.0
+
+[node name="Card" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Heading" type="Label" parent="Card"]
+layout_mode = 0
+offset_left = 990.0
+offset_top = 60.0
+offset_right = 1840.0
+offset_bottom = 240.0
+rotation = -0.0523599
+pivot_offset = Vector2(425, 90)
+text = "Settings"
+vertical_alignment = 1
+
+[node name="Caption" type="Label" parent="Card"]
+layout_mode = 0
+offset_left = 1300.0
+offset_top = 236.0
+offset_right = 1836.0
+offset_bottom = 280.0
+theme_type_variation = &"HintLabel"
+text = "Saved on this TV"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Rows" type="VBoxContainer" parent="Card"]
+layout_mode = 0
+offset_left = 900.0
+offset_top = 300.0
+offset_right = 1920.0
+offset_bottom = 960.0
+mouse_filter = 2
+theme_override_constants/separation = 30
+
+[node name="Music" type="Control" parent="Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_row")
+text = "Music"
+
+[node name="Sound" type="Control" parent="Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_row")
+text = "Sound"
+
+[node name="Shake" type="Control" parent="Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_row")
+kind = 1
+text = "Screen shake"
+
+[node name="Solo" type="Control" parent="Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_row")
+kind = 1
+detail = "One controller plays both players"
+text = "Solo playtest"
+
+[node name="Hint" type="Control" parent="Card"]
+layout_mode = 0
+offset_left = 1090.0
+offset_top = 988.0
+offset_right = 1920.0
+offset_bottom = 1054.0
+mouse_filter = 2
+script = ExtResource("3_hint")
+text = "[ud] Choose    [lr] Change    [b] Back"
+align = 2
+strip = true

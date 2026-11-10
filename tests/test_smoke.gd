@@ -3,6 +3,10 @@ class_name TestSmoke
 extends GdUnitTestSuite
 
 
+func before() -> void:
+	SettingsSandbox.enter()
+
+
 func test_main_scene_loads() -> void:
 	var scene := load("res://scenes/main.tscn") as PackedScene
 	assert_object(scene).is_not_null()
@@ -58,4 +62,5 @@ func test_profile_from_args_accepts_both_forms() -> void:
 
 
 func after() -> void:
+	SettingsSandbox.leave()
 	await Audio.stop_all()   # a cue still playing when the runner quits shows up as a leak

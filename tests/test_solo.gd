@@ -11,6 +11,10 @@ const PAD := 3
 var _nodes: Array = []
 
 
+func before() -> void:
+	SettingsSandbox.enter()
+
+
 func before_test() -> void:
 	# CI runs suites in another order: start from clean autoloads.
 	Players.reset()
@@ -40,6 +44,7 @@ func after_test() -> void:
 
 
 func after() -> void:
+	SettingsSandbox.leave()
 	await Audio.stop_all()
 
 
