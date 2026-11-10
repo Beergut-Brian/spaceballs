@@ -436,6 +436,40 @@ Physics for the first 2 s or below 18 m (`HANDOFF_TIME`, `HANDOFF_HEIGHT`), then
 deterministic ease-out arc to the peak, `PEAK_HOLD` 0.8 s, then the drop. The ball calls
 `Run.notify_tier` / `Run.notify_stopped` itself; `main.gd` calls `Run.end_flight` on `returned`.
 
+Sky hook (Sky lane, 2026-11-09): the only way sky objects touch the ball.
+
+```gdscript
+signal launched(peak_height: float)       # after launch() starts a real flight (not the frog dribble)
+# every ball is in group &"balls"
+const SKY_MAX_OFFSET := 0.04              # reaction offset <= 4 % of the ball's visual height ...
+const SKY_MIN_OFFSET := 0.6               # ... or 0.6 m, whichever is bigger
+const SKY_MAX_HOLD := 0.6                 # total hit-stop seconds per flight
+func sky_react(push: Vector3, hold: float = 0.0, spin: float = 0.0) -> void
+var sky_offset: Vector3                   # the Mesh's current world-space offset (read only)
+```
+
+**The balance rule:** a sky reaction never changes the outcome. `peak_height`, the scripted arc,
+the physics velocity and `height` are untouched. `push` (m/s) kicks a damped spring that offsets
+only the `Mesh` child, clamped to `max(SKY_MIN_OFFSET, SKY_MAX_OFFSET * visual height)`, back to
+zero in about a second. `hold` pauses the scripted arc's clock (hit-stop; ignored in the physics
+phase), capped at `SKY_MAX_HOLD` per flight, so a flight lasts at most 0.6 s longer and peaks at
+exactly the planned height. `spin` adds a little extra spin to the mesh.
+
+### Sky objects (`scenes/sky/`, Sky lane)
+
+- `data/sky.tres` is a `SkySet` (`scripts/gameplay/sky_set.gd`): one `SkyTier` per ladder tier id
+  with `count_min..count_max` objects per kick, a world `scale`, and weighted `SkyEntry`s
+  (`scene`, `weight`, `on_path` = may be placed in the ball's path).
+- `SkyField` (`scripts/gameplay/sky_field.gd`, a child of `HeightLadder`) listens to every ball's
+  `launched`, rolls a seeded plan for that flight (`plan(peak, seed)`), spawns each object shortly
+  before the ball reaches it, frees objects that drop far below the ball, and frees everything on
+  the ball's `returned` or next `launched`.
+- Every object scene's root is a `SkyObject` (`scenes/sky/sky_object.gd`): `@export var cue`,
+  `hit_radius`, `near_radius`; `hit(ball)` plays the cue, does its gag and calls `ball.sky_react`;
+  `near(ball)` is an optional startle when the ball only passes by.
+- Aim: `SkyField.hits_for(tiers)` objects per flight are put on the ball's path (1 for a backyard
+  kick, up to 5 for space); the rest sit beside it as scenery.
+
 ### Camera phases (`CameraRig` in `main.tscn`, script `scripts/gameplay/camera_rig.gd`)
 
 ```gdscript
