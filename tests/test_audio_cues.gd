@@ -61,6 +61,8 @@ func test_layered_music_is_silent_without_files() -> void:
 
 
 func _load_cue(cue: String) -> AudioStream:
+	if Audio.ALIASES.has(cue) and not Audio._has_file(cue):
+		cue = Audio.ALIASES[cue][0]
 	var path := Audio.SFX_DIR + cue + ".ogg"
 	if not ResourceLoader.exists(path):
 		path = Audio.SFX_DIR + cue + "_1.ogg"

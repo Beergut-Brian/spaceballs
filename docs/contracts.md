@@ -7,22 +7,54 @@ own PR before changing code; every other lane reads the merged version.
 
 ### `Game` (`scripts/autoload/Game.gd`)
 
-State machine for the whole session.
+State machine for the whole session. Boots into `LOBBY` (the start screen / main menu,
+`scenes/ui/lobby.tscn`) unless `--demo` is passed, which skips straight to a round.
 
 ```gdscript
-enum State { TITLE, PLAYING, PAUSED, ROUND_END }
+enum State { LOBBY, PLAYING, PAUSED, ROUND_END, TITLE = 0 }   # TITLE: old name of LOBBY, deprecated
 var state: State
+var round_index: int
+var demo: bool                  # --demo: skip the lobby, both players join as virtual players
 signal state_changed(from: State, to: State)
 signal round_started(round_index: int)
 signal round_ended(round_index: int, result: Dictionary)   # result is game-defined
+signal lobby_ready(players: Array)   # the lobby countdown finished; players = who readied up
+signal back_to_lobby()               # pause menu Restart: clear the level, show the lobby
+signal quit_requested()              # emitted just before a clean quit; last chance to save
 
 func start_round() -> void
 func end_round(result: Dictionary = {}) -> void
 func pause() -> void
 func resume() -> void
-func restart() -> void          # back to a fresh round, no questions asked
-func to_title() -> void         # Spaceballs end card: unpause, round_index 0, state TITLE (main.gd re-lays the title)
-func quit(code: int = 0) -> void   # save, silence audio (no exit leaks), quit; use instead of get_tree().quit()
+func restart() -> void          # Select twice: a fresh run from round 1 (see restarted below)
+func to_lobby() -> void         # back to the start screen; round_index resets to 0
+func finish_lobby(players: Array) -> void   # the lobby calls this: emits lobby_ready, starts round 1
+func quit(code: int = 0) -> void            # Save.flush(), silence audio (no exit leaks), exit; the launcher resumes
+```
+
+Start (`pause`) toggles `PLAYING` <-> `PAUSED`. The pause menu (`scenes/ui/pause_menu.tscn`) shows
+three icon buttons: Resume, Restart (`to_lobby()`), Back to the launcher (`quit()`). Either pad
+moves the cursor; A presses; B or Start resumes. Window close also goes through `quit()`.
+
+### Lobby (`scenes/ui/lobby.tscn`, `scenes/ui/lobby.gd`)
+
+Start screen and main menu in one, no text. Two player spots (P1 green left, P2 red right), the
+game's title art on top, two icon buttons below: Play and Back to the launcher (a door).
+
+- A on Play: that pad joins (if new) and is ready; its spot lights up and its character waves.
+- B: un-ready. Both players ready: a 3-dot countdown, then `Game.finish_lobby(ready_players)`.
+- A held on Play for 1.5 s by a ready player starts without the other (a ring fills round the spot).
+- Solo mode readies both. A pad that joins mid-game plays from the next round.
+
+Hooks a game uses (keep the node names):
+
+```gdscript
+@export var title_texture: Texture2D        # the title art; or replace the TitleArt node
+signal player_readied(player: int, ready: bool)
+signal countdown_started()
+signal countdown_cancelled()
+# Spots/P1/Character, Spots/P2/Character: swap in your character. The lobby calls
+# set_joined(on: bool) and wave() on it if it has them.
 ```
 
 ### `Players` (`scripts/autoload/Players.gd`)
@@ -33,14 +65,29 @@ Who is holding which controller. Never read device ids directly.
 const P1 := 0
 const P2 := 1
 const COLOR := { P1: Color("3cc24a"), P2: Color("e4393c") }   # green, red
+const VIRTUAL := -2             # device of a keyboard or --demo player
 
 signal player_joined(player: int, device: int)
 signal player_left(player: int)
+signal solo_changed(on: bool)
+
+var solo: bool                  # playtest only: one pad plays both players
+var solo_focus: int             # the player the solo pad drives right now; the game sets it
 
 func is_active(player: int) -> bool
 func device_of(player: int) -> int
+func active_players() -> Array[int]
 func action(player: int, action: String) -> String   # "p1_move_left" etc. for Input.*
+func move_vector(player: int) -> Vector2
+func join_virtual(player: int) -> void
+func set_solo(on: bool, device: int = VIRTUAL) -> void
+func set_solo_focus(player: int) -> void   # the game calls this when the other player's turn comes
+func reset() -> void                       # tests: nobody joined, solo off, InputMap restored
 ```
+
+Solo mode: `--solo` on the command line, or hold Select + Start together for 2 s on a pad (again
+to turn it off). Both players join on that pad; only `solo_focus`'s actions get its events. A
+two-heads icon shows top-left while it is on. A keyboard key from a player's action joins that player.
 
 Input map actions (defined in `project.godot`, per player, prefix `p1_` / `p2_`):
 `move_left`, `move_right`, `move_up`, `move_down`, `action`, `jump`.
@@ -75,6 +122,12 @@ func bark(character: String, bark: String) -> void   # from openjar-characters v
 
 Every action must call `Audio.play`. Missing cue files log a warning, never crash.
 
+Menu cues (Audio lane supplies the files): `ui_move`, `ui_confirm`, `ui_back`, `player_join`,
+`player_ready`, `player_unready`, `count_tick`, `round_start`, `pause`, `solo_on`, `solo_off`.
+Spaceballs: `Audio.ALIASES` maps the ones with no file to an existing cue and pitch
+(`ui_move`/`count_tick` -> `card_move`, `ui_back` -> `ui_confirm`, `player_ready`/`player_unready`/
+`solo_on`/`solo_off` -> `player_join`). A real file for the cue wins over its alias.
+
 ### `Debug` (`scripts/autoload/Debug.gd`)
 
 F3 toggles the overlay (fps, state, player count). F12 saves `user://screenshots/<timestamp>.png`
@@ -85,7 +138,7 @@ and prints the path. `--screenshot-after=<seconds>` CLI flag does it headlessly 
 The launcher starts a game with `--profile=<id>` and expects the game to:
 
 - read `store/openjar.json` at export time (name, version, card art, clip) — produced by CI;
-- exit with code 0 on a clean quit (Start → Quit on the pause menu);
+- exit with code 0 on a clean quit (`Game.quit()`: the door button in the lobby or the pause menu);
 - not change display mode (the launcher owns fullscreen).
 
 ## Game-specific contracts
@@ -201,7 +254,10 @@ func notify_tier(player: int, tier: int) -> void                  # may emit rea
 func notify_stopped(player: int, height: float) -> void
 func end_flight(player: int) -> void                              # after the comedy drop; next phase
 func pick(player: int, upgrade: UpgradeData) -> void              # PICK; next round when all picked
-func start_run() -> void                                          # Game.restart() calls through here
+func start_run(players: Array = []) -> void                       # Game.restart() calls through here
+func plan_run(players: Array) -> void       # the lobby's ready players play from the next round 1
+func join_next_round(player: int) -> void   # joined but not in the run: plays from the next round
+func stop_run() -> void                     # back to the lobby: run cleared, phase IDLE
 ```
 
 Rules the code implements (tests in `tests/test_run.gd`):
@@ -382,8 +438,12 @@ signal mode_changed(mode: Mode)
 - `scenes/ui/hud.tscn`: `Strip/Blocks` (8 tier blocks, top = space), `Strip/Markers/P1|P2`, `Strip/BestFlag`,
   `Rounds` (ball stack), `RestartHint`. `track(player, ball)` makes a marker follow a flying ball.
 - `scenes/ui/end_card.tscn`: `open()`, `close()`, `signal restart_requested()` (A, after 1.2 s).
-  `main.gd` answers it with `Game.to_title()` (the title card; A there starts a fresh run, the
-  pause menu quits to the launcher); `--demo` skips the title and restarts straight away.
+  Two icon buttons: A on the big one (focused) goes back to the lobby (`Game.to_lobby()`), the door
+  (stick right, A) to the launcher (`Game.quit()`); `--demo` skips the lobby and restarts straight away.
+- Lobby (`UI/Lobby`, template): Jeff and Chuck are the real kickers standing on the tees, the field
+  behind, see-through spots (`fill_alpha`); `Spots/P*/Character` is `scenes/ui/lobby_kicker.gd`,
+  which cheers the kicker on `wave()`. `Game.lobby_ready` -> `Run.plan_run(players)`, round 1.
+  A pad joined but not readied when the countdown ends sits out round 1 and plays from round 2.
 - `scenes/ui/upgrade_card.tscn`: one card (`Icon`), themed by Art.
 
 ### Debug / CLI (after `--`)

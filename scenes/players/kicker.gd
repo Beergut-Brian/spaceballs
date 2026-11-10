@@ -220,6 +220,12 @@ func set_waiting(chair: bool) -> void:
 	_set_state(State.CHAIR if chair else State.CHEER)
 
 
+## Standing still on the spot (the lobby): idle animation, no roaming.
+func set_idle() -> void:
+	set_waiting(false)
+	_set_state(State.IDLE)
+
+
 func set_cloud() -> void:
 	_kill_tween()
 	_clear_prop()

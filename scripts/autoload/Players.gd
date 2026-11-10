@@ -148,7 +148,7 @@ func set_solo(on: bool, device: int = VIRTUAL) -> void:
 			_device_of[p] = device
 		solo_focus = P1
 		_apply_solo_map()
-		Audio.play("player_join", null, 1.5)
+		Audio.play("solo_on")
 		_marker.show_solo(true)
 		solo_changed.emit(true)
 		for p in joined:
@@ -161,7 +161,7 @@ func set_solo(on: bool, device: int = VIRTUAL) -> void:
 		_rebind(P1, keep)
 		_device_of[P2] = -1
 		_held.clear()
-		Audio.play("player_join", null, 0.6)
+		Audio.play("solo_off")
 		_marker.show_solo(false)
 		solo_changed.emit(false)
 		player_left.emit(P2)

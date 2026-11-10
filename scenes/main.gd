@@ -1,6 +1,7 @@
-## Boot scene and round director: title card, drop-in, and the scene side of Run's phases
-## (who stands where, which ball is armed, which camera, which UI). Game rules live in Run.
-## Systems lane owns. CLI (after --): --demo plays itself, --timescale=<x> speeds it up.
+## Boot scene and round director: the lobby (template start screen) with Jeff and Chuck on the tees,
+## drop-in, and the scene side of Run's phases (who stands where, which ball is armed, which camera,
+## which UI). Game rules live in Run. Systems lane owns.
+## CLI (after --): --demo plays itself (no lobby), --timescale=<x> speeds it up, --gear=a,b / --gear2=c.
 extends Node3D
 
 const P1 := Players.P1
@@ -12,8 +13,7 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 @onready var hud: Control = $UI/HUD
 @onready var pick_ui: Control = $UI/UpgradePick
 @onready var end_card: Control = $UI/EndCard
-@onready var title: Control = $UI/Title
-@onready var pause_overlay: Control = $UI/Pause
+@onready var lobby: Control = $UI/Lobby
 @onready var kickers := {P1: $Kickers/Jeff, P2: $Kickers/Chuck}
 @onready var balls := {P1: $Balls/P1, P2: $Balls/P2}
 
@@ -21,8 +21,11 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 const ORBIT_SHOW := 2.0
 ## After the last card is picked, the split screen stays this long so the item is seen landing.
 const PICK_BEAT := 0.9
+## Lobby shot: Jeff and Chuck stand this far behind their tees, the camera this far in front.
+const LOBBY_STAND := Vector3(0, 0, -0.9)
+const LOBBY_CAMERA := Vector3(0, 1.5, 4.6)
+const LOBBY_LOOK := Vector3(0, 1.05, 0)
 
-var _title_t := 0.0
 var _turn: TurnMarker
 var _confetti: CPUParticles2D
 ## -- --gear=a,b (P1) / --gear2=c (P2): start every run wearing these (playtests, screenshots).
@@ -34,6 +37,11 @@ func _ready() -> void:
 	Players.player_left.connect(_on_player_left)
 	Players.solo_changed.connect(_on_solo_changed)
 	Game.state_changed.connect(_on_state_changed)
+	Game.lobby_ready.connect(_on_lobby_ready)
+	Game.round_started.connect(_on_round_started)
+	lobby.player_readied.connect(_on_lobby_readied)
+	for p in [P1, P2]:
+		lobby.get_node("Spots/P%d/Character" % (p + 1)).kicker = kickers[p]
 	Run.phase_changed.connect(_on_phase_changed)
 	Run.run_started.connect(_on_run_started)
 	Run.reached_space.connect(_on_reached_space)
@@ -55,10 +63,8 @@ func _ready() -> void:
 	_confetti.amount = 120
 	_confetti.lifetime = 3.0
 	$UI.add_child(_confetti)
-	title.visible = true
 	hud.visible = false
 	Audio.music("field_loop")
-	_layout_title()
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--demo":
 			Run.demo = true
@@ -68,32 +74,24 @@ func _ready() -> void:
 		elif arg.begins_with("--timescale="):
 			Engine.time_scale = clampf(float(arg.trim_prefix("--timescale=")), 0.1, 8.0)
 	if Run.demo:
+		Game.demo = true   # the lobby stays out of the way
+	if Game.demo:
+		Run.demo = true
 		(func() -> void:
 			Players.join_virtual(P1)
-			Players.join_virtual(P2)).call_deferred()
-
-
-func _process(delta: float) -> void:
-	if Game.state == Game.State.TITLE:
-		_title_t += delta
-		title.scale = Vector2.ONE * (1.0 + 0.04 * sin(_title_t * 3.0))
-		title.pivot_offset = title.size * 0.5
-		# Back from the end card: a pad that is already joined starts the next run with A.
-		if _title_t > 0.5:
-			for p in Players.active_players():
-				if Input.is_action_just_pressed(Players.action(p, "action")):
-					Audio.play("ui_confirm")
-					Run.start_run()
-					return
+			Players.join_virtual(P2)
+			Run.start_run()).call_deferred()
+	elif Game.state != Game.State.LOBBY:
+		Game.to_lobby()
+	else:
+		_layout_lobby()
 
 
 # --- players -------------------------------------------------------------------
 
 func _on_player_joined(player: int, _device: int) -> void:
-	if Game.state == Game.State.TITLE:
-		if not Run.demo or player == P2:
-			Run.start_run()
-		return
+	if Game.state == Game.State.LOBBY:
+		return   # the lobby readies them
 	if player == P2 and not Run.in_run(P2):
 		# Stands up from the lawn chair; gets a ball at the start of the next round.
 		kickers[P2].global_position = _marker("Sidelines", P2)
@@ -104,14 +102,57 @@ func _on_player_joined(player: int, _device: int) -> void:
 
 ## Solo (playtest): turned on before P1's first kick, restart so both play from round 1.
 func _on_solo_changed(on: bool) -> void:
-	if on and Game.state != Game.State.TITLE and Run.round_index <= 1 \
+	if on and Game.state != Game.State.LOBBY and Run.round_index <= 1 \
 			and Run.phase == Run.Phase.KICK_P1 and not Run.in_run(P2):
 		Run.start_run()
 
 
 func _on_player_left(player: int) -> void:
-	if player == P2 and not Run.in_run(P2):
+	if player == P2 and not Run.in_run(P2) and Game.state != Game.State.LOBBY:
 		_bench(P2)
+
+
+# --- lobby -----------------------------------------------------------------------
+
+## The lobby countdown finished: these players play from round 1 (Game starts it right after).
+func _on_lobby_ready(players: Array) -> void:
+	Run.plan_run(players)
+
+
+func _on_round_started(index: int) -> void:
+	# Joined in the lobby but never readied: on the sidelines for round 1, in from round 2.
+	if index == 1:
+		for p in Players.active_players():
+			if not Run.in_run(p):
+				Run.join_next_round(p)
+
+
+func _on_lobby_readied(player: int, on: bool) -> void:
+	if not on:
+		lobby.get_node("Spots/P%d/Character" % (player + 1)).rest()
+
+
+## Jeff left, Chuck right, each standing just behind his tee and facing the camera, which looks
+## along the field from the spawn side: the sunny field is the lobby's backdrop.
+func _layout_lobby() -> void:
+	rig.split(false)
+	_turn.hide_marker()
+	var cam_at := LOBBY_CAMERA
+	for p in [P1, P2]:
+		var k: Kicker = kickers[p]
+		k.set_frog(false)
+		k.dance(false)
+		k.set_space_suit(false)
+		k.clear_upgrade_visuals()
+		k.bot = false
+		balls[p].arm(false)
+		balls[p].visible = true
+		balls[p].place_on_tee(_marker("Tees", p))
+		_place(p, _marker("Tees", p) + LOBBY_STAND, field.global_position + cam_at)
+		k.set_idle()
+	rig.hold_peak()   # a still shot: the rig leaves the camera alone
+	rig.camera.global_position = field.global_position + cam_at
+	rig.camera.look_at(field.global_position + LOBBY_LOOK)
 
 
 # --- phases ----------------------------------------------------------------------
@@ -390,7 +431,8 @@ func _on_end_accepted() -> void:
 	if Run.demo:
 		Run.start_run()
 		return
-	Game.to_title()
+	# Deferred: the same A press must not ready anybody in the lobby this frame.
+	Game.to_lobby.call_deferred()
 
 
 ## The big payoff: the camera rides the ball out of the air; at the peak (ball.gd) it settles into
@@ -419,19 +461,14 @@ func _celebrate_orbit() -> void:
 # --- helpers ---------------------------------------------------------------------
 
 func _on_state_changed(_from: int, to: int) -> void:
-	title.visible = to == Game.State.TITLE
-	pause_overlay.visible = to == Game.State.PAUSED
-	if to == Game.State.TITLE:
-		# Back from the end card.
-		_title_t = 0.0
+	if to == Game.State.LOBBY:
+		# Back from the end card or the pause menu's Restart: a clean field, nobody mid-run.
+		Run.stop_run()
 		end_card.close()
+		pick_ui.close()
 		hud.visible = false
-		for p in [P1, P2]:
-			kickers[p].dance(false)
-			kickers[p].set_space_suit(false)
-			kickers[p].clear_upgrade_visuals()
 		Audio.music("field_loop")
-		_layout_title()
+		_layout_lobby()
 
 
 func _sfx(cue: String, fallback: String, pitch: float = 1.0) -> void:
@@ -439,15 +476,6 @@ func _sfx(cue: String, fallback: String, pitch: float = 1.0) -> void:
 		Audio.play(cue)
 	else:
 		Audio.play(fallback, null, pitch)
-
-
-func _layout_title() -> void:
-	for p in [P1, P2]:
-		balls[p].place_on_tee(_marker("Tees", p))
-	_place(P1, _marker("Spawns", P1), _marker("Tees", P1))
-	kickers[P1].set_waiting(false)
-	_bench(P2)
-	rig.frame_field(kickers[P1], _marker("Tees", P1))
 
 
 func _bench(p: int) -> void:
