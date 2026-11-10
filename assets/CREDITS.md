@@ -145,3 +145,16 @@ Upgrade attachments (`scenes/upgrades/<id>.tscn`, outside `assets/`) are built f
 | ../store/jar.glb | `art/tools/make_jar.sh` (Blender 5.2.3, `art/tools/make_jar.py`): Jeff from `models/characters/jeff.glb` posed at his `kick` contact frame, decimated to 2,000 triangles, face atlas downscaled to 512 px; everything else procedural primitives with a generated 32 px palette | Not in assets/: the launcher jar world (diorama). Own work from in-repo art, no text, no third-party designs | Open Jar Games, in-house (Jeff: same terms as openjar-characters) |
 | gear/*.glb, gear/*.json (34 items) | Written for Open Jar Games (Gear Art lane, Claude Code); Blender 5.2.3 bmesh via `art/tools/build_gear_spaceballs.py` | Wearable upgrade gear for the Jarling equipment slots: procedural, original designs, colours from `art/palettes/cool_arcade.json`, no external assets | Original work, Open Jar Games |
 | models/characters/jeff.glb, chuck.glb | `openjar-characters` v0.1.0 (commit 6e03db9), `characters/<id>/refs/jarling/<id>.glb` | Rigged Jarlings with equipment slot markers and separable body parts; `scripts/equipment/*.gd` vendored from the same commit | Original work, Open Jar Games |
+
+<!-- characters:begin (scripts/tools/sync_characters.sh writes this block) -->
+
+## Characters (synced from openjar-characters v0.3.0)
+
+| File | Source / tool | Prompt or notes | License |
+| --- | --- | --- | --- |
+| `characters/jeff/jeff.glb` | `openjar-characters` `v0.3.0`, `characters/jeff/refs/jarling/jeff.glb` (Jarlings avatar kit, Blender, procedural); Godot extracts its textures (`jeff_*.png`) on import | Jeff, playable; copied unchanged | Open Jar Games, in-house (same terms as openjar-characters) |
+| `characters/jeff/pixel.png` | `openjar-characters` `v0.3.0`, `tools/pixel/residents.py` `jeff()` (Python + Pillow, drawn in code) | Jeff pixel form (the-hill pixel), front view, native size | Open Jar Games, in-house (same terms as openjar-characters) |
+| `characters/chuck/chuck.glb` | `openjar-characters` `v0.3.0`, `characters/chuck/refs/jarling/chuck.glb` (Jarlings avatar kit, Blender, procedural); Godot extracts its textures (`chuck_*.png`) on import | Chuck, playable; copied unchanged | Open Jar Games, in-house (same terms as openjar-characters) |
+| `characters/chuck/pixel.png` | `openjar-characters` `v0.3.0`, `tools/pixel/residents.py` `chuck()` (Python + Pillow, drawn in code) | Chuck pixel form (the-hill pixel), front view, native size | Open Jar Games, in-house (same terms as openjar-characters) |
+
+<!-- characters:end -->

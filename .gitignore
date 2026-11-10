@@ -14,3 +14,4 @@ addons/gdUnit4/
 reports/
 # store/jar.glb is the launcher's jar world, read raw at runtime: never import it (art/tools/make_jar.py)
 !store/jar.glb.import
+.scratch/

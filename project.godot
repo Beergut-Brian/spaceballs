@@ -25,6 +25,7 @@ Game="*res://scripts/autoload/Game.gd"
 Save="*res://scripts/autoload/Save.gd"
 Audio="*res://scripts/autoload/Audio.gd"
 Debug="*res://scripts/autoload/Debug.gd"
+Roster="*res://scripts/autoload/Roster.gd"
 Fx="*res://scripts/autoload/Fx.gd"
 Run="*res://scripts/autoload/Run.gd"
 
