@@ -238,7 +238,31 @@ The schema Content fills (`data/upgrades/<id>.tres`). **Gameplay owns future cha
 @export var kick_sfx: StringName        # optional, replaces kick_1..4 for that kick
 @export var scene_override: PackedScene # round-takeover curses (the frog)
 @export var description: String         # one line
+# Gameplay effects (Gameplay, 2026-11-09 playtest): every pick is felt and seen, not just a number.
+@export_enum("head", "face", "back", "hands", "waist", "knees", "feet", "ball", "none") var slot: String = "none"
+@export var run_speed_mult: float = 1.0 # top run speed (stacks by product)
+@export var accel_mult: float = 1.0     # how fast he gets to top speed (product)
+@export var jump_mult: float = 1.0      # B hop height (product)
+@export var gravity_mult: float = 1.0   # the kicker's own gravity: < 1 is floaty hops (product)
+@export var runup_bonus: float = 0.0    # added to run-up quality (sum; the 1.2 cap stays)
+@export var kick_style: StringName = &"normal"  # normal|stomp|cannon|spin|pogo|jet|zap: the kick move + fx
+@export var ball_effect: StringName = &"none"   # none|bouncy|floaty|rocket|curve|split|sparkle|confetti
+@export var run_fx: StringName = &"none"        # none|flame|bounce|honk|wind|sparkle|squeak: while running
+@export var bulk: float = 1.0           # body scale while worn (Super Strength bulks up)
+@export var shake: float = 0.0          # camera shake on the kick, 0..1
 ```
+
+Effects rule: **stats add up, the look is what you wear.** Every non-curse pick stays in
+`Run.upgrades_of` and its `power_mult` and stat multipliers (`run_speed_mult`, `accel_mult`,
+`jump_mult`, `gravity_mult`, `runup_bonus`) apply for the rest of the run. One item per `slot`
+(`none` never conflicts): a new item in an occupied slot replaces the old one *visually*, and only
+worn items drive the looks (`kick_style`, `ball_effect`, `run_fx`, `bulk`, `shake`); the newest
+worn item with a non-default `kick_style` wins, `ball_effect`s combine. A curse's fields act on its
+one kick (Systems rule above), on top of the gear. `Run.effects_of(player) -> Dictionary` resolves
+all of it (keys: the field names above plus `worn: Dictionary slot -> UpgradeData`).
+
+Draw rule: `draw_cards` never offers a non-curse card the player already has (`Run.draw_from`
+takes the owned list); curses can repeat.
 
 ### Tiers: `TierData` / `TierSet` (`scripts/gameplay/tier_data.gd`, `tier_set.gd`)
 
@@ -278,7 +302,7 @@ signal kick_contact(run_up_quality: float)   # the moment the foot meets the bal
 signal hopped(player: int)                    # B
 signal shouted(player: int)                   # A (harmless shout-hop; also the waiting cheer)
 
-func begin_approach(ball_position: Vector3) -> void
+func begin_approach(ball_position: Vector3) -> void   # arms free roam (state APPROACH) for this kick
 func start_windup() -> void                   # the ball's KickZone calls this through main.gd
 func set_waiting(chair: bool) -> void         # sideline cheer, or the lawn chair
 func set_cloud() -> void                      # finished: cheers from a cloud, no gravity
@@ -298,6 +322,15 @@ func clear_upgrade_visuals() -> void
 static func run_up_quality(path_length: float, straight_distance: float,
 		avg_speed: float, max_speed: float, hopped: bool) -> float   # 0.8..1.2
 ```
+
+Free movement (2026-11-09 playtest, supersedes auto-steer): in `APPROACH` the kicker runs where the
+stick points (acceleration, turn-in-place, B hop), with no pull toward the ball and no movement with
+no input. The kick starts when *his own* armed ball's `KickZone` sees him (`main.gd` checks the
+body). `effects: Dictionary` (from `Run.effects_of`, set by `main.gd` before `begin_approach`)
+scales speed/accel/hop/gravity and picks the run fx and kick style. Run-up quality is measured over
+the last `RUNUP_WINDOW` seconds before contact (roaming first costs nothing). The field is bounded by
+a soft wall (`bounds: Rect2` on XZ, default inside the fence). `bot: bool` (demo) roams a little,
+then runs in. Waiting players (`CHEER`) roam too, slower, and can never touch a ball.
 
 Wind-up gags: `main.gd` sets `windup` to the round's curse, else the newest upgrade with a
 `windup_anim`. `start_windup()` then enters `GAG` (emits `gag_started`), plays the full-body gag on
