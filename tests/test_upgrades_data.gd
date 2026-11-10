@@ -50,7 +50,9 @@ func test_fields_follow_the_spec() -> void:
 		assert_bool(u.visual != null or u.scene_override != null) \
 			.override_failure_message(label + " has no visual").is_true()
 		if u.kick_sfx != &"":
-			assert_bool(ResourceLoader.exists("res://assets/audio/sfx/%s.ogg" % u.kick_sfx)) \
+			# Same lookup as Audio._resolve: the cue itself or its numbered variants.
+			var base := "res://assets/audio/sfx/%s" % u.kick_sfx
+			assert_bool(FileAccess.file_exists(base + ".ogg") or FileAccess.file_exists(base + "_1.ogg")) \
 				.override_failure_message(label + " kick_sfx would be silent").is_true()
 
 
