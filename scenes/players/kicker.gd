@@ -24,6 +24,20 @@ const GAGS: Array[StringName] = [&"slip", &"chase", &"waddle", &"trip", &"sneeze
 ## Whatever happens to a tween, the foot meets the ball by this many seconds into the wind-up.
 const KICK_DEADLINE := 4.0
 const SFX_DIR := "res://assets/audio/sfx/"
+const GEAR_DIR := "res://assets/gear/"
+## The sound a worn item makes on the kick: [cue, fallback cue, fallback pitch, at the wind-up instead].
+const GEAR_CUES := {
+	&"cannon_leg": ["cannon_boom", "kick_3", 0.7, false], &"honk_horn_shoes": ["honk", "card_move", 0.45, false],
+	&"balloon_animal_ball": ["squeak", "hop", 2.0, false], &"rubber_chicken": ["squawk", "shout", 1.8, false],
+	&"opera_kick": ["opera_la", "cheer", 0.6, true], &"coachs_whistle": ["whistle", "ui_confirm", 2.0, true],
+}
+## Slots for the grey-box kicker (no Jarling under Body): Jarling model space, +Y up, +Z front.
+const GREYBOX_SLOTS := {
+	&"head": Vector3(0, 0.78, 0), &"face": Vector3(0, 0.79, 0.25), &"back": Vector3(0, 0.52, -0.12),
+	&"waist": Vector3(0, 0.29, 0), &"hand_l": Vector3(0.3, 0.33, 0), &"hand_r": Vector3(-0.3, 0.33, 0),
+	&"knee_l": Vector3(0.09, 0.19, 0), &"knee_r": Vector3(-0.09, 0.19, 0),
+	&"foot_l": Vector3(0.09, 0, 0), &"foot_r": Vector3(-0.09, 0, 0),
+}
 ## Run-up quality looks at this many seconds before contact: roaming first costs nothing.
 const RUNUP_WINDOW := 1.2
 ## Colours of the running trails (run_fx).
@@ -73,7 +87,13 @@ var _fx_t := 0.0
 var _bot_goals: Array[Vector3] = []
 var _bot_t := 0.0
 var _rest_scale := Vector3.ONE
-var _worn := {}   # UpgradeData.slot -> piece
+## Worn gear (docs/contracts.md "Worn gear"): one item per slot, swap or level up, never a stack.
+var equipment: JarlingEquipment
+var _worn := {}   # prop key (UpgradeData.slot, or the id for slot none) -> piece
+var _gear_slot := {}   # UpgradeData.slot -> id of the gear worn for it
+var _fx_nodes: Array[Node] = []
+var _quiet := false
+static var _gear_cache := {}
 var _phase := 0.0
 var _frog_timer := 0.0
 var _anim_t := 0.0
@@ -101,6 +121,29 @@ func _ready() -> void:
 	mat.albedo_color = Players.COLOR[player]
 	accent.material_override = mat
 	helmet.visible = false
+	if body.find_child("slot_head", true, false) == null:
+		var slots := Node3D.new()
+		slots.name = "Slots"
+		slots.transform = Transform3D(Basis.from_scale(Vector3(-1.3, 1.3, -1.3)), Vector3.ZERO)
+		body.add_child(slots)
+		for s: StringName in GREYBOX_SLOTS:
+			var m := Marker3D.new()
+			m.name = "slot_%s" % s
+			m.position = GREYBOX_SLOTS[s]
+			slots.add_child(m)
+	equipment = JarlingEquipment.new()
+	equipment.name = "Equipment"
+	equipment.jarling = body
+	add_child(equipment)
+	equipment.poof.connect(_on_gear_poof)
+	equipment.item_equipped.connect(_on_gear_equipped)
+	equipment.item_unequipped.connect(func(_s: StringName, _i: JarlingGear) -> void: _find_gear_fx())
+	equipment.item_leveled_up.connect(func(_s: StringName, _i: JarlingGear, _l: int) -> void:
+		Audio.play("upgrade_on", null, 1.3))
+	kick_contact.connect(func(_q: float) -> void: _gear_cue(false))
+	state_changed.connect(func(s: State) -> void:
+		if s == State.WINDUP:
+			_gear_cue(true))
 
 
 func _physics_process(delta: float) -> void:
@@ -125,6 +168,7 @@ func _physics_process(delta: float) -> void:
 			_end_follow_through()
 	_buttons()
 	_idle_anim()
+	_gear_fx(delta)
 	if state != State.CLOUD:
 		move_and_slide()
 		if state == State.APPROACH or (state == State.CHEER and roam):
@@ -284,36 +328,56 @@ func attach_point(slot: StringName) -> Node3D:
 	return n if n else attach.get_node("Body")
 
 
-## One item per body slot (UpgradeData.slot): a new one pops the old one off. Its power stays (Run).
+## The gear item of a wearable card (assets/gear/<id>.json), or null (curses, ball cards, no art yet).
+static func gear_for(upgrade: UpgradeData) -> JarlingGear:
+	if upgrade == null or upgrade.slot == "none" or upgrade.slot == "ball":
+		return null
+	var id := String(upgrade.id)
+	if not _gear_cache.has(id):
+		var path := GEAR_DIR + id + ".json"
+		_gear_cache[id] = JarlingGear.load_json(path) if FileAccess.file_exists(path) else null
+	return _gear_cache[id]
+
+
+## One item per body slot (UpgradeData.slot): gear is worn through `equipment`, which swaps a filled
+## slot and levels up a repeat, so nothing stacks. Its power stays (Run).
 func add_upgrade_visual(upgrade: UpgradeData) -> void:
-	var old: Node3D = _worn.get(upgrade.slot)
-	if upgrade.slot != "none" and is_instance_valid(old):
-		_worn.erase(upgrade.slot)
-		old.get_parent().remove_child(old)   # out of the stack now, so the new piece sits in its place
-		add_child(old)
-		old.top_level = true
-		var fly := old.create_tween()
+	var gear := gear_for(upgrade)
+	if gear:
+		# One card slot is one item, even when the two pieces sit on different body slots.
+		var old: StringName = _gear_slot.get(upgrade.slot, &"")
+		var swap := old != &"" and old != gear.id and equipment.has_item(old)
+		if swap:
+			_quiet = true
+			equipment.unequip(_gear_cache[String(old)].slots[0])
+			_quiet = false
+		_gear_slot[upgrade.slot] = gear.id
+		equipment.equip(gear)
+		if swap:
+			_sfx("poof", "upgrade_on", 0.8)
+		return
+	var key := upgrade.slot if upgrade.slot != "none" else String(upgrade.id)
+	var old_piece: Node3D = _worn.get(key)
+	if is_instance_valid(old_piece):
+		_worn.erase(key)
+		old_piece.get_parent().remove_child(old_piece)
+		add_child(old_piece)
+		old_piece.top_level = true
+		var fly := old_piece.create_tween()
 		var to := global_position + Vector3(_rng.randf_range(-1.5, 1.5), 2.5, _rng.randf_range(0.5, 1.5))
-		fly.tween_property(old, "global_position", to, 0.4).set_ease(Tween.EASE_OUT)
-		fly.parallel().tween_property(old, "scale", Vector3.ONE * 0.01, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-		fly.tween_callback(old.queue_free)
+		fly.tween_property(old_piece, "global_position", to, 0.4).set_ease(Tween.EASE_OUT)
+		fly.parallel().tween_property(old_piece, "scale", Vector3.ONE * 0.01, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		fly.tween_callback(old_piece.queue_free)
 		Fx.puff(to, Color.WHITE, 0.6)
-	var count := 0
-	for slot in SLOTS:
-		count += attach_point(slot).get_child_count()
 	var piece: Node3D
-	var slot: StringName
+	var slot: StringName = &"head"
 	if upgrade.visual:
 		piece = upgrade.visual.instantiate()
 		slot = piece.get_meta(&"attach_point", &"body")
 	else:
 		piece = _placeholder_piece(upgrade)
-		slot = SLOTS[count % 4]
-		var stacked := attach_point(slot).get_child_count()
-		piece.position = Vector3(0, 0.16 * stacked, 0) if slot == &"head" else Vector3(0.05 * stacked, 0.05 * stacked, 0)
 	attach_point(slot).add_child(piece)
-	if upgrade.slot != "none":
-		_worn[upgrade.slot] = piece
+	_worn[key] = piece
 	piece.scale = Vector3.ONE * 0.01
 	var tw := piece.create_tween()
 	tw.tween_property(piece, "scale", Vector3.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -322,18 +386,79 @@ func add_upgrade_visual(upgrade: UpgradeData) -> void:
 	Fx.pop(body, 1.25)
 
 
-## What is worn in a body slot (UpgradeData.slot), or null.
+## What is worn for a card slot (UpgradeData.slot), or null.
 func worn_piece(slot: String) -> Node3D:
+	var id: StringName = _gear_slot.get(slot, &"")
+	if id != &"" and equipment.has_item(id):
+		var item: JarlingGear = _gear_cache[String(id)]
+		return equipment.slot_node(item.slots[0]).get_node_or_null("gear_%s" % id) as Node3D
 	var n: Node3D = _worn.get(slot)
 	return n if is_instance_valid(n) else null
 
 
 func clear_upgrade_visuals() -> void:
 	_worn.clear()
+	_gear_slot.clear()
+	_quiet = true
+	equipment.unequip_all()
+	_quiet = false
 	apply_effects({})
 	for slot in SLOTS:
 		for c in attach_point(slot).get_children():
 			c.queue_free()
+
+
+func _on_gear_poof(_slot: StringName, at: Vector3) -> void:
+	if _quiet or not is_inside_tree():
+		return
+	Audio.play("upgrade_on")
+	Fx.puff(at, Color.WHITE, 0.8)
+	Fx.pop(body, 1.25)
+
+
+## A soft rim on the gear, like the Jarling's own materials, and its effect hooks.
+func _on_gear_equipped(slot: StringName, _item: JarlingGear) -> void:
+	for n in equipment.slot_node(slot).find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var mat := mi.mesh.surface_get_material(s) as StandardMaterial3D
+			if mat and not mat.rim_enabled:
+				mat.rim_enabled = true
+				mat.rim = 0.5
+				mat.rim_tint = 0.35
+	_find_gear_fx()
+
+
+func _find_gear_fx() -> void:
+	_fx_nodes = body.find_children("fx_*", "Node3D", true, false)
+
+
+## Effect hooks in the gear: flames burn while running or kicking, propellers and fans turn.
+func _gear_fx(delta: float) -> void:
+	if _fx_nodes.is_empty():
+		return
+	var busy := state == State.WINDUP or state == State.GAG or state == State.FOLLOW_THROUGH \
+			or Vector2(velocity.x, velocity.z).length() > 1.0
+	for n: Node3D in _fx_nodes:
+		if not is_instance_valid(n) or n.is_queued_for_deletion():
+			continue
+		var nm := String(n.name)
+		if nm.begins_with("fx_flame"):
+			n.visible = busy
+			n.scale = Vector3.ONE * (0.85 + 0.3 * absf(sin(_anim_t * 31.0 + n.get_index() * 1.7)))
+		elif nm.begins_with("fx_spin"):
+			n.rotate_object_local(Vector3.UP, (16.0 if busy else 3.0) * delta)
+		elif nm.begins_with("fx_orbit"):
+			n.rotate_object_local(Vector3.UP, 1.6 * delta)
+
+
+func _gear_cue(at_windup: bool) -> void:
+	if frog:
+		return
+	for id: StringName in GEAR_CUES:
+		var cue: Array = GEAR_CUES[id]
+		if cue[3] == at_windup and equipment.has_item(id):
+			_sfx(cue[0], cue[1], cue[2])
 
 
 ## 0.8 (wobbly, slow) to 1.2 (straight, fast, with a hop). Never stops a kick.

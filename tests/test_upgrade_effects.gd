@@ -151,7 +151,8 @@ func test_slot_replace_keeps_power_and_swaps_the_look() -> void:
 	assert_object(k.worn_piece("feet")).is_not_same(first)
 	await get_tree().create_timer(0.6).timeout
 	assert_bool(is_instance_valid(first)).is_false()
-	assert_int(k.attach_point(&"feet").get_child_count()).is_equal(1)
+	assert_str(String(k.equipment.equipped(&"foot_r").id)).is_equal("rocket_boots")
+	assert_int(k.equipment.slot_node(&"foot_r").get_child_count()).is_equal(1)
 
 
 func test_frog_switches_effects_off() -> void:

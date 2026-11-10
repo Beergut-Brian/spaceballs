@@ -58,8 +58,8 @@ func test_fields_follow_the_spec() -> void:
 
 func test_visuals_name_an_attach_point() -> void:
 	for u in _all():
-		if u.visual == null:
-			continue
+		if u.visual == null or Kicker.gear_for(u) != null:
+			continue   # worn gear goes on through the equipment slots (tests/test_gear.gd)
 		var node := u.visual.instantiate()
 		assert_bool(node.has_meta(&"attach_point")) \
 			.override_failure_message(String(u.id) + " visual has no attach_point").is_true()
