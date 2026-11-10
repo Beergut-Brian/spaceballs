@@ -34,7 +34,7 @@ frequent cues sit 1 to 3 dB under (trim column in `FILES`).
 | space | sfx/space.ogg | a ball reaches space; the end card | fanfare chord + timpani + sparkles, then radio: beep, crackle, chatter, beep |
 | cheer | sfx/cheer_1..3.ogg | the waiting character presses A or reacts to a kick; end card | the sideline crowd of Jarlings: "yaaay!" voices and claps |
 | confetti | sfx/confetti.ogg | end card opens (confetti burst) | party popper + paper rustling down + sparkles |
-| honk | sfx/honk_1..2.ogg | **needs data:** `kick_sfx = &"honk"` on Honk Horn Shoes | clown bike horn (1 honk / honk-honk) |
+| honk | sfx/honk.ogg | Honk Horn Shoes piece gag (`gag_cue`); **needs data:** `kick_sfx = &"honk"` on Honk Horn Shoes | one clown bike horn honk |
 | opera | sfx/opera.ogg | **needs data:** `kick_sfx = &"opera"` on Opera Kick | a diva's "la-LAAAA" with vibrato |
 | hop | sfx/hop_1..2.ogg | B hop | tiny rising boing |
 | shout | sfx/shout_1..2.ogg | A shout-hop in the run-up | a Jarling "hup!" / "hey!" |
@@ -44,10 +44,32 @@ frequent cues sit 1 to 3 dB under (trim column in `FILES`).
 | round_end | sfx/round_end.ogg | `Game.end_round` | marimba "ta-da" |
 | pause | sfx/pause.ogg | pause / resume | two soft xylophone notes down |
 | restart_arm | sfx/restart_arm.ogg | first Select press (a second within 1 s restarts) | wood-block tick-tock |
+| achoo | sfx/achoo.ogg | Sneeze piece gag (`gag_cue`) | "ah... ah... AH-CHOO!": breathy rising ahs, a soft "choo" |
+| cannon_boom | sfx/cannon_boom.ogg | Cannon Leg piece gag | toy cannon: cork pop, round low boom, smoke puff, falling slide whistle |
+| confetti_pop | sfx/confetti_pop.ogg | Confetti Kick piece gag | party popper "pok!", a quick paper shower, two glock pings |
+| hic | sfx/hic.ogg | Hiccups piece gag | a squeaky little "hic!" |
+| opera_la | sfx/opera_la.ogg | Opera Kick piece gag | a diva warming up: "la-la-LAAA!" (shorter than `opera`) |
+| slip | sfx/slip.ogg | Banana Peel piece gag | skid squeak, zippy slide whistle up, soft bump and boing on the bottom |
+| squawk | sfx/squawk.ogg | Rubber Chicken piece gag | rubber chicken: squeezed nasal "bwaaa-aaak" that wheezes out |
+| squeak | sfx/squeak.ogg | Balloon Animal Ball piece gag | two twisty balloon squeaks: "eek-eeek" |
+| whistle | sfx/whistle.ogg | Coach's Whistle piece gag | pea whistle "tweet-TWEEEET" (rounder and lower than a real one) |
+| frog_bloop | sfx/frog_bloop_1..2.ogg | **for Gameplay:** a sad frog moment | a sad little falling bloop, then a smaller lower "blp" |
+| crowd_aww | sfx/crowd_aww_1..2.ogg | **for Gameplay:** a near miss / sympathy | the Jarling crowd's falling "awww" |
+| orbit_chime | sfx/orbit_chime_1..2.ogg | **for Gameplay:** a ball settles into orbit | rising bell run, shimmering ring, sparkles |
+| crowd_wild | sfx/crowd_wild.ogg | **for Gameplay:** a huge kick / big moment | a bigger crowd: waves of "yaaay!", lots of claps, two-finger whistles |
+| trip | sfx/trip_1..2.ogg | **for Gameplay:** Shoelaces Tied stumble | scuff, startled "whoa!", two stumbling steps, soft flop |
+| waddle | sfx/waddle_1..2.ogg | **for Gameplay:** Too Much Lunch waddle | three heavy squishy steps, each with a tuba "bwomp" and a belly jiggle |
+| butterfly | sfx/butterfly_1..2.ogg | **for Gameplay:** Butterfly flutters by / chase | soft wing flaps and a light rising glockenspiel twinkle |
 
-`honk` and `opera` are rendered but only play once the Upgrades lane sets `kick_sfx` in
-`data/upgrades/` (`main.gd::_kick_cue` already honours it). `confetti` also suits a Confetti
-Kick's `kick_sfx`. Barks for Jeff and Chuck (`Audio.bark`) come later from Chatterbox.
+`honk` and `opera` also suit a `kick_sfx` in `data/upgrades/` (`main.gd::_kick_cue` already
+honours it); `confetti` suits a Confetti Kick's. Barks for Jeff and Chuck (`Audio.bark`) come
+later from Chatterbox.
+
+**Piece gags are single files.** `upgrade_piece.gd` plays its `gag_cue` only if
+`sfx/<cue>.ogg` itself exists (it falls back to `fallback_cue` otherwise), so `achoo` ..
+`whistle` and `honk` have no `_N` variants. Variants would need that check to accept `cue_1.ogg`
+too (Upgrades lane). The **for Gameplay** cues are made ahead of the code that plays them; they
+are listed in `PENDING_DATA` in `tests/test_audio_cues.gd` until something calls them.
 
 ## Music (drop-in spec, not made here)
 
