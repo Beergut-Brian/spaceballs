@@ -310,9 +310,40 @@ func test_frog_kiss_hops_in_kisses_and_poofs() -> void:
 	run.call()
 	var frog: Node3D = main.get_node_or_null("KissingFrog")
 	assert_object(frog).is_not_null()
-	var start: float = frog.global_position.distance_to(main.kickers[P1].global_position)
+	var him: Vector3 = main.kickers[P1].global_position   # where he stood when it started
+	var start: float = frog.global_position.distance_to(him)
 	await get_tree().create_timer(0.5).timeout
-	assert_float(frog.global_position.distance_to(main.kickers[P1].global_position)).is_less(start)
+	assert_float(frog.global_position.distance_to(him)).is_less(start)
 	await get_tree().create_timer(1.2).timeout
 	assert_bool(done[0]).is_true()
 	assert_bool(is_instance_valid(frog)).is_false()
+
+
+# --- S-07 / C-21: the all-time collection on the end card ------------------------------------
+
+func test_end_card_collection_shows_every_card_seen_ones_in_colour() -> void:
+	var seen_before = Save.get_value("upgrades_seen", null)
+	Save.set_value("upgrades_seen", ["rocket_boots"])
+	_card = load("res://scenes/ui/end_card.tscn").instantiate()
+	get_tree().root.add_child(_card)
+	_card.open()
+	var badges: Array = _card.collection.get_children()
+	Run._ensure_data()
+	assert_int(badges.size()).is_equal(Run.pool.size())
+	var got := badges.filter(func(b: Node) -> bool: return b.get_meta(&"seen"))
+	assert_int(got.size()).is_equal(1)
+	assert_str(String(got[0].get_meta(&"upgrade_id"))).is_equal("rocket_boots")
+	assert_that(got[0].modulate).is_equal(Color.WHITE)
+	var other: Control = badges.filter(func(b: Node) -> bool: return not b.get_meta(&"seen"))[0]
+	assert_float(other.modulate.v).is_less(0.5)   # a dark silhouette still to find
+	Save.set_value("upgrades_seen", seen_before if seen_before != null else [])
+
+
+func test_a_revealed_curse_joins_the_collection() -> void:
+	var seen_before = Save.get_value("upgrades_seen", null)
+	Save.set_value("upgrades_seen", [])
+	Run.save_enabled = true
+	var frog: UpgradeData = load("res://data/upgrades/kiss_the_frog.tres")
+	Run._mark_seen([frog])
+	assert_array(Save.get_value("upgrades_seen", [])).contains(["kiss_the_frog"])
+	Save.set_value("upgrades_seen", seen_before if seen_before != null else [])

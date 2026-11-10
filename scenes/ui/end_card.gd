@@ -2,7 +2,9 @@
 ## (restart_requested); stick right onto the door and A goes back to the launcher (Game.quit()).
 ## The characters are the 3D kickers, framed by the camera's space orbit. Each player's shelf (P1
 ## top-left, P2 top-right, a tile per upgrade picked this run in the player's colour, no text) pops
-## in one item at a time: the run's collection. Systems owns structure, Art the look.
+## in one item at a time: the run's collection. Across the top, the profile's whole collection: every
+## card in the game as a small icon, the ones ever drawn in colour and the rest as dark silhouettes
+## still to find. Systems owns structure, Art the look.
 extends Control
 
 signal restart_requested()
@@ -15,11 +17,19 @@ const SHELF_COLUMNS := 3
 const SHELF_MARGIN := Vector2(60, 110)
 const POP_START := 0.5
 const POP_EACH := 0.12
+## The all-time collection band across the top.
+const BADGE := 46.0
+const BADGE_COLUMNS := 22
+const BADGE_TOP := 22.0
+const UNSEEN := Color(0.12, 0.12, 0.3, 0.7)
 
 var _t := 0.0
 var door_focused := false
 ## Player -> GridContainer of this run's upgrade tiles (rebuilt on every open).
 var shelves := {}
+## GridContainer of every card's badge (rebuilt on every open); badge meta `seen` true/false.
+var collection: GridContainer
+var _collection_panel: PanelContainer
 
 @onready var confetti: CPUParticles2D = $Confetti
 @onready var button_hint: Control = $ButtonHint
@@ -38,6 +48,7 @@ func open() -> void:
 	confetti.emitting = true
 	Audio.play("confetti")
 	_build_shelves()
+	_build_collection()
 	set_process(true)
 
 
@@ -65,6 +76,52 @@ func _build_shelves() -> void:
 		for i in ups.size():
 			grid.add_child(_tile(ups[i], Players.COLOR[p], i))
 		shelves[p] = grid
+
+
+func _build_collection() -> void:
+	if is_instance_valid(_collection_panel):
+		_collection_panel.queue_free()
+	Run._ensure_data()
+	var cards: Array[UpgradeData] = Run.pool
+	if cards.is_empty():
+		collection = null
+		return
+	var seen: Array = Save.get_value("upgrades_seen", [])
+	# A soft light band behind it, so the silhouettes read on the night sky.
+	_collection_panel = PanelContainer.new()
+	_collection_panel.name = "CollectionPanel"
+	_collection_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(1, 1, 1, 0.55)
+	sb.set_corner_radius_all(22)
+	sb.set_content_margin_all(10)
+	_collection_panel.add_theme_stylebox_override("panel", sb)
+	add_child(_collection_panel)
+	move_child(_collection_panel, 1)
+	collection = GridContainer.new()
+	collection.name = "Collection"
+	collection.columns = BADGE_COLUMNS
+	collection.add_theme_constant_override("h_separation", 6)
+	collection.add_theme_constant_override("v_separation", 6)
+	collection.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_collection_panel.add_child(collection)
+	var screen := size if size.x > 0.0 else get_viewport_rect().size
+	var width := BADGE_COLUMNS * BADGE + (BADGE_COLUMNS - 1) * 6.0 + 20.0
+	_collection_panel.position = Vector2((screen.x - width) * 0.5, BADGE_TOP)
+	for u in cards:
+		var pic := TextureRect.new()
+		pic.texture = u.icon
+		pic.custom_minimum_size = Vector2(BADGE, BADGE)
+		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		pic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var got := seen.has(String(u.id))
+		pic.set_meta(&"seen", got)
+		pic.set_meta(&"upgrade_id", u.id)
+		pic.modulate = Color.WHITE if got else UNSEEN
+		collection.add_child(pic)
+	_collection_panel.modulate.a = 0.0
+	_collection_panel.create_tween().tween_property(_collection_panel, "modulate:a", 1.0, 0.4).set_delay(POP_START)
 
 
 func _tile(u: UpgradeData, color: Color, i: int) -> Control:
