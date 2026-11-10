@@ -42,7 +42,7 @@ func _ready() -> void:
 func show_for(kicker: Node3D, tee: Vector3, color: Color) -> void:
 	_kicker = kicker
 	_t = 0.0
-	_top = 2.0
+	_top = 1.0 if kicker.get(&"frog") else 2.0
 	var attach := kicker.get_node_or_null("Attach")
 	for vi in (attach.find_children("*", "VisualInstance3D", true, false) if attach else []):
 		var v := vi as VisualInstance3D

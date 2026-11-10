@@ -212,7 +212,8 @@ func _on_kick_contact(quality: float, p: int) -> void:
 	if not kickers[p].frog:
 		Fx.puff(balls[p].global_position, Color(1, 1, 0.8), 0.8 + tier * 0.3)
 	balls[p].launch(power, height)
-	rig.follow(balls[p])
+	if not kickers[p].frog:
+		rig.follow(balls[p])   # the frog's dribble stays in the close-up
 	var other := P2 if p == P1 else P1
 	if kickers[other].state == Kicker.State.CHEER or kickers[other].state == Kicker.State.CLOUD:
 		kickers[other].cheer()
@@ -289,13 +290,13 @@ func _begin_pick() -> void:
 
 
 ## Pick camera [from, look_at]: low and a little to the side, pulled back far enough that the
-## whole pile (feet to top hat, `height` metres) sits between 6 % and 60 % of the half's height,
+## whole pile (feet to top hat, `height` metres) sits between 4 % and 58 % of the half's height,
 ## clear of the cards along the bottom.
 static func pick_view(spot: Vector3, height: float, fov_deg: float = 50.0) -> Array:
 	var h := maxf(height, 1.6)
 	var view_h := h / 0.54                      # metres of world the half shows, top to bottom
 	var dist := view_h / (2.0 * tan(deg_to_rad(fov_deg) * 0.5))
-	var look := spot + Vector3.UP * (h * 0.5 - 0.17 * view_h)
+	var look := spot + Vector3.UP * (h * 0.5 - 0.19 * view_h)
 	var from := look + Vector3(0.22, 0.12, -1.0).normalized() * dist
 	return [from, look]
 
