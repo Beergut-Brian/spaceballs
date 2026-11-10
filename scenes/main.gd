@@ -260,7 +260,7 @@ func _begin_kick(p: int) -> void:
 			_bench(q)
 			_bystander_arrow.hide_arrow()
 	var me: Kicker = kickers[p]
-	_place(p, _marker("Spawns", p), tee)
+	_place(p, spawn_for(p, tee), tee)
 	balls[p].place_on_tee(tee)
 	var curse := Run.curse_of(p)
 	var frog_round := curse != null and curse.scene_override != null
@@ -279,6 +279,16 @@ func _begin_kick(p: int) -> void:
 	rig.frame_field(me, tee)
 	_turn.show_for(me, tee, Players.COLOR[p])
 	_turn.set_ball(balls[p])
+
+
+## Where his run starts: the spawn, 30 m out. A slowing curse (tied laces, too much lunch, the frog)
+## starts him closer so the run still lasts about as long, never dead air.
+func spawn_for(p: int, tee: Vector3) -> Vector3:
+	var curse := Run.curse_of(p)
+	var slow := 1.0
+	if curse != null:
+		slow = 0.55 if curse.scene_override != null else clampf(curse.run_speed_mult * (0.7 if Kicker.gag_of(curse) == &"waddle" else 1.0), 0.5, 1.0)
+	return tee.lerp(_marker("Spawns", p), slow)
 
 
 ## The kick's wind-up gag source: the round's curse if it has a gag, else the newest upgrade with one.
