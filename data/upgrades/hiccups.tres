@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/hiccups.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/hiccups.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"hiccups"
+name = "Hiccups"
+icon = ExtResource("2")
+tier = 3
+kind = "curse"
+power_mult = 0.3
+visual = ExtResource("3")
+description = "Hic! The kick goes hic-wards."

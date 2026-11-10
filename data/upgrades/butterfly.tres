@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/butterfly.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/butterfly.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"butterfly"
+name = "Butterfly"
+icon = ExtResource("2")
+tier = 2
+kind = "curse"
+power_mult = 0.25
+visual = ExtResource("3")
+description = "Ooh, a butterfly! The kick can wait."

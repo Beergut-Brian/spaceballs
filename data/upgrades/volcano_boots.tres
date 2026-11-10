@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/volcano_boots.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/volcano_boots.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"volcano_boots"
+name = "Volcano Boots"
+icon = ExtResource("2")
+tier = 2
+kind = "strong"
+power_mult = 2.5
+visual = ExtResource("3")
+description = "Each boot is a tiny volcano. Hot feet, huge kick."

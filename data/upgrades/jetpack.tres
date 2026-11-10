@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_xxmdg"]
-
-[sub_resource type="Gradient" id="Gradient_mus0u"]
-colors = PackedColorArray(0.9411765, 0.7058824, 0.16078432, 1, 0.9411765, 0.7058824, 0.16078432, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_bqrkm"]
-gradient = SubResource("Gradient_mus0u")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/jetpack.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/jetpack.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_xxmdg")
+script = ExtResource("1")
 id = &"jetpack"
 name = "Jetpack"
-icon = SubResource("GradientTexture2D_bqrkm")
+icon = ExtResource("2")
+tier = 2
 kind = "strong"
-power_mult = 2.5
-description = "Whoosh."
+power_mult = 2.6
+visual = ExtResource("3")
+description = "Two fizzing rockets on the back. Strap in."

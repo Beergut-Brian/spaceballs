@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/balloon_animal_ball.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/balloon_animal_ball.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"balloon_animal_ball"
+name = "Balloon Animal Ball"
+icon = ExtResource("2")
+tier = 2
+kind = "joke"
+power_mult = 1.15
+visual = ExtResource("3")
+description = "A balloon dog for company. It squeaks when you kick."

@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_h42ja"]
-
-[sub_resource type="Gradient" id="Gradient_u5o7k"]
-colors = PackedColorArray(0.18431373, 0.56078434, 0.6901961, 1, 0.18431373, 0.56078434, 0.6901961, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_4cccs"]
-gradient = SubResource("Gradient_u5o7k")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/super_strength.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/super_strength.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_h42ja")
+script = ExtResource("1")
 id = &"super_strength"
 name = "Super Strength"
-icon = SubResource("GradientTexture2D_4cccs")
+icon = ExtResource("2")
 tier = 2
-power_mult = 1.8
-description = "Muscles on muscles."
+kind = "normal"
+power_mult = 1.75
+visual = ExtResource("3")
+description = "Lifts a dumbbell with one hand. Kicks with the other foot."

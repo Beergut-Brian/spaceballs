@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/extra_shoes.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/extra_shoes.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"extra_shoes"
+name = "Extra Shoes"
+icon = ExtResource("2")
+tier = 1
+kind = "joke"
+power_mult = 1.15
+visual = ExtResource("3")
+description = "Now with four shoes. Nobody knows where the extra feet came from."

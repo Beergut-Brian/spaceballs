@@ -1,20 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/curses/frog.tscn" id="1_phlp4"]
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="2_kxyuv"]
-
-[sub_resource type="Gradient" id="Gradient_v4lyx"]
-colors = PackedColorArray(0.60784316, 0.3647059, 0.8980392, 1, 0.60784316, 0.3647059, 0.8980392, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_2c0fk"]
-gradient = SubResource("Gradient_v4lyx")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/kiss_the_frog.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/curses/frog.tscn" id="3"]
 
 [resource]
-script = ExtResource("2_kxyuv")
+script = ExtResource("1")
 id = &"kiss_the_frog"
 name = "Kiss the Frog"
-icon = SubResource("GradientTexture2D_2c0fk")
+icon = ExtResource("2")
+tier = 1
 kind = "curse"
 power_mult = 0.2
-scene_override = ExtResource("1_phlp4")
-description = "Mwah. Ribbit."
+scene_override = ExtResource("3")
+description = "Mwah. Ribbit. One round as a frog."

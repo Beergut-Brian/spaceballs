@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/too_much_lunch.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/too_much_lunch.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"too_much_lunch"
+name = "Too Much Lunch"
+icon = ExtResource("2")
+tier = 2
+kind = "curse"
+power_mult = 0.2
+visual = ExtResource("3")
+description = "Three sandwiches and a pie. Too full to kick."

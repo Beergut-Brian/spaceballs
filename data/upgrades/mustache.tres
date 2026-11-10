@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_7ibld"]
-
-[sub_resource type="Gradient" id="Gradient_r3d8d"]
-colors = PackedColorArray(0.9019608, 0.42352942, 0.69803923, 1, 0.9019608, 0.42352942, 0.69803923, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_mxmrq"]
-gradient = SubResource("Gradient_r3d8d")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/mustache.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/mustache.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_7ibld")
+script = ExtResource("1")
 id = &"mustache"
 name = "Mustache"
-icon = SubResource("GradientTexture2D_mxmrq")
+icon = ExtResource("2")
+tier = 1
 kind = "joke"
-power_mult = 1.2
-description = "Distinguished."
+power_mult = 1.05
+visual = ExtResource("3")
+description = "A magnificent mustache. Strength unknown, style enormous."

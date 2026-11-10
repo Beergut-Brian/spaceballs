@@ -1,19 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_jhvm7"]
-
-[sub_resource type="Gradient" id="Gradient_dftio"]
-colors = PackedColorArray(0.5568628, 0.49019608, 0.74509805, 1, 0.5568628, 0.49019608, 0.74509805, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_3352t"]
-gradient = SubResource("Gradient_dftio")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/sneeze.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/sneeze.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_jhvm7")
+script = ExtResource("1")
 id = &"sneeze"
 name = "Sneeze"
-icon = SubResource("GradientTexture2D_3352t")
-tier = 2
+icon = ExtResource("2")
+tier = 1
 kind = "curse"
-power_mult = 0.25
-description = "Achoo, mid-kick."
+power_mult = 0.3
+visual = ExtResource("3")
+description = "Ah... ahh... AHHH-CHOO! Right on the kick."
