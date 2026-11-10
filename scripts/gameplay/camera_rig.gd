@@ -16,6 +16,16 @@ signal mode_changed(mode: Mode)
 ## Extra distance per m/s of ball speed: the zoom-out.
 @export var follow_zoom := 0.45
 @export var smooth := 6.0
+@export_group("Long run-up")
+## Seconds of the runner's velocity the shot looks ahead by.
+@export var lead_time := 0.5
+## Closer than this to his ball the shot widens to hold both; at `both_full` it is the midpoint.
+@export var both_from := 12.0
+@export var both_full := 5.0
+## Big jumps: the shot rises with him, looking this many seconds of vertical speed ahead.
+@export var rise_lead := 0.2
+## Pull back this much per metre he is up, so the lawn stays in the bottom of the shot.
+@export var rise_pullback := 0.06
 
 var mode: Mode = Mode.FIELD
 var _kicker: Node3D
@@ -28,6 +38,8 @@ var _look := Vector3.ZERO
 var _close := false
 var _orbit_r := 7.0
 var _orbit_h := 2.5
+var _lead := Vector3.ZERO
+var _lift := 0.0
 
 @onready var camera: Camera3D = $Camera
 
@@ -37,9 +49,12 @@ func _ready() -> void:
 	camera.fov = 55.0
 
 
+## Frames only this kicker (and his ball on `tee`); the bystander may leave the shot.
 func frame_field(kicker: Node3D, tee: Vector3) -> void:
 	_kicker = kicker
 	_tee = tee
+	_lead = Vector3.ZERO
+	_lift = 0.0
 	_set_mode(Mode.FIELD)
 	_snap()
 
@@ -88,17 +103,9 @@ func _process(delta: float) -> void:
 		Mode.FIELD:
 			if _kicker == null:
 				return
-			var mid := (_kicker.global_position + _tee) * 0.5 + Vector3.UP * (0.6 if _close else 1.0)
-			var off := field_offset
-			# Free roam: pull back as he wanders off, so he and his ball both stay in shot.
-			var spread := Vector2(_kicker.global_position.x - _tee.x, _kicker.global_position.z - _tee.z).length()
-			off *= clampf(spread / 7.0, 1.0, 1.6)
-			if _close:
-				# Starts a little wider while he is still far from the tee, then moves in.
-				var gap := Vector2(_kicker.global_position.x - _tee.x, _kicker.global_position.z - _tee.z).length()
-				off = close_offset * clampf(gap / 4.0, 1.0, 1.6)
-			want_pos = mid + off
-			want_look = mid
+			var r := field_frame(delta)
+			want_pos = r[0]
+			want_look = r[1]
 		Mode.FOLLOW:
 			if _ball == null:
 				return
@@ -121,6 +128,31 @@ func _process(delta: float) -> void:
 	_look = _look.lerp(want_look, k)
 	if not camera.global_position.is_equal_approx(_look):
 		camera.look_at(_look)
+
+
+## [camera position, look-at] for the run-up. Far out: on the runner, a little ahead of him.
+## Getting close: widening to hold him and his ball. Jumping high: rising with him.
+func field_frame(delta: float) -> Array:
+	var k := clampf(delta, 0.0, 1.0)
+	var kp := _kicker.global_position
+	var v: Vector3 = _kicker.get("velocity") if _kicker.get("velocity") is Vector3 else Vector3.ZERO
+	_lead = _lead.lerp(Vector3(v.x, 0.0, v.z) * lead_time, clampf(k * 2.5, 0.0, 1.0))
+	var air := maxf(kp.y - _tee.y, 0.0)
+	var want_lift := 0.0
+	if air > 0.4:
+		want_lift = maxf(air + clampf(v.y * rise_lead, -1.0, 1.5), 0.0)
+	_lift = lerpf(_lift, want_lift, clampf(k * 4.0, 0.0, 1.0))
+	var gap := Vector2(kp.x - _tee.x, kp.z - _tee.z).length()
+	var both := clampf((both_from - gap) / (both_from - both_full), 0.0, 1.0)
+	var runner := kp + _lead * (1.0 - both)
+	var focus := runner.lerp((kp + _tee) * 0.5, both)
+	focus.y = _tee.y + (0.6 if _close else 1.0) + _lift
+	var off := field_offset * lerpf(1.1, clampf(gap / 7.0, 1.0, 1.6), both)
+	if _close:
+		# Starts a little wider while he is still far from the tee, then moves in.
+		off = close_offset * clampf(gap / 4.0, 1.0, 1.6)
+	off *= 1.0 + _lift * rise_pullback
+	return [focus + off, focus]
 
 
 func _snap() -> void:

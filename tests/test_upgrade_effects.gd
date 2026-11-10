@@ -111,17 +111,17 @@ func test_a_whole_run_never_repeats_gear() -> void:
 			assert_int(ids.count(id)).is_equal(1)
 
 
+## Hidden curses come from the whole curse pool every time: the same one can come again.
 func test_curses_can_repeat() -> void:
 	var r := _run()
-	var curses: Array[UpgradeData] = []
-	curses.assign(r.pool.filter(func(c): return c.is_curse()))
 	var rng := RandomNumberGenerator.new()
-	var seen := false
+	var seen := {}
 	for s in 400:
 		rng.seed = s
-		for c in RunScript.draw_from(r.pool, 5, false, rng, curses):
-			seen = seen or c.is_curse()
-	assert_bool(seen).is_true()
+		var c: UpgradeData = RunScript.pick_curse(r.pool, 9, rng)
+		seen[c.id] = seen.get(c.id, 0) + 1
+	assert_bool(seen.values().any(func(n): return n > 1)).is_true()
+	assert_int(seen.size()).is_greater(3)
 
 
 func test_slot_replace_keeps_power_and_swaps_the_look() -> void:

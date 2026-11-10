@@ -13,6 +13,8 @@ signal kick_contact(run_up_quality: float)
 signal hopped(player: int)
 signal shouted(player: int)
 signal gag_started(gag: StringName)
+## Banana peel: he stepped on it (a few metres out), so the kick starts now, from here.
+signal slipped()
 
 const FROG_FALLBACK := preload("res://scenes/curses/frog.tscn")
 const SLOTS: Array[StringName] = [&"head", &"feet", &"back", &"hands", &"body"]
@@ -38,6 +40,10 @@ const GREYBOX_SLOTS := {
 	&"knee_l": Vector3(0.09, 0.19, 0), &"knee_r": Vector3(-0.09, 0.19, 0),
 	&"foot_l": Vector3(0.09, 0, 0), &"foot_r": Vector3(-0.09, 0, 0),
 }
+## Banana peel: lies this far before the ball on his way in; stepping within PEEL_STEP of it
+## (or getting closer to the ball than the peel, from any side) slips him.
+const PEEL_GAP := 3.6
+const PEEL_STEP := 0.7
 ## Run-up quality looks at this many seconds before contact: roaming first costs nothing.
 const RUNUP_WINDOW := 1.2
 ## Colours of the running trails (run_fx).
@@ -54,10 +60,10 @@ const RUN_FX_COLOR := {
 ## Pushing against the run brakes this much harder (turn-and-go).
 @export var reverse_boost := 2.5
 @export var turn_speed := 14.0
-## Waiting players roam too, a bit slower.
-@export var roam_speed := 0.75
+## The bystander runs about with all his gear too (playtest 2026-11-09 #2: at full speed).
+@export var roam_speed := 1.0
 ## The field (XZ: x, z, width, depth), inside the fence. A soft wall pushes back over `wall_soft` m.
-@export var bounds := Rect2(-5.7, -5.8, 12.6, 16.3)
+@export var bounds := Rect2(-5.7, -5.8, 13.6, 40.3)
 @export var wall_soft := 1.2
 @export_group("Moves")
 @export var windup_time := 0.6
@@ -87,6 +93,9 @@ var _fx_t := 0.0
 var _bot_goals: Array[Vector3] = []
 var _bot_t := 0.0
 var _rest_scale := Vector3.ONE
+var _slipping := false
+var _wander_goal := Vector3.ZERO
+var _wander_t := 0.0
 ## Worn gear (docs/contracts.md "Worn gear"): one item per slot, swap or level up, never a stack.
 var equipment: JarlingEquipment
 var _worn := {}   # prop key (UpgradeData.slot, or the id for slot none) -> piece
@@ -186,11 +195,12 @@ func begin_approach(ball_position: Vector3) -> void:
 	_hopped_t = -10.0
 	_bot_goals.clear()
 	_bot_t = 0.0
+	_slipping = false
 	if bot:
-		# Demo: wander off to a spot or two first, so the free run shows.
-		for i in 1 + _rng.randi() % 2:
-			_bot_goals.append(Vector3(_rng.randf_range(bounds.position.x + 1.5, bounds.end.x - 1.5), 0.0,
-					_rng.randf_range(bounds.position.y + 2.0, bounds.end.y - 2.0)))
+		# Demo: one swerve on the way in, so the free run (and the gear on it) shows.
+		var mid := global_position.lerp(ball_position, _rng.randf_range(0.35, 0.6))
+		mid.x = _rng.randf_range(bounds.position.x + 1.5, bounds.end.x - 1.5)
+		_bot_goals.append(Vector3(mid.x, 0.0, mid.z))
 	roam = false
 	_dancing = false
 	_gag = &""
@@ -479,8 +489,8 @@ static func run_up_quality(path_length: float, straight_distance: float,
 func _approach(delta: float, speed_scale: float) -> void:
 	_time += delta
 	var stick := _stick_world()
-	if bot and stick_override == null and state == State.APPROACH:
-		stick = _bot_stick(delta)
+	if bot and stick_override == null:
+		stick = _bot_stick(delta) if state == State.APPROACH else _wander_stick(delta)
 	var hv := Vector3(velocity.x, 0.0, velocity.z)
 	var top := max_speed * _fx(&"run_speed_mult") * speed_scale
 	if gag_of(windup) == &"waddle":
@@ -513,7 +523,26 @@ func _approach(delta: float, speed_scale: float) -> void:
 		_hist.append(Vector4(global_position.x, global_position.z, _time, 0.0))
 		while _hist.size() > 2 and _hist[0].z < _time - RUNUP_WINDOW:
 			_hist.pop_front()
+		_check_peel()
 	_run_fx(delta, hv.length() / maxf(top, 0.01))
+
+
+## Banana peel: on it (or past it from another side, and then it zips under his foot): slip.
+func _check_peel() -> void:
+	if _slipping or gag_of(windup) != &"slip" or not is_instance_valid(_prop) or frog:
+		return
+	var to_peel := _flat(_prop.global_position - global_position).length()
+	if to_peel > PEEL_STEP and _flat(_ball - global_position).length() > PEEL_GAP - 0.4:
+		return
+	_slipping = true
+	if to_peel > PEEL_STEP:
+		_prop.global_position = Vector3(global_position.x, _prop.global_position.y, global_position.z)
+	slipped.emit()
+
+
+## A slip has started (or the peel is still waiting for him).
+func is_slipping() -> bool:
+	return _slipping
 
 
 ## Past the soft edge the field pushes back, harder the further out; nothing gets through.
@@ -550,6 +579,19 @@ func _bot_stick(delta: float) -> Vector3:
 		_bot_t = 0.0
 	var goal := _bot_goals[0] if not _bot_goals.is_empty() else _ball
 	var d := _flat(goal - global_position)
+	return d.normalized() if d.length() > 0.05 else Vector3.ZERO
+
+
+## Demo bystander: jogs between random spots near his tee and hops now and then, gear showing.
+func _wander_stick(delta: float) -> Vector3:
+	_wander_t -= delta
+	if _wander_t <= 0.0 or _flat(_wander_goal - global_position).length() < 0.8:
+		_wander_t = _rng.randf_range(1.5, 3.0)
+		_wander_goal = Vector3(_rng.randf_range(bounds.position.x + 1.5, bounds.end.x - 1.5), 0.0,
+				_rng.randf_range(bounds.position.y + 1.5, minf(bounds.position.y + 16.0, bounds.end.y - 1.5)))
+		if _rng.randf() < 0.5:
+			_hop(1.0)
+	var d := _flat(_wander_goal - global_position)
 	return d.normalized() if d.length() > 0.05 else Vector3.ZERO
 
 
@@ -839,19 +881,49 @@ func _style_zap(tw: Tween) -> void:
 	tw.tween_property(body, "rotation:x", -0.5, 0.07)
 
 
-## Banana Peel: a scramble, feet fly out, flat on his back, and the flying foot boots the ball.
+## Banana Peel: steps on it a few metres out, feet fly up, lands flat on his back and slides,
+## spinning, all the way into the ball. The ball dribbles off a sad metre (ball.gd).
 func _gag_slip(tw: Tween) -> void:
+	var from := global_position
+	var gap := _flat(_ball - from)
+	var stop := from + gap.normalized() * maxf(gap.length() - 0.7, 0.0)
 	tw.tween_callback(_sfx.bind("slip", "land", 1.6))
-	tw.tween_property(body, "position:z", -0.35, 0.12)
-	tw.tween_property(body, "rotation:x", -0.35, 0.1)
+	tw.tween_callback(_fling_peel)
+	tw.tween_property(body, "position:z", -0.35, 0.1)
+	tw.tween_property(body, "rotation:x", -0.35, 0.08)
 	tw.tween_callback(_sfx.bind("shout", "hop", 1.4))
-	tw.tween_property(body, "rotation:x", 1.35, 0.32).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(body, "position:y", 0.75, 0.16).set_ease(Tween.EASE_OUT)
-	tw.parallel().tween_property(body, "position:y", 0.22, 0.16).set_ease(Tween.EASE_IN).set_delay(0.16)
+	tw.tween_property(body, "rotation:x", 1.35, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(body, "position:y", 0.85, 0.15).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(body, "position:y", 0.22, 0.15).set_ease(Tween.EASE_IN).set_delay(0.15)
 	tw.tween_callback(func() -> void:
 		Audio.play("land", null, 0.7)
-		Fx.puff(global_position + global_basis.z * 0.6 + Vector3.UP * 0.1, Color(1.0, 0.93, 0.4), 0.5)
-		Fx.pop(body, 1.2))
+		Fx.puff(global_position + Vector3.UP * 0.1, Color(1.0, 0.93, 0.4), 0.6)
+		Fx.pop(body, 1.2)
+		Audio.play("whoosh", null, 1.4))
+	# Wheee: on his back, spinning, straight into the ball.
+	tw.tween_method(_slide.bind(from, stop), 0.0, 1.0, 0.8)
+	tw.parallel().tween_property(body, "rotation:y", TAU, 0.8).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(func() -> void: body.rotation.y = 0.0)
+
+
+func _slide(u: float, from: Vector3, to: Vector3) -> void:
+	var at := from.lerp(to, 1.0 - (1.0 - u) * (1.0 - u))
+	global_position = Vector3(at.x, global_position.y, at.z)
+	if _rng.randf() < 0.35:
+		Fx.puff(global_position + Vector3.UP * 0.05, Color(0.55, 0.8, 0.4), 0.3)
+
+
+## The peel shoots out from under his foot, spinning, and lands behind him.
+func _fling_peel() -> void:
+	if not is_instance_valid(_prop):
+		return
+	var peel := _prop
+	var start := peel.global_position
+	var back := _flat(start - _ball).normalized() * 2.2
+	var tw := peel.create_tween()
+	tw.tween_method(func(u: float) -> void:
+		peel.global_position = start + back * u + Vector3.UP * sin(u * PI) * 1.4
+		peel.rotation = Vector3(u * TAU * 2.0, u * TAU, 0.0), 0.0, 1.0, 0.6)
 
 
 ## Butterfly: forgets the ball, chases it round in a circle with three hops, then remembers.
@@ -963,8 +1035,9 @@ func _spawn_prop() -> void:
 		_prop.top_level = true
 		add_child(_prop)
 		var back := _flat(global_position - _ball).normalized()
-		_prop.global_position = _ball + back * 0.75 + Vector3.DOWN * (_ball.y - global_position.y)
-		_prop.scale = Vector3.ONE * 1.6
+		_prop.global_position = _ball + back * PEEL_GAP + Vector3.DOWN * (_ball.y - global_position.y)
+		_prop.rotation.y = _rng.randf() * TAU
+		_prop.scale = Vector3.ONE * 2.2
 	else:
 		attach_point(_prop.get_meta(&"attach_point", &"body")).add_child(_prop)
 		if gag == &"chase":

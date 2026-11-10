@@ -186,6 +186,9 @@ Source: `playtests/2026-11-09-2.md`.
 - **The sky is busier and the ball interacts with it:** more objects per tier, and the ball pops balloons, bonks planes, scatters birds, bounces off things, each with a sound and a little reaction.
 - **The other player is a bystander, not benched:** during the other's turn they run around with all their upgrades and effects, but can't kick any ball.
 - **The crowd reacts:** spectators cheer and celebrate a good kick (bigger kick, bigger celebration).
+- **Camera on the kicker only** (Kaden, after playtest #2): the camera frames the active kicker and their ball; the bystander may run off-screen (a colour arrow at the edge shows where).
+- **The camera follows big jumps** (rocket boots, jetpack) up and settles back down.
+- **No accidental jump-overs:** a low hop over your own ball snaps you in front of it and kicks; a big jump far above it still flies over.
 
 ## Decisions made without Kaden
 
