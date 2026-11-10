@@ -26,19 +26,43 @@ var _track := ""
 var _layers := 0
 var _level := 0
 var _level_tween: Tween
+var _music_tween: Tween
 const LAYER_OFF_DB := -60.0
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	for bus in ["Music", "SFX"]:
+		if AudioServer.get_bus_index(bus) == -1:
+			AudioServer.add_bus()
+			AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)
+			AudioServer.set_bus_send(AudioServer.bus_count - 1, "Master")
 	for i in POOL_SIZE:
 		var p := AudioStreamPlayer.new()
-		p.bus = "SFX" if AudioServer.get_bus_index("SFX") != -1 else "Master"
+		p.bus = "SFX"
 		add_child(p)
 		_pool.append(p)
 	_music = AudioStreamPlayer.new()
-	_music.bus = "Music" if AudioServer.get_bus_index("Music") != -1 else "Master"
+	_music.bus = "Music"
 	add_child(_music)
+	set_volume("Music", Save.get_setting("music_volume", 0.8))
+	set_volume("SFX", Save.get_setting("sound_volume", 1.0))
+
+
+## bus: "Music" or "SFX"; linear 0..1 (the Settings sliders). 0 mutes.
+func set_volume(bus: String, linear: float) -> void:
+	var i := AudioServer.get_bus_index(bus)
+	if i == -1:
+		return
+	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(linear, 0.0001)))
+	AudioServer.set_bus_mute(i, linear <= 0.0)
+
+
+func get_volume(bus: String) -> float:
+	var i := AudioServer.get_bus_index(bus)
+	if i == -1 or AudioServer.is_bus_mute(i):
+		return 0.0
+	return db_to_linear(AudioServer.get_bus_volume_db(i))
 
 
 ## A player still playing at quit leaks its stream playback (the audio thread frees it later
@@ -50,7 +74,10 @@ func silence() -> void:
 
 ## Stops every player and waits for the audio thread to let go of the playbacks.
 func stop_all() -> void:
-	for p in _pool + [_music]:
+	if _music_tween:
+		_music_tween.kill()   # a fade still pending would start the track again
+	_track = ""
+	for p in _pool + [_music] + _other_players():
 		p.stop()
 		p.stream = null
 	_cache.clear()
@@ -58,8 +85,17 @@ func stop_all() -> void:
 	await get_tree().create_timer(0.2, true, false, true).timeout
 
 
+## Every other player in the tree too: the menu kit's synth cues (UiSound, its own pool under the
+## root) and any scene's own players. One still ringing at quit leaks its playback.
+func _other_players() -> Array:
+	if not is_inside_tree():
+		return []
+	return get_tree().root.find_children("*", "AudioStreamPlayer", true, false).filter(
+			func(c: Node) -> bool: return not c in _pool and c != _music)
+
+
 func _exit_tree() -> void:
-	for p in _pool + [_music]:
+	for p in _pool + [_music] + _other_players():
 		p.stop()
 		p.stream = null
 	_cache.clear()
@@ -93,7 +129,10 @@ func music(track: String, fade: float = 0.5) -> void:
 		return
 	_track = track
 	_level = 0
-	var tw := create_tween()
+	if _music_tween:
+		_music_tween.kill()
+	_music_tween = create_tween()
+	var tw := _music_tween
 	if _music.playing:
 		tw.tween_property(_music, "volume_db", -40.0, fade)
 	tw.tween_callback(func():

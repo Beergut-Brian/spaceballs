@@ -1,5 +1,7 @@
 ## JSON save under user://saves/<profile>.json. Autoload: Save.
 ## The launcher passes --profile=<id>; default "p1".
+## Settings (volumes, screen shake, solo playtest) are per install, not per profile:
+## user://settings.json, written on every change.
 extends Node
 
 signal saved()
@@ -8,11 +10,15 @@ signal loaded()
 var profile: String = "p1"
 var _data: Dictionary = {}
 var _dirty := false
+## Tests point this somewhere else so they never touch the real settings.
+var settings_path := "user://settings.json"
+var _settings: Dictionary = {}
 
 
 func _ready() -> void:
 	profile = profile_from_args(OS.get_cmdline_args() + OS.get_cmdline_user_args(), profile)
 	_load()
+	reload_settings()
 
 
 ## The launcher passes --profile=<id> without a "--" separator, so Godot puts it in
@@ -48,6 +54,34 @@ func flush() -> void:
 	f.close()
 	_dirty = false
 	saved.emit()
+
+
+func get_setting(key: String, default = null):
+	return _settings.get(key, default)
+
+
+func set_setting(key: String, value) -> void:
+	_settings[key] = value
+	var f := FileAccess.open(settings_path, FileAccess.WRITE)
+	if f == null:
+		push_warning("Save: could not open %s" % settings_path)
+		return
+	f.store_string(JSON.stringify(_settings, "\t"))
+	f.close()
+
+
+func reload_settings() -> void:
+	_settings = {}
+	if FileAccess.file_exists(settings_path):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(settings_path))
+		if parsed is Dictionary:
+			_settings = parsed
+
+
+func wipe_settings() -> void:
+	_settings = {}
+	if FileAccess.file_exists(settings_path):
+		DirAccess.remove_absolute(settings_path)
 
 
 func wipe() -> void:

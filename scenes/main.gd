@@ -23,7 +23,6 @@ const ORBIT_SHOW := 2.0
 const PICK_BEAT := 0.9
 ## Lobby shot: Jeff and Chuck stand this far behind and outside their tees (P2 mirrored), so
 ## each is in the middle of his spot with the ball at his inner side; the camera looks from in front.
-const LOBBY_KICKER := preload("res://scenes/ui/lobby_kicker.gd")
 const BallScript := preload("res://scenes/ball.gd")
 const LOBBY_STAND := Vector3(-0.8, 0, -1.3)
 const LOBBY_CAMERA := Vector3(0, 1.5, 4.6)
@@ -64,7 +63,6 @@ func _ready() -> void:
 	Game.state_changed.connect(_on_state_changed)
 	Game.lobby_ready.connect(_on_lobby_ready)
 	Game.round_started.connect(_on_round_started)
-	lobby.player_readied.connect(_on_lobby_readied)
 	_adopt_lobby()
 	Run.phase_changed.connect(_on_phase_changed)
 	Run.run_started.connect(_on_run_started)
@@ -160,11 +158,6 @@ func _on_round_started(index: int) -> void:
 				Run.join_next_round(p)
 
 
-func _on_lobby_readied(player: int, on: bool) -> void:
-	if not on:
-		lobby.get_node("Spots/P%d/Character" % (player + 1)).rest()
-
-
 ## Jeff left, Chuck right, each standing just behind his tee and facing the camera, which looks
 ## along the field from the spawn side: the sunny field is the lobby's backdrop.
 func _layout_lobby() -> void:
@@ -187,6 +180,7 @@ func _layout_lobby() -> void:
 	rig.hold_peak()   # a still shot: the rig leaves the camera alone
 	rig.camera.global_position = field.global_position + cam_at
 	rig.camera.look_at(field.global_position + LOBBY_LOOK)
+	_dress_lobby()
 
 
 # --- phases ----------------------------------------------------------------------
@@ -663,40 +657,38 @@ func _marker_node(path: String) -> Node3D:
 	return field.get_node(path)
 
 
-## Hook Spaceballs into the template lobby in code, not only through main.tscn overrides: the exported
-## build dropped the overrides on the instanced lobby's children (Backdrop, TitleArt, Character script),
-## so the release showed the template's dark placeholder lobby while the editor showed the field.
+## Spaceballs on the Showtime lobby (docs/ui.md): title, colours, Jeff and Chuck and the blurred live
+## field all come from data/menu_skin.tres. Only what the skin can't know is set here, in code (never
+## as .tscn overrides on the instanced lobby's children: the export drops those, dev.7 shipped the
+## placeholder lobby that way).
 func _adopt_lobby() -> void:
-	lobby.get_node("Backdrop").visible = false
-	lobby.get_node("TitleArt").visible = false
+	lobby.launching.connect(_on_lobby_launching)
+	lobby.player_readied.connect(func(p: int, on: bool) -> void:
+		if not on:
+			_lobby_character(p).set_joined(Players.is_active(p)))   # back to idle
+
+
+## The round card's line under "ROUND 1": who kicks first (the lowest player in the run, Run._begin_round).
+func _on_lobby_launching() -> void:
+	var ready: Array = lobby.ready_players()
+	var first: int = ready[0] if not ready.is_empty() else P1
+	lobby.round_card_subtitle = "%s KICKS FIRST" % UiStyle.skin().player_name(first).to_upper()
+	lobby.round_card_color = Players.COLOR[first]
+
+
+func _lobby_character(p: int) -> CharacterSlot:
+	return lobby.get_node("Spots/P%d/Character" % (p + 1))
+
+
+## The podium Jeff and Chuck wear what they will wear on the field (--gear / --gear2), nothing else.
+func _dress_lobby() -> void:
 	for p in [P1, P2]:
-		var spot: Node = lobby.get_node("Spots/P%d" % (p + 1))
-		spot.fill_alpha = 0.18   # see-through, so the real kicker on the field shows inside the spot
-		spot.queue_redraw()
-		var who: Node = spot.get_node_or_null("Character")
-		if who == null or who.get_script() != LOBBY_KICKER:
-			var c := Control.new()
-			c.set_script(LOBBY_KICKER)
-			if who:
-				c.layout_mode = who.layout_mode
-				c.anchor_left = who.anchor_left
-				c.anchor_top = who.anchor_top
-				c.anchor_right = who.anchor_right
-				c.anchor_bottom = who.anchor_bottom
-				c.offset_left = who.offset_left
-				c.offset_top = who.offset_top
-				c.offset_right = who.offset_right
-				c.offset_bottom = who.offset_bottom
-				var at := who.get_index()
-				spot.remove_child(who)
-				who.queue_free()
-				c.name = "Character"
-				spot.add_child(c)
-				spot.move_child(c, at)
-			else:
-				c.name = "Character"
-				spot.add_child(c)
-			who = c
-		who.player = p
-		who.kicker = kickers[p]
+		var who: Node = _lobby_character(p).character
+		if who and who.has_method("dress"):
+			var items := []
+			for id in _gear[p]:
+				var u := Run.upgrade_by_id(StringName(id))
+				if u:
+					items.append(Kicker.gear_for(u))
+			who.dress(items)
 

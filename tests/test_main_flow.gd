@@ -6,6 +6,10 @@ extends GdUnitTestSuite
 var _main: Node
 
 
+func before() -> void:
+	SettingsSandbox.enter()
+
+
 func before_test() -> void:
 	# Start from a clean slate whatever suite ran before (CI runs suites in a different order:
 	# test_run.gd left Run.phase at KICK_P1, so no phase change fired and nobody kicked).
@@ -83,4 +87,5 @@ func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void
 
 
 func after() -> void:
+	SettingsSandbox.leave()
 	await Audio.stop_all()   # a cue still playing when the runner quits shows up as a leak

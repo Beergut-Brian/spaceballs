@@ -11,6 +11,14 @@ var _runs: Array[Node] = []
 var _main: Node
 
 
+func before() -> void:
+	SettingsSandbox.enter()
+
+
+
+func after() -> void:
+	SettingsSandbox.leave()
+
 func after_test() -> void:
 	for r in _runs:
 		r.free()
