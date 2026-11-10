@@ -1,5 +1,8 @@
 ## End card: confetti, then two buttons. A on the big green one (focused) goes back to the lobby
 ## (restart_requested); stick right onto the door and A goes back to the launcher (Game.quit()).
+## Stick only works too (PLAN-STATUS K-07): hold the stick left or up onto the big button and a white
+## ring fills round it with rising ticks; full ring = back to the lobby. Letting go drains the ring.
+## The door still needs A, so a stick alone never leaves the game.
 ## The characters are the 3D kickers, framed by the camera's space orbit. Each player's shelf (P1
 ## top-left, P2 top-right, a tile per upgrade picked this run in the player's colour, no text) pops
 ## in one item at a time: the run's collection. Across the top, the profile's whole collection: every
@@ -22,6 +25,10 @@ const BADGE := 46.0
 const BADGE_COLUMNS := 22
 const BADGE_TOP := 22.0
 const UNSEEN := Color(0.12, 0.12, 0.3, 0.7)
+## Stick hold onto the big button: seconds to fill the ring, how fast it drains, ticks per fill.
+const HOLD_TIME := 1.2
+const HOLD_DRAIN := 3.0
+const HOLD_TICKS := 4
 
 var _t := 0.0
 var door_focused := false
@@ -30,6 +37,9 @@ var shelves := {}
 ## GridContainer of every card's badge (rebuilt on every open); badge meta `seen` true/false.
 var collection: GridContainer
 var _collection_panel: PanelContainer
+## 0..1: how full the stick-hold ring on the big button is.
+var hold := 0.0
+var _ring: Control
 
 @onready var confetti: CPUParticles2D = $Confetti
 @onready var button_hint: Control = $ButtonHint
@@ -39,10 +49,18 @@ var _collection_panel: PanelContainer
 func _ready() -> void:
 	visible = false
 	set_process(false)
+	_ring = Control.new()
+	_ring.name = "HoldRing"
+	_ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_ring.draw.connect(_draw_ring)
+	button_hint.add_child(_ring)
 
 
 func open() -> void:
 	_t = 0.0
+	hold = 0.0
+	_ring.queue_redraw()
 	_focus_door(false, false)
 	visible = true
 	confetti.emitting = true
@@ -161,11 +179,17 @@ func _process(delta: float) -> void:
 	_t += delta
 	button_hint.visible = _t > ACCEPT_AFTER
 	door.visible = button_hint.visible and not Run.demo
-	button_hint.scale = Vector2.ONE * (1.0 + (0.0 if door_focused else 0.1 * sin(_t * 6.0)))
+	button_hint.scale = Vector2.ONE * (1.0 + (0.0 if door_focused else 0.1 * sin(_t * 6.0)) + 0.25 * hold)
 	if _t < ACCEPT_AFTER:
 		return
 	if Run.demo and _t > ACCEPT_AFTER + 1.0:
 		_accept()
+		return
+	var held := false
+	for p in [Players.P1, Players.P2]:
+		held = held or Input.is_action_pressed(Players.action(p, "move_left")) \
+				or Input.is_action_pressed(Players.action(p, "move_up"))
+	if hold_step(held, delta):
 		return
 	for p in [Players.P1, Players.P2]:
 		if Input.is_action_just_pressed(Players.action(p, "move_right")) \
@@ -177,6 +201,35 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(Players.action(p, "action")):
 			press()
 			return
+
+
+## One frame of the stick hold onto the big button. True when the ring filled and the card went
+## back to the lobby. The door focus moves back to the big button first (the stick's own press).
+func hold_step(held: bool, delta: float) -> bool:
+	var before := hold
+	if held and not door_focused:
+		hold = minf(hold + delta / HOLD_TIME, 1.0)
+		var tick := floori(hold * HOLD_TICKS)
+		if tick > floori(before * HOLD_TICKS) and hold < 1.0:
+			Audio.play("ui_move", null, 1.0 + 0.15 * tick)
+	else:
+		hold = maxf(hold - delta * HOLD_DRAIN, 0.0)
+	if hold != before:
+		_ring.queue_redraw()
+	if hold >= 1.0:
+		hold = 0.0
+		_accept()
+		return true
+	return false
+
+
+func _draw_ring() -> void:
+	if hold <= 0.0:
+		return
+	var c := _ring.size * 0.5
+	var r := minf(c.x, c.y) + 16.0
+	_ring.draw_arc(c, r, 0.0, TAU, 48, Color(1, 1, 1, 0.3), 12.0, true)
+	_ring.draw_arc(c, r, -PI * 0.5, -PI * 0.5 + TAU * hold, 48, Color.WHITE, 12.0, true)
 
 
 ## A on whatever is focused: the big button back to the lobby, or the door to the launcher.
