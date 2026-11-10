@@ -236,7 +236,7 @@ Remove `p1_name` / `p2_name` from `data/menu_skin.tres` so the plates follow the
   characters: a Node3D scene holding `jeff.glb` / `chuck.glb` with the Jarling rig (play `idle`,
   `cheer()` plays `cheer`); `backdrop = SCENE`, `backdrop_scene = scenes/levels/field.tscn`
   (it has no camera, so the skin's default field camera is used). Verified in a scratch copy:
-  `handoff/shots/`. **Chooser:** give `lobby_jarling.gd` a `set_character(id)` that swaps its
+  `handoff/shots/`. **Chooser (adopted 2026-11-10, see docs/contracts.md "Kicker"):** give `lobby_jarling.gd` a `set_character(id)` that swaps its
   `Jarling/Model` for `load(Roster.info(id).glb)` (equipment re-applied with `dress()`), point
   `lobby_jeff.tscn` / `lobby_chuck.tscn` at `assets/characters/<id>/` (drop
   `assets/models/characters/jeff.glb`, `chuck.glb` after a `sync_characters.sh` run), clear

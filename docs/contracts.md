@@ -471,12 +471,22 @@ func ladder_fraction(height: float) -> float   # 0..1 on the HUD strip, one equa
 
 ### Kicker (`scenes/players/kicker.tscn`, `CharacterBody3D`, script `kicker.gd`)
 
-`jeff.tscn` / `chuck.tscn` inherit it. Art replaces `Body` (and adds an `AnimationTree` driven by
-`state`); keep the node names below.
+`jarling_kicker.tscn` inherits it: `Body/Jarling` (`art/scripts/jarling_rig.gd`) holds the player's
+**Roster pick** (docs/roster.md), its vendored `.glb` as `Body/Jarling/Model`, same rig, collision and
+gear for any standard-body Jarling. `main.tscn` spawns two of them as `Kickers/P1` / `Kickers/P2`
+(no Jeff/Chuck scenes); `jeff.tscn` / `chuck.tscn` inherit it with a fixed `character_id`
+(previews, tests). Keep the node names below.
 
 ```gdscript
 enum State { IDLE, APPROACH, WINDUP, FOLLOW_THROUGH, CHEER, CHAIR, CLOUD, GAG }   # GAG: Gameplay polish, appended
 @export var player: int
+@export var character_id: String   # Roster id; "" at spawn = Roster.pick(player) (then default, then any)
+func set_character(id: String) -> bool   # become `id` in place; worn gear moves over at its level; false = unknown id
+func character_name() -> String          # Roster name ("Jeff"), "Player N" if none
+static func voice_cue(base: String, id: String) -> String   # "<base>_<id>" if sfx has it, else "<base>"; never another character's
+# main.gd: Roster.pick_changed -> kickers[p].set_character(id) (the chooser changes the field kicker too).
+# jarling_rig.gd: set_model(scene, detach) swaps the .glb; "<id>_hat" pops on the kick if the model has it.
+# Frog form: Jeff's hood / Chuck's hat only on that character; anyone else is a frog in the player tint.
 var state: State
 signal state_changed(state: State)
 signal kick_contact(run_up_quality: float)   # the moment the foot meets the ball
@@ -623,9 +633,11 @@ signal mode_changed(mode: Mode)
   Two icon buttons: A on the big one (focused) goes back to the lobby (`Game.to_lobby()`), the door
   (stick right, A) to the launcher (`Game.quit()`); `--demo` skips the lobby and restarts straight away.
 - Lobby (`UI/Lobby`, template Showtime kit): skinned by `data/menu_skin.tres` (title, colours,
-  backdrop `SCREEN` = the live field behind it, blurred). Jeff and Chuck on the podiums are
-  `scenes/ui/lobby_jeff.tscn` / `lobby_chuck.tscn` (`lobby_jarling.gd`: the field rig, idle/cheer,
-  `dress(items)` with the run's `--gear`). `main.gd` sets the round card line ("JEFF KICKS FIRST"). `Game.lobby_ready` -> `Run.plan_run(players)`, round 1.
+  backdrop `SCREEN` = the live field behind it, blurred). Both podiums host
+  `scenes/ui/lobby_jarling.tscn` (`lobby_jarling.gd`: the field rig, idle/cheer, `set_character(id)`
+  with the Roster pick, `dress(items)` with the run's `--gear`, kept across a swap). Names come from
+  the Roster (`p1_name` / `p2_name` empty). `main.gd` sets the round card line ("<NAME> KICKS FIRST",
+  the picked character's name, in the player's colour). `Game.lobby_ready` -> `Run.plan_run(players)`, round 1.
   A pad joined but not readied when the countdown ends sits out round 1 and plays from round 2.
 - `scenes/ui/upgrade_card.tscn`: one card (`Icon`), themed by Art.
 
@@ -634,4 +646,6 @@ signal mode_changed(mode: Mode)
 `--screenshot-after=<s>` (template), `--solo` (one pad plays both, see Solo mode), `--demo` (two virtual players, auto-picks, auto-restarts: the game
 plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heights, picks).
 `--gear=<id,id>` / `--gear2=<id>`: P1 / P2 start every run wearing those upgrades (`Run.give`), for
-playtests and screenshots.
+playtests and screenshots. `--p1-char=<id>` / `--p2-char=<id>`: who plays (Roster, as the launcher
+passes it). Dev only: `--roster=<res path>` reads another roster file before the kickers spawn
+(`tests/fixtures/roster_standin.json`: Jeff, Chuck and a generic stand-in; `tests/` never ships).
