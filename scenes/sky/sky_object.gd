@@ -154,14 +154,14 @@ func _burst(b: Node3D) -> void:
 	var at := b.global_position
 	b.visible = false
 	_puff(at, Color.WHITE, 0.6 * size)
-	_confetti(at, 12)
+	_confetti(at, 16)
 
 
 ## Paper bits fly out, flutter down and shrink away.
 func _confetti(at: Vector3, n: int) -> void:
 	var s := size
 	var mesh := BoxMesh.new()
-	mesh.size = Vector3(0.12, 0.02, 0.08) * s
+	mesh.size = Vector3(0.22, 0.03, 0.15) * s
 	for k in n:
 		var bit := MeshInstance3D.new()
 		bit.mesh = mesh

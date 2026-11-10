@@ -21,6 +21,11 @@ const HOME_RATE := 6.0
 ## Space has no top: its band is this tall above the space line.
 const SPACE_BAND := 30.0
 const BACKYARD_FLOOR := 1.3
+## size_at(): the follow camera's closest distance (camera_rig.gd follow_min) and the smallest share.
+const CAMERA_NEAR := 9.0
+const MIN_SIZE := 0.35
+## Ball.Flight.PHYSICS, Ball.Flight.SCRIPTED: the climb.
+const RISING := [1, 2]
 
 var sky: SkySet
 var tiers: TierSet
@@ -101,7 +106,7 @@ func plan(peak: float, seed_value: int) -> Array[Dictionary]:
 		var n := maxi(r.randi_range(st.count_min, st.count_max), n_path)
 		var span := b.y - b.x
 		var lo := b.x + span * BAND_MARGIN * 0.5
-		var hi := minf(b.y - span * BAND_MARGIN * 0.5, top + st.scale * 2.0)
+		var hi := minf(b.y - span * BAND_MARGIN * 0.5, top + st.scale)
 		for k in n:
 			var path := k < n_path
 			var e := _pick(st, r, path)
@@ -116,11 +121,19 @@ func plan(peak: float, seed_value: int) -> Array[Dictionary]:
 			else:
 				y = r.randf_range(lo, maxf(hi, lo))
 				var side := -1.0 if r.randf() < 0.5 else 1.0
-				off = Vector2(r.randf_range(-2.0, 0.3), side * r.randf_range(st.spread.x, st.spread.y)) * st.scale
-			out.append({tier = i, entry = e, scale = st.scale, y = y, offset = off, on_path = path,
+				# Behind the ball's column (the follow camera sits on +X), never between it and the lens.
+				off = Vector2(r.randf_range(-3.0, -0.4), side * r.randf_range(st.spread.x, st.spread.y)) * st.scale
+			var size := size_at(st.scale, top - y)
+			out.append({tier = i, entry = e, scale = size, y = y, offset = off * size / st.scale, on_path = path,
 					yaw = r.randf_range(-0.6, 0.6) + (PI if r.randf() < 0.5 else 0.0)})
 	out.sort_custom(func(a: Dictionary, b2: Dictionary) -> bool: return a.y < b2.y)
 	return out
+
+
+## The follow camera zooms back in as the ball slows near its peak, so things up there shrink with
+## it: about tier scale on the way up, down to MIN_SIZE of it right at the peak (big tiers only).
+static func size_at(tier_scale: float, below_peak: float) -> float:
+	return tier_scale * clampf((CAMERA_NEAR + maxf(below_peak, 0.0) * 0.6) / (tier_scale * 4.0), MIN_SIZE, 1.0)
 
 
 func _path_band(i: int, st: SkyTier, top: float) -> Vector2:
@@ -184,6 +197,8 @@ func _step(ball: Node3D, f: Dictionary, delta: float) -> void:
 		f.live.append(_spawn(items[f.next], ball, base))
 		f.next += 1
 	var last: Vector3 = f.last
+	# Only the climb bumps things: not the peak hold, the drop's teleport or the orbit.
+	var climbing: bool = ball.get(&"flight") in RISING
 	var keep: Array = []
 	for x in f.live:
 		if not is_instance_valid(x) or x.is_queued_for_deletion():
@@ -193,11 +208,13 @@ func _step(ball: Node3D, f: Dictionary, delta: float) -> void:
 			o.queue_free()
 			continue
 		keep.append(o)
-		if o.homing and not o.was_hit and o.hit_center().y > now.y:
+		if climbing and o.homing and not o.was_hit and o.hit_center().y > now.y:
 			var target := Vector3(now.x, 0, now.z) + Vector3(o.home_jitter.x, 0, o.home_jitter.y) * o.hit_reach()
 			var c := o.hit_center()
 			var move := (target - Vector3(c.x, 0, c.z)) * (1.0 - exp(-HOME_RATE * delta))
 			o.global_position += move
+		if not climbing:
+			continue
 		var d := _segment_distance(last, now, o.hit_center())
 		if not o.was_hit and d <= o.hit_reach() + BALL_RADIUS:
 			o.hit(ball)
@@ -211,7 +228,7 @@ func _spawn(item: Dictionary, ball: Node3D, base: Vector3) -> SkyObject:
 	var e: SkyEntry = item.entry
 	var o := e.scene.instantiate() as SkyObject
 	o.field = self
-	add_child(o)
+	add_child(o, true)
 	o.size = float(item.scale)
 	o.scale = Vector3.ONE * o.size
 	o.rotation.y = item.yaw

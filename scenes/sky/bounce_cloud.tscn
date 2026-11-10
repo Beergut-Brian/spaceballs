@@ -76,84 +76,83 @@ height = 0.16
 radial_segments = 32
 rings = 16
 
-[node name="BounceCloud" type="Node3D" unique_id=1024802090]
+[node name="BounceCloud" type="Node3D" unique_id=94167365]
 script = ExtResource("1_lm44l")
 reaction = 3
 cue = &"sky_boing"
-hit_radius = 1.3
 push = 4.0
 hold = 0.2
 shake = 0.06
 puff_color = Color(0.9843137, 0.9843137, 0.96862745, 1)
 
-[node name="Gag" type="Node3D" parent="." unique_id=1519182690]
+[node name="Gag" type="Node3D" parent="." unique_id=1373583133]
 
-[node name="Bob" type="Node3D" parent="Gag" unique_id=1425412351]
+[node name="Bob" type="Node3D" parent="Gag" unique_id=1032605862]
 script = ExtResource("2_whhlx")
 amount = 0.1
 speed = 0.4
 
-[node name="Puff0" type="MeshInstance3D" parent="Gag/Bob" unique_id=619886293]
+[node name="Puff0" type="MeshInstance3D" parent="Gag/Bob" unique_id=1531231541]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_385ii")
 
-[node name="Puff1" type="MeshInstance3D" parent="Gag/Bob" unique_id=1088873999]
+[node name="Puff1" type="MeshInstance3D" parent="Gag/Bob" unique_id=270212458]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.05, 0)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_jtp6e")
 
-[node name="Puff2" type="MeshInstance3D" parent="Gag/Bob" unique_id=613399023]
+[node name="Puff2" type="MeshInstance3D" parent="Gag/Bob" unique_id=275639368]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.05, 0.05)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_0hvsy")
 
-[node name="Puff3" type="MeshInstance3D" parent="Gag/Bob" unique_id=2013519272]
+[node name="Puff3" type="MeshInstance3D" parent="Gag/Bob" unique_id=1701436144]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.45, -0.1)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_ti1s3")
 
-[node name="Puff4" type="MeshInstance3D" parent="Gag/Bob" unique_id=463804783]
+[node name="Puff4" type="MeshInstance3D" parent="Gag/Bob" unique_id=1602705601]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.4, -0.1)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_v8jsu")
 
-[node name="Puff5" type="MeshInstance3D" parent="Gag/Bob" unique_id=1458819975]
+[node name="Puff5" type="MeshInstance3D" parent="Gag/Bob" unique_id=1829063495]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0.2)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_rxcrw")
 
-[node name="EyeL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1580689131]
+[node name="EyeL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1972918468]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19800001, 0.16000001, 0.78)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_r8j37")
 
-[node name="EyeR" type="MeshInstance3D" parent="Gag/Bob" unique_id=1082517149]
+[node name="EyeR" type="MeshInstance3D" parent="Gag/Bob" unique_id=549614276]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19800001, 0.16000001, 0.78)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_r8j37")
 
-[node name="Smile" type="MeshInstance3D" parent="Gag/Bob" unique_id=874441140]
+[node name="Smile" type="MeshInstance3D" parent="Gag/Bob" unique_id=1911795543]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -0.5, 0, 1, -2.1855694e-08, 0, -0.015999999, 0.78)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("TorusMesh_esb0x")
 
-[node name="CheekL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1493818377]
+[node name="CheekL" type="MeshInstance3D" parent="Gag/Bob" unique_id=1368388553]
 transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 0.4, -0.32, -0.05, 0.7)
 material_override = SubResource("StandardMaterial3D_xyb8n")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_gkvgo")
 
-[node name="CheekR" type="MeshInstance3D" parent="Gag/Bob" unique_id=926551336]
+[node name="CheekR" type="MeshInstance3D" parent="Gag/Bob" unique_id=2092392888]
 transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 0.4, 0.32, -0.05, 0.7)
 material_override = SubResource("StandardMaterial3D_xyb8n")
 cast_shadow = 0

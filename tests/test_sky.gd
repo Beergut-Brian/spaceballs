@@ -38,6 +38,11 @@ func _cue_exists(cue: StringName) -> bool:
 	return ResourceLoader.exists(Audio.SFX_DIR + c + ".ogg") or ResourceLoader.exists(Audio.SFX_DIR + c + "_1.ogg")
 
 
+func test_rising_matches_the_ball_flight_enum() -> void:
+	var b := _ball()
+	assert_array(SkyField.RISING).contains_exactly([b.Flight.PHYSICS, b.Flight.SCRIPTED])
+
+
 func test_every_tier_has_three_to_six_objects() -> void:
 	for id in TIER_IDS:
 		var t := _sky.get_tier(id)
@@ -94,7 +99,8 @@ func test_plans_aim_one_to_three_hits_and_more_on_big_kicks() -> void:
 			var per := {}
 			for i in p:
 				per[i.tier] = per.get(i.tier, 0) + 1
-				assert_float(i.y).is_less_equal(TierSet.visual_y(peak) + float(i.scale) * 2.0 + 0.01)
+				assert_float(i.y).is_less_equal(TierSet.visual_y(peak) + 10.01)
+				assert_float(float(i.scale)).is_greater(0.0)
 				if i.on_path:
 					assert_float(i.y).is_less(TierSet.visual_y(peak))
 			for t in per:

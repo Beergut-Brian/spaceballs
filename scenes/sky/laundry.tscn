@@ -73,7 +73,7 @@ rim_tint = 0.3
 [sub_resource type="BoxMesh" id="BoxMesh_igh5p"]
 size = Vector3(0.06, 0.14, 0.06)
 
-[node name="Laundry" type="Node3D" unique_id=417798267]
+[node name="Laundry" type="Node3D" unique_id=837960032]
 script = ExtResource("1_bnldq")
 reaction = 4
 cue = &"sky_flap"
@@ -83,22 +83,22 @@ hold = 0.12
 spin = 20.0
 shake = 0.04
 
-[node name="Gag" type="Node3D" parent="." unique_id=903603936]
+[node name="Gag" type="Node3D" parent="." unique_id=778392597]
 
-[node name="Line" type="Node3D" parent="Gag" unique_id=252187232]
+[node name="Line" type="Node3D" parent="Gag" unique_id=320398981]
 script = ExtResource("2_prv4y")
 mode = 7
 amount = 0.12
 speed = 0.8
 axis = Vector3(1, 0, 0)
 
-[node name="Rope" type="MeshInstance3D" parent="Gag/Line" unique_id=1877872556]
+[node name="Rope" type="MeshInstance3D" parent="Gag/Line" unique_id=1048775726]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_txgin")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_pmkyb")
 
-[node name="Shirt" type="Node3D" parent="Gag/Line" unique_id=97408589]
+[node name="Shirt" type="Node3D" parent="Gag/Line" unique_id=2141316861]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.4, 0)
 script = ExtResource("2_prv4y")
 mode = 7
@@ -106,31 +106,31 @@ amount = 0.25
 speed = 1.6
 axis = Vector3(1, 0, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=1572299765]
+[node name="Body" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=1825045466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
 material_override = SubResource("StandardMaterial3D_4gvq8")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_pehwl")
 
-[node name="SleeveL" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=701107810]
+[node name="SleeveL" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=919712296]
 transform = Transform3D(0.87758255, -0.47942555, 0, 0.47942555, 0.87758255, 0, 0, 0, 1, -0.38, -0.15, 0)
 material_override = SubResource("StandardMaterial3D_4gvq8")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_mopq3")
 
-[node name="SleeveR" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=245069081]
+[node name="SleeveR" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=2114403440]
 transform = Transform3D(0.87758255, 0.47942555, 0, -0.47942555, 0.87758255, 0, 0, 0, 1, 0.38, -0.15, 0)
 material_override = SubResource("StandardMaterial3D_4gvq8")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_mopq3")
 
-[node name="Spot" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=1459077637]
+[node name="Spot" type="MeshInstance3D" parent="Gag/Line/Shirt" unique_id=1362507182]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.3, 0, -0.32, 0.03)
 material_override = SubResource("StandardMaterial3D_l8bb2")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_pc8cs")
 
-[node name="Sock" type="Node3D" parent="Gag/Line" unique_id=947531435]
+[node name="Sock" type="Node3D" parent="Gag/Line" unique_id=1433180343]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.4, 0)
 script = ExtResource("2_prv4y")
 mode = 7
@@ -139,31 +139,31 @@ speed = 1.9
 axis = Vector3(1, 0, 0)
 phase = 0.3
 
-[node name="Leg" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=1860743292]
+[node name="Leg" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=669441491]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_oj6l5")
 
-[node name="Foot" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=977993625]
+[node name="Foot" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=1499329814]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, -0.45, 0)
 material_override = SubResource("StandardMaterial3D_bcrig")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_ylki8")
 
-[node name="Stripe" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=574976583]
+[node name="Stripe" type="MeshInstance3D" parent="Gag/Line/Sock" unique_id=2140132618]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0.01)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_qemfm")
 
-[node name="Peg-0_35" type="MeshInstance3D" parent="Gag/Line" unique_id=59624964]
+[node name="Peg-0_35" type="MeshInstance3D" parent="Gag/Line" unique_id=600106425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.42, 0.02)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_igh5p")
 
-[node name="Peg0_45" type="MeshInstance3D" parent="Gag/Line" unique_id=888389742]
+[node name="Peg0_45" type="MeshInstance3D" parent="Gag/Line" unique_id=1342671707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.42, 0.02)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0

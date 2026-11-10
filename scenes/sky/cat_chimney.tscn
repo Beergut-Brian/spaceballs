@@ -87,7 +87,7 @@ height = 0.6
 radial_segments = 24
 rings = 6
 
-[node name="CatChimney" type="Node3D" unique_id=270595517]
+[node name="CatChimney" type="Node3D" unique_id=1307736222]
 script = ExtResource("1_lc2or")
 cue = &"gag_rooftops"
 cue_pitch = 1.25
@@ -98,72 +98,72 @@ near_radius = 4.5
 hit_offset = Vector3(0, 0.55, 0)
 push = 2.5
 
-[node name="Gag" type="Node3D" parent="." unique_id=484993870]
+[node name="Gag" type="Node3D" parent="." unique_id=1660333883]
 
-[node name="Roof" type="MeshInstance3D" parent="Gag" unique_id=734249197]
+[node name="Roof" type="MeshInstance3D" parent="Gag" unique_id=586881864]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2, 0)
 material_override = SubResource("StandardMaterial3D_53cqi")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_3687l")
 
-[node name="Chimney" type="MeshInstance3D" parent="Gag" unique_id=1245110495]
+[node name="Chimney" type="MeshInstance3D" parent="Gag" unique_id=1236954098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, -0.45, 0)
 material_override = SubResource("StandardMaterial3D_i6i5s")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_vkd3t")
 
-[node name="Cap" type="MeshInstance3D" parent="Gag" unique_id=1943640594]
+[node name="Cap" type="MeshInstance3D" parent="Gag" unique_id=2076171996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.08, 0)
 material_override = SubResource("StandardMaterial3D_5byk0")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_ap0nx")
 
-[node name="Cat" type="Node3D" parent="Gag" unique_id=636292788]
+[node name="Cat" type="Node3D" parent="Gag" unique_id=1510930320]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.45, 0)
 
-[node name="Body" type="MeshInstance3D" parent="Gag/Cat" unique_id=39480439]
+[node name="Body" type="MeshInstance3D" parent="Gag/Cat" unique_id=1742225050]
 transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1.2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_2i1f7")
 
-[node name="Head" type="MeshInstance3D" parent="Gag/Cat" unique_id=1937985514]
+[node name="Head" type="MeshInstance3D" parent="Gag/Cat" unique_id=2107295608]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.2)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Ear-1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=708408647]
+[node name="Ear-1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=976022069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.52, 0.2)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_lqcof")
 
-[node name="Eye-1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=572463364]
+[node name="Eye-1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=1913679639]
 transform = Transform3D(1, 0, 0, 0, 1.4, 0, 0, 0, 1, -0.08, 0.34, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_0ms5i")
 
-[node name="Ear1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=1006619087]
+[node name="Ear1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=1180109949]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.52, 0.2)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0
 mesh = SubResource("PrismMesh_lqcof")
 
-[node name="Eye1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=281035563]
+[node name="Eye1_0" type="MeshInstance3D" parent="Gag/Cat" unique_id=1542177163]
 transform = Transform3D(1, 0, 0, 0, 1.4, 0, 0, 0, 1, 0.08, 0.34, 0.4)
 material_override = SubResource("StandardMaterial3D_56eph")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_0ms5i")
 
-[node name="Nose" type="MeshInstance3D" parent="Gag/Cat" unique_id=1343078804]
+[node name="Nose" type="MeshInstance3D" parent="Gag/Cat" unique_id=1074199185]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0.42)
 material_override = SubResource("StandardMaterial3D_8c8y6")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_b3lr1")
 
-[node name="Tail" type="Node3D" parent="Gag/Cat" unique_id=2098989330]
+[node name="Tail" type="Node3D" parent="Gag/Cat" unique_id=2018341118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.3)
 script = ExtResource("2_xlygp")
 mode = 5
@@ -171,7 +171,7 @@ amount = 0.6
 speed = 1.2
 axis = Vector3(0, 0, 1)
 
-[node name="Tip" type="MeshInstance3D" parent="Gag/Cat/Tail" unique_id=286884993]
+[node name="Tip" type="MeshInstance3D" parent="Gag/Cat/Tail" unique_id=259952172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 material_override = SubResource("StandardMaterial3D_dgkp8")
 cast_shadow = 0

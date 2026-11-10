@@ -267,7 +267,7 @@ func _own(n: Node, r: Node) -> void:
 # --- backyard ------------------------------------------------------------------
 
 func _kite() -> void:
-	var a := root("Kite", R.SNAG, "sky_twang", 0.8, {spin = 30.0, push = 2.0, hold = 0.2, shake = 0.06,
+	var a := root("Kite", R.SNAG, "sky_twang", 0.65, {spin = 30.0, push = 2.0, hold = 0.2, shake = 0.06,
 			puff_color = Color(1, 0.8, 0.9)})
 	var k := motion(node(a[1], "Kite"), SWAY, 0.25, 0.6, Vector3(0, 0, 1))
 	mi(k, "SailA", _mesh("prism", 0.9, 0.7, 0.05), mat(PINK), Vector3(0, 0.35, 0))
@@ -343,7 +343,7 @@ func _pigeons() -> void:
 # --- treetops ------------------------------------------------------------------
 
 func _flock() -> void:
-	var a := root("Flock", R.SCATTER, "sky_flutter", 1.3, {push = 2.5, hold = 0.08, shake = 0.06,
+	var a := root("Flock", R.SCATTER, "sky_flutter", 1.1, {push = 2.5, hold = 0.08, shake = 0.06,
 			cue_pitch = 1.1, drift = Vector3(0, 0, 0.8)})
 	var g: Node3D = a[1]
 	var spots := [Vector3(0, 0, 0.6), Vector3(-0.7, 0.15, 0), Vector3(0.7, 0.1, 0), Vector3(-1.3, 0.3, -0.6),
@@ -376,7 +376,7 @@ func _squirrel() -> void:
 # --- kites and balloons ----------------------------------------------------------
 
 func _party_balloons() -> void:
-	var a := root("PartyBalloons", R.POP, "sky_pop", 0.9, {push = 3.0, hold = 0.1, shake = 0.08,
+	var a := root("PartyBalloons", R.POP, "sky_pop", 0.75, {push = 3.0, hold = 0.1, shake = 0.08,
 			hit_offset = Vector3(0, 0.3, 0), drift = Vector3(0, 0.2, 0)})
 	var g: Node3D = a[1]
 	var spots := [Vector3(-0.4, 0.3, 0), Vector3(0.4, 0.4, 0.1), Vector3(0, 0.8, -0.1)]
@@ -390,7 +390,7 @@ func _party_balloons() -> void:
 
 
 func _hot_air_balloon() -> void:
-	var a := root("HotAirBalloon", R.BOUNCE, "sky_boing", 1.2, {cue_pitch = 0.8, push = 3.0, hold = 0.15,
+	var a := root("HotAirBalloon", R.BOUNCE, "sky_boing", 1.0, {cue_pitch = 0.8, push = 3.0, hold = 0.15,
 			shake = 0.08, near_radius = 3.0, near_cue = &"cheer", near_pitch = 1.4, drift = Vector3(0.1, 0.1, 0)})
 	var g := motion(node(a[1], "Sway"), SWAY, 0.06, 0.4, Vector3(0, 0, 1))
 	sph(g, "Envelope", Vector3(0, 0.6, 0), 1.0, ORANGE, Vector3(1, 1.1, 1))
@@ -412,7 +412,7 @@ func _hot_air_balloon() -> void:
 
 
 func _blimp() -> void:
-	var a := root("Blimp", R.BOUNCE, "sky_boing", 1.1, {cue_pitch = 0.6, push = 2.5, hold = 0.12,
+	var a := root("Blimp", R.BOUNCE, "sky_boing", 0.8, {cue_pitch = 0.6, push = 2.5, hold = 0.12,
 			shake = 0.07, drift = Vector3(0, 0, 0.4)})
 	var g: Node3D = a[1]
 	cap(g, "Hull", Vector3.ZERO, 0.6, 2.6, SKY1.lerp(WHITE, 0.4), Vector3(PI / 2, 0, 0))
@@ -432,7 +432,7 @@ func _blimp() -> void:
 # --- clouds --------------------------------------------------------------------
 
 func _prop_plane() -> void:
-	var a := root("PropPlane", R.BONK, "sky_bonk", 1.0, {push = 4.0, hold = 0.15, shake = 0.12,
+	var a := root("PropPlane", R.BONK, "sky_bonk", 0.55, {push = 4.0, hold = 0.15, shake = 0.12,
 			drift = Vector3(0, 0, 0.9)})
 	var g := motion(node(a[1], "Bob"), BOB, 0.08, 0.7)
 	cap(g, "Body", Vector3.ZERO, 0.28, 1.7, YELLOW, Vector3(PI / 2, 0, 0))
@@ -448,7 +448,7 @@ func _prop_plane() -> void:
 
 
 func _bounce_cloud() -> void:
-	var a := root("BounceCloud", R.BOUNCE, "sky_boing", 1.3, {push = 4.0, hold = 0.2, shake = 0.06,
+	var a := root("BounceCloud", R.BOUNCE, "sky_boing", 1.0, {push = 4.0, hold = 0.2, shake = 0.06,
 			puff_color = WHITE})
 	var g := motion(node(a[1], "Bob"), BOB, 0.1, 0.4)
 	var bits := [[Vector3(0, 0.15, 0), 0.75], [Vector3(-0.8, -0.05, 0), 0.55], [Vector3(0.8, -0.05, 0.05), 0.58],
@@ -464,7 +464,7 @@ func _bounce_cloud() -> void:
 # --- thin air ------------------------------------------------------------------
 
 func _jet() -> void:
-	var a := root("Jet", R.BONK, "sky_bonk", 1.0, {cue_pitch = 0.85, push = 4.0, hold = 0.15, shake = 0.14,
+	var a := root("Jet", R.BONK, "sky_bonk", 0.55, {cue_pitch = 0.85, push = 4.0, hold = 0.15, shake = 0.14,
 			drift = Vector3(0, 0, 1.6)})
 	var g: Node3D = a[1]
 	cap(g, "Body", Vector3.ZERO, 0.25, 2.2, WHITE, Vector3(PI / 2, 0, 0))
@@ -489,7 +489,7 @@ func _jet() -> void:
 
 
 func _balloon_bunch() -> void:
-	var a := root("BalloonBunch", R.POP, "sky_pop", 1.1, {push = 3.0, hold = 0.12, shake = 0.08,
+	var a := root("BalloonBunch", R.POP, "sky_pop", 0.95, {push = 3.0, hold = 0.12, shake = 0.08,
 			hit_offset = Vector3(0, 0.4, 0), drift = Vector3(0, 0.25, 0.1)})
 	var g: Node3D = a[1]
 	var cols := [PINK, YELLOW, SKY2, ORANGE, TEAL, SKY4]
@@ -505,7 +505,7 @@ func _balloon_bunch() -> void:
 # --- edge of space ---------------------------------------------------------------
 
 func _satellite() -> void:
-	var a := root("Satellite", R.PING, "sky_ping", 1.0, {push = 3.0, hold = 0.12, shake = 0.06,
+	var a := root("Satellite", R.PING, "sky_ping", 0.75, {push = 3.0, hold = 0.12, shake = 0.06,
 			puff_color = YELLOW})
 	var g := motion(node(a[1], "Turn"), SPIN, 0.0, 0.08, Vector3(0.2, 1, 0.1))
 	box(g, "Body", Vector3.ZERO, Vector3(0.6, 0.6, 0.8), YELLOW)
@@ -535,7 +535,7 @@ func _weather_balloon() -> void:
 # --- space ---------------------------------------------------------------------
 
 func _saucer() -> void:
-	var a := root("Saucer", R.CATCH, "sky_catch", 1.2, {push = 4.0, hold = 0.5, shake = 0.1,
+	var a := root("Saucer", R.CATCH, "sky_catch", 0.9, {push = 4.0, hold = 0.5, shake = 0.1,
 			puff_color = ALIEN, near_radius = 3.5, near_cue = &"gag_space", near_pitch = 1.2})
 	var g: Node3D = a[1]
 	var hover := motion(node(g, "Hover"), BOB, 0.1, 0.6)
@@ -578,14 +578,15 @@ func _moon() -> void:
 
 func _comet() -> void:
 	var a := root("Comet", R.PING, "sky_ping", 0.8, {cue_pitch = 1.4, push = 3.0, hold = 0.1, shake = 0.06,
-			puff_color = SKY1, near_radius = 3.0, near_cue = &"whoosh", near_pitch = 1.6, drift = Vector3(0, -0.3, 2.0)})
+			puff_color = SKY1, near_radius = 3.0, near_cue = &"whoosh", near_pitch = 1.6, drift = Vector3(0, -0.05, 0.6)})
 	var g: Node3D = a[1]
-	sph(g, "Head", Vector3.ZERO, 0.4, ICE, Vector3.ONE, 1.2)
-	sph(g, "Glow", Vector3.ZERO, 0.55, Color(SKY1, 0.4), Vector3.ONE, 1.5)
-	for i in 7:
-		var r := 0.45 - i * 0.05
-		sph(g, "Tail%d" % i, Vector3(sin(i * 1.7) * 0.08, cos(i * 1.3) * 0.08, -0.4 - i * 0.45), r,
-				Color([SKY1, YELLOW, PINK][i % 3], 0.7 - i * 0.08), Vector3.ONE, 1.2)
+	sph(g, "Head", Vector3.ZERO, 0.3, ICE, Vector3.ONE, 1.2)
+	sph(g, "Glow", Vector3.ZERO, 0.38, Color(SKY1, 0.35), Vector3.ONE, 1.2)
+	# A tapering tail of little glowing puffs streaming out behind.
+	for i in 8:
+		var r := 0.28 - i * 0.03
+		sph(g, "Tail%d" % i, Vector3(sin(i * 1.7) * 0.05, cos(i * 1.3) * 0.05, -0.45 - i * 0.28), r,
+				Color(SKY1.lerp(WHITE, 0.4), 0.8 - i * 0.08), Vector3.ONE, 1.5)
 	save(a[0], "comet")
 
 
@@ -597,10 +598,10 @@ const TIERS := [
 	[&"rooftops", 3, 5, 1.2, Vector2(2.0, 5.0), [["cat_chimney", 1.0, false], ["pigeons", 1.2, true], ["bird", 0.6, true]]],
 	[&"treetops", 3, 6, 2.0, Vector2(1.8, 4.5), [["flock", 1.2, true], ["squirrel", 0.8, true], ["bird", 0.5, true], ["kite", 0.4, true]]],
 	[&"kites", 4, 6, 4.5, Vector2(1.6, 4.0), [["party_balloons", 1.2, true], ["hot_air_balloon", 1.0, true], ["blimp", 0.6, true], ["kite", 0.6, true]]],
-	[&"clouds", 4, 6, 7.0, Vector2(1.6, 4.0), [["prop_plane", 1.2, true], ["bounce_cloud", 1.2, true], ["party_balloons", 0.3, true]]],
-	[&"thin_air", 3, 5, 9.0, Vector2(1.6, 4.0), [["jet", 1.2, true], ["balloon_bunch", 1.0, true], ["bounce_cloud", 0.4, true]]],
-	[&"edge", 3, 5, 10.0, Vector2(1.6, 4.0), [["satellite", 1.2, true], ["weather_balloon", 1.0, true]]],
-	[&"space", 3, 5, 10.0, Vector2(1.6, 4.0), [["saucer", 1.2, true], ["moon", 0.7, true], ["comet", 0.8, true]]],
+	[&"clouds", 4, 6, 5.5, Vector2(1.6, 4.0), [["prop_plane", 1.2, true], ["bounce_cloud", 1.2, true], ["party_balloons", 0.3, true]]],
+	[&"thin_air", 3, 5, 8.0, Vector2(1.6, 4.0), [["jet", 1.2, true], ["balloon_bunch", 1.0, true], ["bounce_cloud", 0.4, true]]],
+	[&"edge", 3, 5, 9.0, Vector2(1.6, 4.0), [["satellite", 1.2, true], ["weather_balloon", 1.0, true]]],
+	[&"space", 3, 5, 10.0, Vector2(1.6, 4.0), [["saucer", 1.2, true], ["moon", 0.7, false], ["comet", 0.8, true]]],
 ]
 
 

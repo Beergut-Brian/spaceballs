@@ -12,143 +12,166 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_a3yiy"]
-radius = 0.4
-height = 0.8
-radial_segments = 32
-rings = 16
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n4oxr"]
-transparency = 1
-albedo_color = Color(0.5254902, 0.9647059, 1, 0.4)
-roughness = 0.7
-emission_enabled = true
-emission = Color(0.5254902, 0.9647059, 1, 0.4)
-emission_energy_multiplier = 1.5
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="SphereMesh" id="SphereMesh_jtp6e"]
-radius = 0.55
-height = 1.1
-radial_segments = 32
-rings = 16
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ib5o0"]
-transparency = 1
-albedo_color = Color(0.5254902, 0.9647059, 1, 0.7)
-roughness = 0.7
-emission_enabled = true
-emission = Color(0.5254902, 0.9647059, 1, 0.7)
-emission_energy_multiplier = 1.2
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="SphereMesh" id="SphereMesh_7ndxh"]
-radius = 0.45
-height = 0.9
-radial_segments = 32
-rings = 16
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3nvrb"]
-transparency = 1
-albedo_color = Color(1, 0.84705883, 0.3019608, 0.62)
-roughness = 0.7
-emission_enabled = true
-emission = Color(1, 0.84705883, 0.3019608, 0.62)
-emission_energy_multiplier = 1.2
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vnnco"]
-transparency = 1
-albedo_color = Color(1, 0.30980393, 0.84705883, 0.54)
-roughness = 0.7
-emission_enabled = true
-emission = Color(1, 0.30980393, 0.84705883, 0.54)
-emission_energy_multiplier = 1.2
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="SphereMesh" id="SphereMesh_k3iix"]
-radius = 0.35
-height = 0.7
-radial_segments = 32
-rings = 16
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xn7je"]
-transparency = 1
-albedo_color = Color(0.5254902, 0.9647059, 1, 0.46)
-roughness = 0.7
-emission_enabled = true
-emission = Color(0.5254902, 0.9647059, 1, 0.46)
-emission_energy_multiplier = 1.2
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
 [sub_resource type="SphereMesh" id="SphereMesh_667l8"]
 radius = 0.3
 height = 0.6
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_15rut"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a3yiy"]
 transparency = 1
-albedo_color = Color(1, 0.84705883, 0.3019608, 0.38)
+albedo_color = Color(0.5254902, 0.9647059, 1, 0.35)
 roughness = 0.7
 emission_enabled = true
-emission = Color(1, 0.84705883, 0.3019608, 0.38)
+emission = Color(0.5254902, 0.9647059, 1, 0.35)
 emission_energy_multiplier = 1.2
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_dnnoe"]
+[sub_resource type="SphereMesh" id="SphereMesh_8pinp"]
+radius = 0.38
+height = 0.76
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n4oxr"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.8)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.8)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_2i1f7"]
+radius = 0.28
+height = 0.56
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ib5o0"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.72)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.72)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_7ndxh"]
 radius = 0.25
 height = 0.5
 radial_segments = 32
 rings = 16
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3nvrb"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.64)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.64)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_iu2a8"]
+radius = 0.22
+height = 0.44
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vnnco"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.56)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.56)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_6t8ws"]
+radius = 0.19
+height = 0.38
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k3iix"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.48)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.48)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_ifqd7"]
+radius = 0.16
+height = 0.32
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xn7je"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.4)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.4)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_15rut"]
+radius = 0.13
+height = 0.26
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dnnoe"]
+transparency = 1
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.32)
+roughness = 0.7
+emission_enabled = true
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.32)
+emission_energy_multiplier = 1.5
+rim_enabled = true
+rim = 0.35
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_pc8cs"]
+radius = 0.1
+height = 0.2
+radial_segments = 32
+rings = 16
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xbdg"]
 transparency = 1
-albedo_color = Color(1, 0.30980393, 0.84705883, 0.3)
+albedo_color = Color(0.70901966, 0.972549, 0.98745096, 0.24)
 roughness = 0.7
 emission_enabled = true
-emission = Color(1, 0.30980393, 0.84705883, 0.3)
-emission_energy_multiplier = 1.2
+emission = Color(0.70901966, 0.972549, 0.98745096, 0.24)
+emission_energy_multiplier = 1.5
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_mkkbk"]
-radius = 0.2
-height = 0.4
+[sub_resource type="SphereMesh" id="SphereMesh_kcyjj"]
+radius = 0.07
+height = 0.14
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kcyjj"]
-transparency = 1
-albedo_color = Color(0.5254902, 0.9647059, 1, 0.22)
-roughness = 0.7
-emission_enabled = true
-emission = Color(0.5254902, 0.9647059, 1, 0.22)
-emission_energy_multiplier = 1.2
-rim_enabled = true
-rim = 0.35
-rim_tint = 0.3
-
-[sub_resource type="SphereMesh" id="SphereMesh_qojx4"]
-radius = 0.15
-height = 0.3
-radial_segments = 32
-rings = 16
-
-[node name="Comet" type="Node3D" unique_id=1128785750]
+[node name="Comet" type="Node3D" unique_id=1637833527]
 script = ExtResource("1_tuq27")
 reaction = 5
 cue = &"sky_ping"
@@ -159,58 +182,64 @@ hit_radius = 0.8
 near_radius = 3.0
 shake = 0.06
 puff_color = Color(0.5254902, 0.9647059, 1, 1)
-drift = Vector3(0, -0.3, 2)
+drift = Vector3(0, -0.05, 0.6)
 
-[node name="Gag" type="Node3D" parent="." unique_id=1395003746]
+[node name="Gag" type="Node3D" parent="." unique_id=847692000]
 
-[node name="Head" type="MeshInstance3D" parent="Gag" unique_id=750926747]
+[node name="Head" type="MeshInstance3D" parent="Gag" unique_id=1858034417]
 material_override = SubResource("StandardMaterial3D_qlppb")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_a3yiy")
+mesh = SubResource("SphereMesh_667l8")
 
-[node name="Glow" type="MeshInstance3D" parent="Gag" unique_id=1406581039]
+[node name="Glow" type="MeshInstance3D" parent="Gag" unique_id=955942930]
+material_override = SubResource("StandardMaterial3D_a3yiy")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_8pinp")
+
+[node name="Tail0" type="MeshInstance3D" parent="Gag" unique_id=1777786296]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.45)
 material_override = SubResource("StandardMaterial3D_n4oxr")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_jtp6e")
+mesh = SubResource("SphereMesh_2i1f7")
 
-[node name="Tail0" type="MeshInstance3D" parent="Gag" unique_id=1850494158]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, -0.4)
+[node name="Tail1" type="MeshInstance3D" parent="Gag" unique_id=1350883741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04958324, 0.013374941, -0.73)
 material_override = SubResource("StandardMaterial3D_ib5o0")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_7ndxh")
 
-[node name="Tail1" type="MeshInstance3D" parent="Gag" unique_id=798146156]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.079333186, 0.021399906, -0.85)
+[node name="Tail2" type="MeshInstance3D" parent="Gag" unique_id=1720533887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.012777055, -0.042844437, -1.01)
 material_override = SubResource("StandardMaterial3D_3nvrb")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_a3yiy")
+mesh = SubResource("SphereMesh_iu2a8")
 
-[node name="Tail2" type="MeshInstance3D" parent="Gag" unique_id=717467455]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.020443289, -0.0685511, -1.3)
+[node name="Tail3" type="MeshInstance3D" parent="Gag" unique_id=1216314445]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.046290733, -0.036296614, -1.29)
 material_override = SubResource("StandardMaterial3D_vnnco")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_k3iix")
+mesh = SubResource("SphereMesh_6t8ws")
 
-[node name="Tail3" type="MeshInstance3D" parent="Gag" unique_id=1330990869]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07406517, -0.058074586, -1.75)
+[node name="Tail4" type="MeshInstance3D" parent="Gag" unique_id=872914914]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.024705667, 0.023425834, -1.57)
+material_override = SubResource("StandardMaterial3D_k3iix")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ifqd7")
+
+[node name="Tail5" type="MeshInstance3D" parent="Gag" unique_id=222187891]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.039924357, 0.04882938, -1.85)
 material_override = SubResource("StandardMaterial3D_xn7je")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_667l8")
+mesh = SubResource("SphereMesh_15rut")
 
-[node name="Tail4" type="MeshInstance3D" parent="Gag" unique_id=96180291]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.039529067, 0.037481334, -2.2)
-material_override = SubResource("StandardMaterial3D_15rut")
+[node name="Tail6" type="MeshInstance3D" parent="Gag" unique_id=1431642200]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.034993734, 0.002697771, -2.13)
+material_override = SubResource("StandardMaterial3D_dnnoe")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_dnnoe")
+mesh = SubResource("SphereMesh_pc8cs")
 
-[node name="Tail5" type="MeshInstance3D" parent="Gag" unique_id=501174508]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06387897, 0.07812701, -2.65)
+[node name="Tail7" type="MeshInstance3D" parent="Gag" unique_id=1389100530]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.030906856, -0.04738608, -2.41)
 material_override = SubResource("StandardMaterial3D_4xbdg")
 cast_shadow = 0
-mesh = SubResource("SphereMesh_mkkbk")
-
-[node name="Tail6" type="MeshInstance3D" parent="Gag" unique_id=304085721]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055989973, 0.004316434, -3.1)
-material_override = SubResource("StandardMaterial3D_kcyjj")
-cast_shadow = 0
-mesh = SubResource("SphereMesh_qojx4")
+mesh = SubResource("SphereMesh_kcyjj")
