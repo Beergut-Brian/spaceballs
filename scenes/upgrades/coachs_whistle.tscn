@@ -1,0 +1,76 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_k3pws"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_gmq8g"]
+material = SubResource("StandardMaterial3D_7jlw3")
+inner_radius = 0.24
+outer_radius = 0.26
+rings = 24
+ring_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wunvx"]
+material = SubResource("StandardMaterial3D_osvcx")
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.07
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_57p5x"]
+material = SubResource("StandardMaterial3D_osvcx")
+size = Vector3(0.12, 0.05, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_33tqy"]
+albedo_color = Color(0.16862746, 0.16862746, 0.2, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mx21b"]
+material = SubResource("StandardMaterial3D_33tqy")
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.072
+radial_segments = 20
+rings = 1
+
+[node name="CoachsWhistle" type="Node3D" unique_id=222085130]
+script = ExtResource("1_k3pws")
+stack_step = Vector3(0, -0.05, -0.04)
+gag_cue = &"whistle"
+fallback_cue = &"ui_confirm"
+fallback_pitch = 2.0
+gag_on_windup = true
+metadata/attach_point = &"body"
+
+[node name="Tor0" type="MeshInstance3D" parent="." unique_id=193632259]
+transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 0.28, 0.24)
+mesh = SubResource("TorusMesh_gmq8g")
+
+[node name="Cyl1" type="MeshInstance3D" parent="." unique_id=1836284432]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.02, -0.02, -0.04)
+mesh = SubResource("CylinderMesh_wunvx")
+
+[node name="Box2" type="MeshInstance3D" parent="." unique_id=140590879]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.03, -0.04)
+mesh = SubResource("BoxMesh_57p5x")
+
+[node name="Cyl3" type="MeshInstance3D" parent="." unique_id=2000607188]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.02, -0.02, -0.04)
+mesh = SubResource("CylinderMesh_mx21b")

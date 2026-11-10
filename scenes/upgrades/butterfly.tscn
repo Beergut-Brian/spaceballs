@@ -1,0 +1,87 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_1u5c5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_33tqy"]
+albedo_color = Color(0.16862746, 0.16862746, 0.2, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_pg7ly"]
+material = SubResource("StandardMaterial3D_33tqy")
+radius = 0.02
+height = 0.12
+radial_segments = 16
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_8s3vr"]
+material = SubResource("StandardMaterial3D_7jlw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_nqtvh"]
+material = SubResource("StandardMaterial3D_7jlw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_jax4c"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_kwksc"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[node name="Butterfly" type="Node3D" unique_id=614845316]
+script = ExtResource("1_1u5c5")
+stack_step = Vector3(0, 0, 0)
+bob = 0.08
+metadata/attach_point = &"head"
+
+[node name="Bob" type="Node3D" parent="." unique_id=1094555028]
+
+[node name="Cap0" type="MeshInstance3D" parent="Bob" unique_id=1778008465]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.3, -0.35)
+mesh = SubResource("CapsuleMesh_pg7ly")
+
+[node name="Sph1" type="MeshInstance3D" parent="Bob" unique_id=1100388814]
+transform = Transform3D(0.081379764, -0.03258179, 0.005, 0.034202013, 0.10336619, 0, -0.04698463, 0.018811107, 0.008660254, -0.08, 0.34, -0.35)
+mesh = SubResource("SphereMesh_8s3vr")
+
+[node name="Sph2" type="MeshInstance3D" parent="Bob" unique_id=4757157]
+transform = Transform3D(0.081379764, 0.03258179, -0.005, -0.034202013, 0.10336619, 0, 0.04698463, 0.018811107, 0.008660254, 0.08, 0.34, -0.35)
+mesh = SubResource("SphereMesh_nqtvh")
+
+[node name="Sph3" type="MeshInstance3D" parent="Bob" unique_id=275672830]
+transform = Transform3D(0.048827857, 0.020733867, 0.005, -0.020521207, 0.06577849, 0, -0.028190779, -0.011970704, 0.008660254, -0.07, 0.25, -0.33)
+mesh = SubResource("SphereMesh_jax4c")
+
+[node name="Sph4" type="MeshInstance3D" parent="Bob" unique_id=1935542167]
+transform = Transform3D(0.048827857, -0.020733867, -0.005, 0.020521207, 0.06577849, 0, 0.028190779, -0.011970704, 0.008660254, 0.07, 0.25, -0.33)
+mesh = SubResource("SphereMesh_kwksc")

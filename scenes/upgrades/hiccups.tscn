@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_n6hct"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q23yq"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.5254902, 0.9647059, 1, 0.45)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_obwhx"]
+material = SubResource("StandardMaterial3D_q23yq")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_8112c"]
+material = SubResource("StandardMaterial3D_q23yq")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_y40q7"]
+material = SubResource("StandardMaterial3D_q23yq")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[node name="Hiccups" type="Node3D" unique_id=1289387569]
+script = ExtResource("1_n6hct")
+stack_step = Vector3(0, 0, 0)
+gag_cue = &"hic"
+fallback_cue = &"hop"
+fallback_pitch = 1.6
+bob = 0.06
+metadata/attach_point = &"head"
+
+[node name="Bob" type="Node3D" parent="." unique_id=441658759]
+
+[node name="Sph0" type="MeshInstance3D" parent="Bob" unique_id=154549378]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0.25, 0.1, -0.3)
+mesh = SubResource("SphereMesh_obwhx")
+
+[node name="Sph1" type="MeshInstance3D" parent="Bob" unique_id=1363340718]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.35, 0.25, -0.25)
+mesh = SubResource("SphereMesh_8112c")
+
+[node name="Sph2" type="MeshInstance3D" parent="Bob" unique_id=619943978]
+transform = Transform3D(0.035, 0, 0, 0, 0.035, 0, 0, 0, 0.035, 0.3, 0.38, -0.2)
+mesh = SubResource("SphereMesh_y40q7")

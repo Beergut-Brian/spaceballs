@@ -1,0 +1,85 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_kd424"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_33tqy"]
+albedo_color = Color(0.16862746, 0.16862746, 0.2, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_m6pth"]
+material = SubResource("StandardMaterial3D_33tqy")
+inner_radius = 0.2
+outer_radius = 0.26
+rings = 24
+ring_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5x6rg"]
+albedo_color = Color(0.23921569, 0.54509807, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_oxdmm"]
+material = SubResource("StandardMaterial3D_5x6rg")
+top_radius = 0.21
+bottom_radius = 0.21
+height = 0.02
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_7660r"]
+material = SubResource("StandardMaterial3D_33tqy")
+radius = 0.025
+height = 0.2
+radial_segments = 16
+rings = 6
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_gkuxs"]
+material = SubResource("StandardMaterial3D_33tqy")
+radius = 0.025
+height = 0.2
+radial_segments = 16
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3xmpt"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_3y2st"]
+material = SubResource("StandardMaterial3D_3xmpt")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[node name="TrampolineTee" type="Node3D" unique_id=286841009]
+script = ExtResource("1_kd424")
+stack_step = Vector3(0, 0, 0.1)
+metadata/attach_point = &"back"
+
+[node name="Tor0" type="MeshInstance3D" parent="." unique_id=1262478220]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.05, 0.08)
+mesh = SubResource("TorusMesh_m6pth")
+
+[node name="Cyl1" type="MeshInstance3D" parent="." unique_id=1297388993]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.05, 0.08)
+mesh = SubResource("CylinderMesh_oxdmm")
+
+[node name="Cap2" type="MeshInstance3D" parent="." unique_id=693256308]
+transform = Transform3D(1, 0, 0, 0, 0.34202015, -0.9396926, 0, 0.9396926, 0.34202015, -0.17, -0.12, 0.14)
+mesh = SubResource("CapsuleMesh_7660r")
+
+[node name="Cap3" type="MeshInstance3D" parent="." unique_id=916751755]
+transform = Transform3D(1, 0, 0, 0, 0.34202015, -0.9396926, 0, 0.9396926, 0.34202015, 0.17, -0.12, 0.14)
+mesh = SubResource("CapsuleMesh_gkuxs")
+
+[node name="Sph4" type="MeshInstance3D" parent="." unique_id=2070673251]
+transform = Transform3D(0.09, 0, 0, 0, 0.09, 0, 0, 0, 0.09, 0, 0.05, 0.19)
+mesh = SubResource("SphereMesh_3y2st")

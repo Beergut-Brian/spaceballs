@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_rw051"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02cr8"]
+albedo_color = Color(0.93333334, 0.972549, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_c2t1l"]
+material = SubResource("StandardMaterial3D_02cr8")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f4iw3"]
+albedo_color = Color(0.5568628, 0.6117647, 0.7529412, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_bcvvt"]
+material = SubResource("StandardMaterial3D_f4iw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_35ymo"]
+material = SubResource("StandardMaterial3D_f4iw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[node name="MoonGravity" type="Node3D" unique_id=252283751]
+script = ExtResource("1_rw051")
+stack_step = Vector3(0, 0, 0)
+spin_speed = 1.6
+metadata/attach_point = &"head"
+
+[node name="Spin" type="Node3D" parent="." unique_id=1554159848]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06999999, 0)
+
+[node name="Sph0" type="MeshInstance3D" parent="Spin" unique_id=811566748]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0.5, 0, 0)
+mesh = SubResource("SphereMesh_c2t1l")
+
+[node name="Sph1" type="MeshInstance3D" parent="Spin" unique_id=414591793]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.02, 0.48, 0.04, -0.12)
+mesh = SubResource("SphereMesh_bcvvt")
+
+[node name="Sph2" type="MeshInstance3D" parent="Spin" unique_id=1705760187]
+transform = Transform3D(0.03, 0, 0, 0, 0.03, 0, 0, 0, 0.02, 0.55, -0.05, -0.11)
+mesh = SubResource("SphereMesh_35ymo")

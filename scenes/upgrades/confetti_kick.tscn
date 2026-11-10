@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_fbbep"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7101u"]
+material = SubResource("StandardMaterial3D_7jlw3")
+top_radius = 0.0
+bottom_radius = 0.09
+height = 0.28
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_5l5i6"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.03
+outer_radius = 0.08
+rings = 24
+ring_segments = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_ilcnb"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_egx2q"]
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_a8xve"]
+material = SubResource("StandardMaterial3D_egx2q")
+size = Vector3(0.06, 0.01, 0.04)
+
+[sub_resource type="Gradient" id="Gradient_vg5yk"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.25, 0.5, 0.75, 1)
+colors = PackedColorArray(1, 0.30980393, 0.84705883, 1, 1, 0.84705883, 0.3019608, 1, 0.21960784, 0.7764706, 1, 1, 1, 0.62352943, 0.18039216, 1, 0.93333334, 0.972549, 1, 1)
+
+[node name="ConfettiKick" type="Node3D" unique_id=1872241981]
+script = ExtResource("1_fbbep")
+gag_cue = &"confetti_pop"
+fallback_cue = &"tier_up"
+fallback_pitch = 1.5
+metadata/attach_point = &"feet"
+
+[node name="Cyl0" type="MeshInstance3D" parent="." unique_id=1573965282]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.14, -0.28)
+mesh = SubResource("CylinderMesh_7101u")
+
+[node name="Tor1" type="MeshInstance3D" parent="." unique_id=231231804]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 0, 0.12, -0.2)
+mesh = SubResource("TorusMesh_5l5i6")
+
+[node name="Sph2" type="MeshInstance3D" parent="." unique_id=2078260799]
+transform = Transform3D(0.09, 0, 0, 0, 0.007764572, 0.08693333, 0, -0.028977774, 0.023293717, 0, 0.17, -0.42)
+mesh = SubResource("SphereMesh_ilcnb")
+
+[node name="Burst" type="CPUParticles3D" parent="." unique_id=1053231953]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -0.45)
+emitting = false
+amount = 40
+lifetime = 1.4
+one_shot = true
+explosiveness = 0.95
+mesh = SubResource("BoxMesh_a8xve")
+direction = Vector3(0, 1, -0.6)
+spread = 55.0
+gravity = Vector3(0, -5, 0)
+initial_velocity_min = 2.5
+initial_velocity_max = 5.0
+angular_velocity_min = -360.0
+angular_velocity_max = 360.0
+color_initial_ramp = SubResource("Gradient_vg5yk")

@@ -1,0 +1,133 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_yih8p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5x6rg"]
+albedo_color = Color(0.23921569, 0.54509807, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_kkicn"]
+material = SubResource("StandardMaterial3D_5x6rg")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02cr8"]
+albedo_color = Color(0.93333334, 0.972549, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_y0f3u"]
+material = SubResource("StandardMaterial3D_02cr8")
+size = Vector3(0.22, 0.04, 0.36)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_bigdv"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="TorusMesh_13wh4"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="TorusMesh_ksyrg"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_qchjr"]
+material = SubResource("StandardMaterial3D_5x6rg")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_63k8u"]
+material = SubResource("StandardMaterial3D_02cr8")
+size = Vector3(0.22, 0.04, 0.36)
+
+[sub_resource type="TorusMesh" id="TorusMesh_ts6r2"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="TorusMesh_54vud"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="TorusMesh_133xw"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.1
+rings = 24
+ring_segments = 10
+
+[node name="SpringShoes" type="Node3D" unique_id=1973077531]
+script = ExtResource("1_yih8p")
+stack_step = Vector3(0, 0.14, 0)
+metadata/attach_point = &"feet"
+
+[node name="Sph0" type="MeshInstance3D" parent="." unique_id=1875596011]
+transform = Transform3D(0.12, 0, 0, 0, 0.09, 0, 0, 0, 0.19, 0, 0.07, -0.05)
+mesh = SubResource("SphereMesh_kkicn")
+
+[node name="Box1" type="MeshInstance3D" parent="." unique_id=1213240112]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
+mesh = SubResource("BoxMesh_y0f3u")
+
+[node name="Tor2" type="MeshInstance3D" parent="." unique_id=1607424762]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 0)
+mesh = SubResource("TorusMesh_bigdv")
+
+[node name="Tor3" type="MeshInstance3D" parent="." unique_id=118604040]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+mesh = SubResource("TorusMesh_13wh4")
+
+[node name="Tor4" type="MeshInstance3D" parent="." unique_id=196409502]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
+mesh = SubResource("TorusMesh_ksyrg")
+
+[node name="Sph5" type="MeshInstance3D" parent="." unique_id=1514179098]
+transform = Transform3D(0.12, 0, 0, 0, 0.09, 0, 0, 0, 0.19, -0.24, 0.07, -0.05)
+mesh = SubResource("SphereMesh_qchjr")
+
+[node name="Box6" type="MeshInstance3D" parent="." unique_id=1433899932]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0, -0.05)
+mesh = SubResource("BoxMesh_63k8u")
+
+[node name="Tor7" type="MeshInstance3D" parent="." unique_id=2111402451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.16, 0)
+mesh = SubResource("TorusMesh_ts6r2")
+
+[node name="Tor8" type="MeshInstance3D" parent="." unique_id=1389667482]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.22, 0)
+mesh = SubResource("TorusMesh_54vud")
+
+[node name="Tor9" type="MeshInstance3D" parent="." unique_id=817024310]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.28, 0)
+mesh = SubResource("TorusMesh_133xw")

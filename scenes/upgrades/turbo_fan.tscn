@@ -1,0 +1,118 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_i64v7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3xmpt"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_25n36"]
+material = SubResource("StandardMaterial3D_3xmpt")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5x6rg"]
+albedo_color = Color(0.23921569, 0.54509807, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_sw52g"]
+material = SubResource("StandardMaterial3D_5x6rg")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_obtl7"]
+material = SubResource("StandardMaterial3D_7jlw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_0n88s"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f4iw3"]
+albedo_color = Color(0.5568628, 0.6117647, 0.7529412, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_qc63u"]
+material = SubResource("StandardMaterial3D_f4iw3")
+size = Vector3(0.62, 0.62, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_djaw8"]
+albedo_color = Color(0.5254902, 0.9647059, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_sd5ap"]
+material = SubResource("StandardMaterial3D_djaw8")
+top_radius = 0.27
+bottom_radius = 0.27
+height = 0.15
+radial_segments = 20
+rings = 1
+
+[node name="TurboFan" type="Node3D" unique_id=1654360828]
+script = ExtResource("1_i64v7")
+stack_step = Vector3(0, 0, 0.2)
+spin_speed = 18.0
+metadata/attach_point = &"back"
+
+[node name="Spin" type="Node3D" parent="." unique_id=1854877960]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.2)
+
+[node name="Sph2" type="MeshInstance3D" parent="Spin" unique_id=495279556]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 0)
+mesh = SubResource("SphereMesh_25n36")
+
+[node name="Sph3" type="MeshInstance3D" parent="Spin" unique_id=907427904]
+transform = Transform3D(0.11, 0, 0, 0, 0.015, 0, 0, 0, 0.05, 0.13, 0, 0)
+mesh = SubResource("SphereMesh_sw52g")
+
+[node name="Sph4" type="MeshInstance3D" parent="Spin" unique_id=92267695]
+transform = Transform3D(-0.055000007, 0, 0.04330127, 0, 0.015, 0, -0.095262796, 0, -0.025000004, -0.065, 0, 0.11)
+mesh = SubResource("SphereMesh_obtl7")
+
+[node name="Sph5" type="MeshInstance3D" parent="Spin" unique_id=221542613]
+transform = Transform3D(-0.05499999, 0, -0.043301273, 0, 0.015, 0, 0.095262796, 0, -0.024999997, -0.065, 0, -0.11)
+mesh = SubResource("SphereMesh_0n88s")
+
+[node name="Box0" type="MeshInstance3D" parent="." unique_id=2059055879]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0.16)
+mesh = SubResource("BoxMesh_qc63u")
+
+[node name="Cyl1" type="MeshInstance3D" parent="." unique_id=571092984]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.08, 0.17)
+mesh = SubResource("CylinderMesh_sd5ap")

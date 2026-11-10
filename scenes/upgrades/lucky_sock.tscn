@@ -1,0 +1,114 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_q7ekf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02cr8"]
+albedo_color = Color(0.93333334, 0.972549, 1, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_r6be2"]
+material = SubResource("StandardMaterial3D_02cr8")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.3
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_oun3i"]
+material = SubResource("StandardMaterial3D_7jlw3")
+inner_radius = 0.09
+outer_radius = 0.115
+rings = 24
+ring_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_s3jx5"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.09
+outer_radius = 0.115
+rings = 24
+ring_segments = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_xf3pp"]
+material = SubResource("StandardMaterial3D_7jlw3")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0d51b"]
+albedo_color = Color(0.10980392, 0.7882353, 0.6509804, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_bdkgb"]
+material = SubResource("StandardMaterial3D_0d51b")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_efs7u"]
+material = SubResource("StandardMaterial3D_0d51b")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_jxrvr"]
+material = SubResource("StandardMaterial3D_0d51b")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[node name="LuckySock" type="Node3D" unique_id=2095925886]
+script = ExtResource("1_q7ekf")
+stack_step = Vector3(0, 0.08, 0)
+metadata/attach_point = &"feet"
+
+[node name="Cyl0" type="MeshInstance3D" parent="." unique_id=48991066]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.02)
+mesh = SubResource("CylinderMesh_r6be2")
+
+[node name="Tor1" type="MeshInstance3D" parent="." unique_id=1485428055]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0.02)
+mesh = SubResource("TorusMesh_oun3i")
+
+[node name="Tor2" type="MeshInstance3D" parent="." unique_id=1050948889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33, 0.02)
+mesh = SubResource("TorusMesh_s3jx5")
+
+[node name="Sph3" type="MeshInstance3D" parent="." unique_id=169140994]
+transform = Transform3D(0.12, 0, 0, 0, 0.08, 0, 0, 0, 0.17, 0, 0.06, -0.06)
+mesh = SubResource("SphereMesh_xf3pp")
+
+[node name="Sph4" type="MeshInstance3D" parent="." unique_id=1392622253]
+transform = Transform3D(0.035, 0, 0, 0, 0.035, 0, 0, 0, 0.02, 0, 0.2, -0.1)
+mesh = SubResource("SphereMesh_bdkgb")
+
+[node name="Sph5" type="MeshInstance3D" parent="." unique_id=299862729]
+transform = Transform3D(0.035, 0, 0, 0, 0.035, 0, 0, 0, 0.02, 0.04, 0.24, -0.1)
+mesh = SubResource("SphereMesh_efs7u")
+
+[node name="Sph6" type="MeshInstance3D" parent="." unique_id=1473647807]
+transform = Transform3D(0.035, 0, 0, 0, 0.035, 0, 0, 0, 0.02, -0.04, 0.24, -0.1)
+mesh = SubResource("SphereMesh_jxrvr")

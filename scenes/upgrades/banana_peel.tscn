@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_tns1h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_4f043"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_2utf0"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_1dksd"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_wond7"]
+material = SubResource("StandardMaterial3D_osvcx")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a5m7f"]
+albedo_color = Color(0.5411765, 0.3529412, 0.16862746, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kqa4r"]
+material = SubResource("StandardMaterial3D_a5m7f")
+top_radius = 0.015
+bottom_radius = 0.015
+height = 0.04
+radial_segments = 20
+rings = 1
+
+[node name="BananaPeel" type="Node3D" unique_id=643072216]
+script = ExtResource("1_tns1h")
+stack_step = Vector3(0, 0, 0)
+gag_cue = &"slip"
+fallback_cue = &"land"
+fallback_pitch = 1.6
+metadata/attach_point = &"feet"
+
+[node name="Sph0" type="MeshInstance3D" parent="." unique_id=614453191]
+transform = Transform3D(0.05, 0, 0, 0, 0.12, 0, 0, 0, 0.05, 0, 0.1, -0.35)
+mesh = SubResource("SphereMesh_4f043")
+
+[node name="Sph1" type="MeshInstance3D" parent="." unique_id=931932705]
+transform = Transform3D(0.128025, 0.0043412047, 0, -0.022574263, 0.024620194, 0, 0, 0, 0.05, 0.1, 0.02, -0.35)
+mesh = SubResource("SphereMesh_2utf0")
+
+[node name="Sph2" type="MeshInstance3D" parent="." unique_id=213935424]
+transform = Transform3D(0.128025, -0.0043412047, 0, 0.022574263, 0.024620194, 0, 0, 0, 0.05, -0.1, 0.02, -0.35)
+mesh = SubResource("SphereMesh_1dksd")
+
+[node name="Sph3" type="MeshInstance3D" parent="." unique_id=630199131]
+transform = Transform3D(0.05, 0, 0, 0, 0.025, 0, 0, 0, 0.13, 0, 0.02, -0.25)
+mesh = SubResource("SphereMesh_wond7")
+
+[node name="Cyl4" type="MeshInstance3D" parent="." unique_id=1691960793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.23, -0.35)
+mesh = SubResource("CylinderMesh_kqa4r")
