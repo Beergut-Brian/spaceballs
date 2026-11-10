@@ -89,9 +89,10 @@ func _start_hop(m: Node3D, delay: float, height: float, speed: float, seconds: f
 
 ## Hats in the air: spin up off their heads and come back down.
 func _hats(odds: float) -> void:
-	for m in _members:
-		if _rng.randf() > odds:
-			continue
+	for i in _members.size():
+		var m := _members[i]
+		if i > 0 and _rng.randf() > odds:
+			continue   # most throw, never nobody
 		var hat := _hat(HAT_COLORS[_rng.randi() % HAT_COLORS.size()])
 		crowd.add_child(hat)
 		var start := m.global_position + Vector3.UP * 1.75
