@@ -8,7 +8,17 @@ const P2 := Players.P2
 
 var _hud: Control
 var _ball: Node
+var _main: Node
+var _card: Control
 var _best_before = null
+
+
+func before() -> void:
+	SettingsSandbox.enter()
+
+
+func after() -> void:
+	SettingsSandbox.leave()
 
 
 func before_test() -> void:
@@ -17,8 +27,15 @@ func before_test() -> void:
 
 
 func after_test() -> void:
-	if is_instance_valid(_hud):
-		_hud.free()
+	for n in [_hud, _main, _card]:
+		if is_instance_valid(n):
+			n.free()
+	Run.demo = false
+	Game.demo = false
+	Run.save_enabled = true
+	Players._device_of = {P1: -1, P2: -1}
+	Game._set_state(Game.State.TITLE)
+	Engine.time_scale = 1.0
 	if is_instance_valid(_ball):
 		_ball.free()
 	Save.set_value("best_height", _best_before if _best_before != null else 0.0)
@@ -122,3 +139,67 @@ func test_slow_mo_lasts_half_a_real_second_then_restores() -> void:
 	s.free()
 	assert_float(Engine.time_scale).is_equal_approx(2.0, 0.001)
 	Engine.time_scale = 1.0
+
+
+# --- C-17 / C-18: the space moment: victory dance and a waving visitor -------------------------
+
+func _boot_main() -> Node:
+	Run.save_enabled = false
+	Run.demo = true
+	_main = load("res://scenes/main.tscn").instantiate()
+	get_tree().root.add_child(_main)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	return _main
+
+
+func test_ball_in_orbit_gets_a_dance_and_a_waving_visitor() -> void:
+	var main: Node = await _boot_main()
+	Run._in_space[P1] = true
+	var ball: Node3D = main.balls[P1]
+	ball.orbit_around(ball.global_position + Vector3.UP * 50.0, 1.8, 0.3, 0.0)
+	main._on_ball_stopped(P1, 200000.0, 8)
+	assert_bool(main.kickers[P1]._dancing).is_true()
+	assert_object(main.visitor).is_not_null()
+	assert_bool(main.visitor.is_inside_tree()).is_true()
+	assert_float(main.visitor.global_position.distance_to(ball.orbit_center)).is_less(4.0)
+	# The arm waves (landmark_motion WAVE on the saucer's alien).
+	assert_object(main.visitor.find_child("Arm", true, false)).is_not_null()
+	# A new run clears it.
+	var v: Node = main.visitor
+	Run.start_run()
+	await get_tree().process_frame
+	assert_bool(is_instance_valid(v)).is_false()
+	assert_object(main.visitor).is_null()
+
+
+# --- C-21: the end card shows the run's collection ---------------------------------------
+
+func test_end_card_shelves_hold_each_players_picks() -> void:
+	_card = load("res://scenes/ui/end_card.tscn").instantiate()
+	get_tree().root.add_child(_card)
+	var boots: UpgradeData = load("res://data/upgrades/rocket_boots.tres")
+	var hat: UpgradeData = load("res://data/upgrades/tiny_hat.tres")
+	Run._upgrades[P1] = [boots, hat] as Array[UpgradeData]
+	Run._upgrades[P2] = [hat] as Array[UpgradeData]
+	_card.open()
+	assert_int(_card.shelves.size()).is_equal(2)
+	var p1: Array = _card.shelves[P1].get_children()
+	assert_int(p1.size()).is_equal(2)
+	assert_str(String(p1[0].get_meta(&"upgrade_id"))).is_equal("rocket_boots")
+	assert_object((p1[0].get_child(0) as TextureRect).texture).is_equal(boots.icon)
+	assert_int(_card.shelves[P2].get_child_count()).is_equal(1)
+	# P1 on the left, P2 on the right; each tile is framed in its player's colour.
+	assert_float(_card.shelves[P1].position.x).is_less(_card.shelves[P2].position.x)
+	var sb: StyleBoxFlat = p1[0].get_theme_stylebox("panel")
+	assert_that(sb.border_color).is_equal(Players.COLOR[P1])
+	# They pop in one at a time.
+	assert_float(p1[0].scale.x).is_less(0.1)
+	await get_tree().create_timer(1.2).timeout
+	assert_float(p1[1].scale.x).is_equal_approx(1.0, 0.01)
+	# Opening again (the next run) rebuilds them; a player with no picks gets no shelf.
+	Run._upgrades[P2] = [] as Array[UpgradeData]
+	_card.open()
+	await get_tree().process_frame
+	assert_bool(_card.shelves.has(P2)).is_false()
+	Run._upgrades[P1] = [] as Array[UpgradeData]

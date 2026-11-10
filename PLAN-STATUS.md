@@ -32,11 +32,11 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | C-14 | S1/S2 Core loop | Balls return to the tee with a comedy drop from the sky | built | scenes/ball.gd::_drop (bounce ease + land + puff) | |
 | C-15 | S1/S2 Core loop | Space: a ball crossing the space line ends that player's run | built | tests/test_run.gd::test_player_in_space_is_skipped_and_run_ends_when_both_are | |
 | C-16 | S1/S2 Core loop | Space: the ball floats | built | scenes/ball.gd::_reach_peak (orbit ring, smiling ball), main.gd::_on_ball_stopped (camera orbit) | |
-| C-17 | S1/S2 Core loop | Space: the character does a victory dance | missing | main.gd::_celebrate_orbit cheers only a character already cheering; the kicker himself stands idle | |
-| C-18 | S1/S2 Core loop | Space: a little satellite or alien waves | partial | scenes/sky/saucer.tscn (alien catches the ball), scenes/sky/satellite.tscn (ping) | only if the ball's path meets them; nothing waves at the orbit moment itself |
+| C-17 | S1/S2 Core loop | Space: the character does a victory dance | built | tests/test_plan_gaps.gd::test_ball_in_orbit_gets_a_dance_and_a_waving_visitor, handoff/shots/space/victory_dance.png | 2026-11-10: he dances from the orbit on, and keeps dancing on his cloud |
+| C-18 | S1/S2 Core loop | Space: a little satellite or alien waves | built | tests/test_plan_gaps.gd::test_ball_in_orbit_gets_a_dance_and_a_waving_visitor, handoff/shots/space/orbit_visitor.png | 2026-11-10: the Sky lane's saucer pops in beside every orbiting ball (alien theremin), its alien waving; gone when the flight ends |
 | C-19 | S1/S2 Core loop | The other keeps kicking; the finished player cheers from a cloud | built | main.gd::_to_cloud, tests/test_run.gd::test_player_in_space_is_skipped_and_run_ends_when_both_are | |
 | C-20 | S1/S2 Core loop | End card: both in space suits, confetti, restart | built | tests/test_rounds_polish.gd::test_end_card_flow, tests/test_lobby.gd::test_end_card_a_goes_to_lobby_and_door_quits | A goes to the lobby (Showtime), the door to the launcher |
-| C-21 | S1 Save / S2 Tech | End card shows the run's / the collection of silly items | missing | end_card.gd has no icons | Save already keeps `upgrades_seen` |
+| C-21 | S1 Save / S2 Tech | End card shows the run's / the collection of silly items | built | tests/test_plan_gaps.gd::test_end_card_shelves_hold_each_players_picks, handoff/shots/space/end_card_collection.png | 2026-11-10: the run's picks per player (P1 shelf left, P2 right, tiles in the player colour, no text), popping in one by one; the all-time `upgrades_seen` collection isn't shown (needs a design: it's every card ever drawn) |
 | C-22 | S1/S2 Core loop | Catch-up: two or more tiers behind gets only above-average cards | built | tests/test_run.gd::test_catch_up_when_two_tiers_behind, ::test_catch_up_draws_only_above_average | |
 | C-23 | S1 Core loop | Both players must finish (co-op, not race) | built | tests/test_run.gd::test_player_in_space_is_skipped_and_run_ends_when_both_are | |
 | C-24 | S3 | Free movement: run around, kick fires when you run into your ball | built | tests/test_free_roam.gd (8 tests) | |
@@ -115,7 +115,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | V-10 | S1/S2 Camera | Flight: follows the ball, zooms out as speed rises | built | camera_rig.gd (follow_zoom) | |
 | V-11 | S1/S2 Camera | Landing: hold the peak a beat, a stamp shows the tier reached (icon) | built | tests/test_plan_gaps.gd::test_peak_shows_the_tier_stamp_in_the_kickers_colour, handoff/shots/strip/peak_stamp.png | 2026-11-10: round badge of the tier's picture in the kicker's colour slams in at the top, 1.4 s, with a bonk |
 | V-12 | S1/S2 Camera | Upgrade pick: vertical split, each half frames its character | built | handoff/shots/base/t040.0s.png | |
-| V-13 | S1/S2 Camera | Space: slow orbit round the floating ball and the celebrating character | partial | main.gd::_on_ball_stopped rig.orbit | orbit is round the ball; the character isn't in it (C-17) |
+| V-13 | S1/S2 Camera | Space: slow orbit round the floating ball and the celebrating character | built | main.gd::_on_ball_stopped, ::_on_ball_returned, handoff/shots/space/orbit_visitor.png, handoff/shots/space/victory_dance.png | 2026-11-10: 2 s orbit round the ball, then 2 s orbit round the dancing kicker with the crowd |
 | V-14 | S4 | Camera on the kicker only; follows big jumps up and down | built | camera_rig.gd (jump look-ahead) | |
 | V-15 | S1/S2 Art | Juice: screen shake scaled to power, dust puff, speed lines, star burst at tiers | built | art/scripts/juice.gd | |
 | V-16 | S1/S2 Art | Half-second slow motion on the strongest kicks | built | scripts/gameplay/slow_mo.gd, tests/test_plan_gaps.gd::test_slow_mo_lasts_half_a_real_second_then_restores, ::test_slow_mo_only_for_the_strongest_uncursed_kicks | 2026-11-10: kicks peaking at tier 7-8 (the sonic-boom kick), never a curse or the frog; 0.25x for 0.5 real s; a still frame can't show it |
@@ -147,7 +147,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | S-04 | S1/S2 Tech | Kicker CharacterBody3D, Area3D auto-kick, wind-up state machine, attach points, frog variant | built | tests/test_kicker.gd::test_attach_points_exist, ::test_frog_mode_hides_upgrades_and_comes_back | state machine is in code, not an AnimationTree |
 | S-05 | S1 Tech | PhysicalBone3D ragdoll upper body | later | Decisions 2026-11-09 | |
 | S-06 | S1/S2 Tech | Contract signals + Run.power_of / upgrades_of | built | docs/contracts.md, tests/test_run.gd::test_signals_carry_the_contract_values | |
-| S-07 | S1/S2 Tech | Save per profile: best height, runs completed, upgrades ever seen | built | tests/test_run.gd::test_save_keys_best_height_runs_and_seen | the end card doesn't use them yet (C-21) |
+| S-07 | S1/S2 Tech | Save per profile: best height, runs completed, upgrades ever seen | built | tests/test_run.gd::test_save_keys_best_height_runs_and_seen | best height drives the strip's flag (V-08); `runs_completed` and `upgrades_seen` are saved but nothing shows them yet |
 | S-08 | S1/S2 Tech | Scenes as listed (main, field, kicker, jeff/chuck, ball, height_ladder, upgrade_pick, hud, frog) | built | scenes/ | |
 | S-09 | S1/S2 First playable | Full run to space in 10-12 rounds, frog works, sound+visual everywhere, no red kid check | built | tests/test_simulation.gd, tests/test_rounds_polish.gd::test_frog_round | |
 | S-10 | S1/S2 Lanes | data/BALANCE.md holds the curve | built | data/BALANCE.md | |

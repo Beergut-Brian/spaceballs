@@ -20,8 +20,13 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 @onready var kickers := {P1: $Kickers/P1, P2: $Kickers/P2}
 @onready var balls := {P1: $Balls/P1, P2: $Balls/P2}
 
-## Space moment: the ball circles the planet this long before the next kick.
+## Space moment: the ball circles the planet this long before the next kick (the camera spends it on
+## the kicker's victory dance).
 const ORBIT_SHOW := 2.0
+## The alien who drops by to wave at a ball in orbit (the Sky lane's saucer, as scenery).
+const VisitorScene := preload("res://scenes/sky/saucer.tscn")
+const VISITOR_SCALE := 0.35
+const VISITOR_AT := Vector3(2.0, 1.1, -0.6)
 ## After the last card is picked, the split screen stays this long so the item is seen landing.
 const PICK_BEAT := 0.9
 ## Lobby shot: Jeff and Chuck stand this far behind and outside their tees (P2 mirrored), so
@@ -50,6 +55,8 @@ const CROWD_BEAT := 0.35
 
 var _turn: TurnMarker
 var slow_mo: SlowMo
+## The waving alien at the orbit moment (null when there is none).
+var visitor: Node3D
 var _crowd: CrowdReactions
 var _bystander_arrow: OffscreenArrow
 var _bump_t := 0.0
@@ -210,6 +217,7 @@ func _layout_lobby() -> void:
 
 func _on_run_started() -> void:
 	_run_top_tier = 1
+	_clear_visitor()
 	end_card.close()
 	pick_ui.close()
 	hud.visible = true
@@ -446,11 +454,35 @@ func _kick_cue(p: int, tier: int) -> String:
 
 func _on_ball_returned(p: int) -> void:
 	if Run.in_space(p) and Run.phase == Run.FLIGHT_PHASE[p]:
-		# The space moment: let it circle the planet for a bit before the next kick.
+		# The space moment, part two: the camera comes down to him dancing with the crowd.
+		_clear_visitor()
+		rig.orbit(kickers[p].global_position + Vector3.UP * 1.0, 4.6, 1.3)
+		kickers[p].dance(true)
 		await get_tree().create_timer(ORBIT_SHOW).timeout
 		if Run.phase != Run.FLIGHT_PHASE[p]:
 			return
+	_clear_visitor()
 	Run.end_flight(p)
+
+
+## A little saucer pops in beside the orbiting ball and its alien waves (C-18 in PLAN-STATUS.md).
+func _space_visitor(center: Vector3) -> void:
+	_clear_visitor()
+	visitor = VisitorScene.instantiate()
+	visitor.name = "SpaceVisitor"
+	add_child(visitor)
+	visitor.global_position = center + VISITOR_AT
+	visitor.scale = Vector3.ONE * 0.01
+	visitor.create_tween().tween_property(visitor, "scale", Vector3.ONE * VISITOR_SCALE, 0.45) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	Fx.puff(visitor.global_position, Color(0.6, 1.0, 0.6), 0.8)
+	Audio.play("gag_space")
+
+
+func _clear_visitor() -> void:
+	if is_instance_valid(visitor):
+		visitor.queue_free()
+	visitor = null
 
 
 ## A new tier for the whole run: the crowd roars.
@@ -466,6 +498,8 @@ func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 	if Run.in_space(p) and balls[p].flight == balls[p].Flight.FLOATING:
 		rig.orbit(balls[p].orbit_center, 4.4, 1.2, false)
 		_celebrate_orbit()
+		_space_visitor(balls[p].orbit_center)
+		kickers[p].dance(true)   # the victory dance; he keeps it up on his cloud
 		return
 	var curse := Run.curse_of(p)
 	if curse == null:
@@ -563,6 +597,7 @@ func _on_picked(p: int, u: UpgradeData) -> void:
 
 func _begin_end() -> void:
 	rig.split(false)
+	hud.visible = false   # the end card's shelves take the edges
 	_turn.hide_marker()
 	# Up among the stars, so the sky ramp shows space and the planet below.
 	var center := _marker_node("EndSpot").global_position + Vector3.UP * end_altitude()
@@ -628,6 +663,7 @@ func _on_state_changed(_from: int, to: int) -> void:
 	if to == Game.State.LOBBY:
 		# Back from the end card or the pause menu's Restart: a clean field, nobody mid-run.
 		Run.stop_run()
+		_clear_visitor()
 		end_card.close()
 		pick_ui.close()
 		hud.visible = false
