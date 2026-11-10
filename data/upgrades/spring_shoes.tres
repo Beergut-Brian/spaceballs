@@ -1,17 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_itn4c"]
-
-[sub_resource type="Gradient" id="Gradient_4r2gw"]
-colors = PackedColorArray(0.37254903, 0.7176471, 0.8980392, 1, 0.37254903, 0.7176471, 0.8980392, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_awc7y"]
-gradient = SubResource("Gradient_4r2gw")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/spring_shoes.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/spring_shoes.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_itn4c")
+script = ExtResource("1")
 id = &"spring_shoes"
 name = "Spring Shoes"
-icon = SubResource("GradientTexture2D_awc7y")
+icon = ExtResource("2")
+tier = 1
+kind = "normal"
 power_mult = 1.75
-description = "Boing boing boing."
+visual = ExtResource("3")
+description = "Boing on the way in, boing on the way out."

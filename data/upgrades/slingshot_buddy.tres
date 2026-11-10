@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/slingshot_buddy.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/slingshot_buddy.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"slingshot_buddy"
+name = "Slingshot Buddy"
+icon = ExtResource("2")
+tier = 1
+kind = "strong"
+power_mult = 2.35
+visual = ExtResource("3")
+description = "The other kicker holds the slingshot. Pull back... further..."

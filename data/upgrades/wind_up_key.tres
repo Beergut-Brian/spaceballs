@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/wind_up_key.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/wind_up_key.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"wind_up_key"
+name = "Wind-Up Key"
+icon = ExtResource("2")
+tier = 3
+kind = "normal"
+power_mult = 1.9
+visual = ExtResource("3")
+description = "Wind the kicker up like a toy, then let go."

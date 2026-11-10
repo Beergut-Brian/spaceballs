@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/turbo_fan.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/turbo_fan.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"turbo_fan"
+name = "Turbo Fan"
+icon = ExtResource("2")
+tier = 3
+kind = "strong"
+power_mult = 2.65
+visual = ExtResource("3")
+description = "A fan the size of a fridge strapped to the back. Hair everywhere."

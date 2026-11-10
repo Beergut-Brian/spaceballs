@@ -1,18 +1,17 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_1l24b"]
-
-[sub_resource type="Gradient" id="Gradient_1hdau"]
-colors = PackedColorArray(0.7019608, 0.53333336, 0.92156863, 1, 0.7019608, 0.53333336, 0.92156863, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_qbkkd"]
-gradient = SubResource("Gradient_1hdau")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/banana_peel.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/banana_peel.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_1l24b")
+script = ExtResource("1")
 id = &"banana_peel"
 name = "Banana Peel"
-icon = SubResource("GradientTexture2D_qbkkd")
+icon = ExtResource("2")
+tier = 1
 kind = "curse"
-power_mult = 0.3
-description = "Whoops."
+power_mult = 0.25
+kick_sfx = &"curse"
+visual = ExtResource("3")
+description = "Whoops, a banana peel right by the tee. Slip, flip, plop."

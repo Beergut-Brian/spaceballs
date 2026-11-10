@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_40u53"]
-
-[sub_resource type="Gradient" id="Gradient_3yy8i"]
-colors = PackedColorArray(0.96862745, 0.7882353, 0.28235295, 1, 0.96862745, 0.7882353, 0.28235295, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_oo6em"]
-gradient = SubResource("Gradient_3yy8i")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/pogo_legs.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/pogo_legs.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_40u53")
+script = ExtResource("1")
 id = &"pogo_legs"
 name = "Pogo Legs"
-icon = SubResource("GradientTexture2D_oo6em")
+icon = ExtResource("2")
+tier = 2
 kind = "strong"
-power_mult = 2.4
-description = "Legs replaced with pogo sticks."
+power_mult = 2.45
+visual = ExtResource("3")
+description = "Two pogo sticks where the legs used to be."

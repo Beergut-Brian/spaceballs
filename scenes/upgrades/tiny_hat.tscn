@@ -1,0 +1,58 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_su662"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_33tqy"]
+albedo_color = Color(0.16862746, 0.16862746, 0.2, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1veb4"]
+material = SubResource("StandardMaterial3D_33tqy")
+top_radius = 0.09
+bottom_radius = 0.09
+height = 0.015
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gokic"]
+material = SubResource("StandardMaterial3D_33tqy")
+top_radius = 0.055
+bottom_radius = 0.055
+height = 0.1
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7jlw3"]
+albedo_color = Color(1, 0.30980393, 0.84705883, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3ssku"]
+material = SubResource("StandardMaterial3D_7jlw3")
+top_radius = 0.057
+bottom_radius = 0.057
+height = 0.025
+radial_segments = 20
+rings = 1
+
+[node name="TinyHat" type="Node3D" unique_id=997906962]
+script = ExtResource("1_su662")
+stack_step = Vector3(0, 0.12, 0)
+metadata/attach_point = &"head"
+
+[node name="Cyl0" type="MeshInstance3D" parent="." unique_id=2100225044]
+transform = Transform3D(0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 0, 0, 1, 0.03, 0.06, 0)
+mesh = SubResource("CylinderMesh_1veb4")
+
+[node name="Cyl1" type="MeshInstance3D" parent="." unique_id=906899870]
+transform = Transform3D(0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 0, 0, 1, 0.03, 0.11, 0)
+mesh = SubResource("CylinderMesh_gokic")
+
+[node name="Cyl2" type="MeshInstance3D" parent="." unique_id=348999102]
+transform = Transform3D(0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 0, 0, 1, 0.03, 0.08, 0)
+mesh = SubResource("CylinderMesh_3ssku")

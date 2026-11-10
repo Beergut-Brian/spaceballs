@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_c3b77"]
-
-[sub_resource type="Gradient" id="Gradient_7rd56"]
-colors = PackedColorArray(0.23921569, 0.43529412, 0.81960785, 1, 0.23921569, 0.43529412, 0.81960785, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_krfma"]
-gradient = SubResource("Gradient_7rd56")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/rocket_boots.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/rocket_boots.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_c3b77")
+script = ExtResource("1")
 id = &"rocket_boots"
 name = "Rocket Boots"
-icon = SubResource("GradientTexture2D_krfma")
+icon = ExtResource("2")
 tier = 2
+kind = "normal"
 power_mult = 1.85
-description = "Boots with rockets on."
+visual = ExtResource("3")
+description = "Boots with little rockets on the heels. Mind the lawn."

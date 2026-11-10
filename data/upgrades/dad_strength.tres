@@ -1,19 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_y7lc8"]
-
-[sub_resource type="Gradient" id="Gradient_ct6ev"]
-colors = PackedColorArray(0.79607844, 0.43137255, 0.09019608, 1, 0.79607844, 0.43137255, 0.09019608, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_b51yc"]
-gradient = SubResource("Gradient_ct6ev")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/dad_strength.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/dad_strength.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_y7lc8")
+script = ExtResource("1")
 id = &"dad_strength"
 name = "Dad Strength"
-icon = SubResource("GradientTexture2D_b51yc")
-tier = 3
+icon = ExtResource("2")
+tier = 1
 kind = "strong"
-power_mult = 2.7
-description = "Opens any jar."
+power_mult = 2.3
+visual = ExtResource("3")
+description = "A tool belt, a mug of coffee and the power of every dad ever."

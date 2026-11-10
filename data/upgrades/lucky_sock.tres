@@ -1,17 +1,16 @@
 [gd_resource type="Resource" script_class="UpgradeData" format=3]
 
-[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1_luixi"]
-
-[sub_resource type="Gradient" id="Gradient_g04q3"]
-colors = PackedColorArray(0.47843137, 0.6509804, 0.9411765, 1, 0.47843137, 0.6509804, 0.9411765, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0uavc"]
-gradient = SubResource("Gradient_g04q3")
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/lucky_sock.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/lucky_sock.tscn" id="3"]
 
 [resource]
-script = ExtResource("1_luixi")
+script = ExtResource("1")
 id = &"lucky_sock"
 name = "Lucky Sock"
-icon = SubResource("GradientTexture2D_0uavc")
+icon = ExtResource("2")
+tier = 1
+kind = "normal"
 power_mult = 1.65
-description = "Never washed. Very lucky."
+visual = ExtResource("3")
+description = "Never washed. That's where the luck lives."

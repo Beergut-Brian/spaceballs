@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/thunder_hat.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/thunder_hat.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"thunder_hat"
+name = "Thunder Hat"
+icon = ExtResource("2")
+tier = 3
+kind = "strong"
+power_mult = 2.6
+visual = ExtResource("3")
+description = "A grumpy little storm cloud. The kick comes with lightning."

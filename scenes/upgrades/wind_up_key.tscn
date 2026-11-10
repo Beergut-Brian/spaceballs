@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/upgrades/upgrade_piece.gd" id="1_vv008"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3xmpt"]
+albedo_color = Color(1, 0.62352943, 0.18039216, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_6et84"]
+material = SubResource("StandardMaterial3D_3xmpt")
+radius = 1.0
+height = 2.0
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_osvcx"]
+albedo_color = Color(1, 0.84705883, 0.3019608, 1)
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_ffw2a"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.12
+rings = 24
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="TorusMesh_uq0vm"]
+material = SubResource("StandardMaterial3D_osvcx")
+inner_radius = 0.06
+outer_radius = 0.12
+rings = 24
+ring_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6b60x"]
+material = SubResource("StandardMaterial3D_osvcx")
+top_radius = 0.035
+bottom_radius = 0.035
+height = 0.32
+radial_segments = 20
+rings = 1
+
+[node name="WindUpKey" type="Node3D" unique_id=332895180]
+script = ExtResource("1_vv008")
+stack_step = Vector3(0, 0, 0.22)
+spin_speed = 3.0
+metadata/attach_point = &"back"
+
+[node name="Spin" type="Node3D" parent="." unique_id=1657995421]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.05, 0.3)
+
+[node name="Sph1" type="MeshInstance3D" parent="Spin" unique_id=844987305]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 0)
+mesh = SubResource("SphereMesh_6et84")
+
+[node name="Tor2" type="MeshInstance3D" parent="Spin" unique_id=1731218957]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.15, 0, 0)
+mesh = SubResource("TorusMesh_ffw2a")
+
+[node name="Tor3" type="MeshInstance3D" parent="Spin" unique_id=1651831259]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.15, 0, 0)
+mesh = SubResource("TorusMesh_uq0vm")
+
+[node name="Cyl0" type="MeshInstance3D" parent="." unique_id=1730243824]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.05, 0.14)
+mesh = SubResource("CylinderMesh_6b60x")

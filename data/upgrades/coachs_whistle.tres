@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/coachs_whistle.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/coachs_whistle.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"coachs_whistle"
+name = "Coach's Whistle"
+icon = ExtResource("2")
+tier = 2
+kind = "normal"
+power_mult = 1.8
+visual = ExtResource("3")
+description = "Tweet! The ball listens to the coach."

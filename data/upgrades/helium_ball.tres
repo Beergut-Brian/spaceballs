@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/upgrades/helium_ball.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/upgrades/helium_ball.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = &"helium_ball"
+name = "Helium Ball"
+icon = ExtResource("2")
+tier = 1
+kind = "normal"
+power_mult = 1.65
+visual = ExtResource("3")
+description = "Fill the ball with balloon gas. It wants to go up anyway."
