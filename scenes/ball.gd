@@ -5,6 +5,8 @@ extends RigidBody3D
 
 signal kick_zone_entered(body: Node3D)
 signal returned()
+## Sky hook (docs/contracts.md, Ball): a real flight started (not the frog dribble).
+signal launched(peak_height: float)
 
 enum Flight { TEE, PHYSICS, SCRIPTED, PEAK, DROP, FLOATING }
 
@@ -28,6 +30,13 @@ const ORBIT_PERIOD := 4.0
 const DRIBBLE_DISTANCE := 1.4
 const DRIBBLE_TIME := 0.9
 const FACE_YAW := 1.15
+## Sky hook: reactions only offset the Mesh (never the arc), at most this share of the visual
+## height (or SKY_MIN_OFFSET m), and pause the scripted arc at most SKY_MAX_HOLD s per flight.
+const SKY_MAX_OFFSET := 0.04
+const SKY_MIN_OFFSET := 0.6
+const SKY_MAX_HOLD := 0.6
+const SKY_SPRING := 60.0
+const SKY_DAMP := 9.0
 
 @export var player: int = 0
 ## This kick's ball effects (UpgradeData.ball_effect, via Run.effects_of): set before launch().
@@ -68,12 +77,19 @@ var _orbit_speed := TAU / ORBIT_PERIOD
 var _return_in := -1.0
 var _ring: MeshInstance3D
 var _dribbling := false
+## Sky hook state: the Mesh's world offset, its spring velocity, hit-stop left / used, extra spin.
+var sky_offset := Vector3.ZERO
+var _sky_vel := Vector3.ZERO
+var _sky_hold := 0.0
+var _sky_hold_used := 0.0
+var _sky_spin := 0.0
 
 @onready var zone: Area3D = $KickZone
 @onready var mesh: MeshInstance3D = $Mesh
 
 
 func _ready() -> void:
+	add_to_group(&"balls")
 	collision_layer = 16
 	collision_mask = 1
 	zone.collision_layer = 0
@@ -99,6 +115,7 @@ func place_on_tee(tee: Vector3) -> void:
 	speed = 0.0
 	visible = true
 	_stop_orbit()
+	_sky_reset()
 	mesh.scale = Vector3.ONE
 	gravity_scale = 1.0
 	constant_force = Vector3.ZERO
@@ -133,11 +150,14 @@ func launch(power: float, peak: float) -> void:
 	angular_velocity = Vector3(randf_range(-8, 8), randf_range(-4, 4), randf_range(-8, 8))
 	flight = Flight.PHYSICS
 	Audio.play("whoosh", null, clampf(0.7 + v0 / 40.0, 0.7, 1.7))
+	_sky_reset()
+	launched.emit(peak)
 
 
 func _physics_process(delta: float) -> void:
 	if _dribbling:
 		return   # the dribble tween owns the ball
+	_sky_step(delta)
 	if flight == Flight.PHYSICS or flight == Flight.SCRIPTED:
 		_trail(delta)
 	match flight:
@@ -151,6 +171,9 @@ func _physics_process(delta: float) -> void:
 			elif _t > 0.1 and linear_velocity.y <= 0.0:
 				_reach_peak()
 		Flight.SCRIPTED:
+			if _sky_hold > 0.0:
+				_sky_hold -= delta   # hit-stop: the arc's clock waits, the peak doesn't move
+				return
 			_t += delta
 			var u := clampf(_t / _arc_time, 0.0, 1.0)
 			var vis := lerpf(_arc_from, _arc_to, 1.0 - (1.0 - u) * (1.0 - u))
@@ -295,6 +318,7 @@ func orbit_around(center: Vector3, radius: float, tilt: float, phase: float) -> 
 	_orbiting = true
 	flight = Flight.FLOATING
 	mesh.scale = Vector3.ONE * 1.5   # big enough to see the smile
+	_sky_reset()
 	_return_in = -1.0
 	global_position = center + _orbit_offset(phase)
 	_show_ring()
@@ -416,3 +440,46 @@ func _confetti_pop() -> void:
 	Audio.play("confetti_pop")
 	for c in [Color(1, 0.4, 0.5), Color(0.4, 0.8, 1), Color(1, 0.9, 0.3), Color(0.6, 1, 0.5)]:
 		Fx.puff(global_position + Vector3(randf_range(-0.6, 0.6), randf_range(0.0, 0.6), randf_range(-0.6, 0.6)), c, 0.5)
+
+
+## Sky hook (docs/contracts.md, Ball): a sky object bumped the ball. Cosmetic only: `push` (m/s)
+## kicks a spring that offsets the Mesh, `hold` is hit-stop on the scripted arc, `spin` twirls it.
+func sky_react(push: Vector3, hold: float = 0.0, spin: float = 0.0) -> void:
+	_sky_vel += push
+	_sky_spin += spin
+	if flight == Flight.SCRIPTED:
+		var h := clampf(hold, 0.0, SKY_MAX_HOLD - _sky_hold_used)
+		_sky_hold += h
+		_sky_hold_used += h
+
+
+func sky_bound() -> float:
+	return maxf(SKY_MIN_OFFSET, SKY_MAX_OFFSET * TierSet.visual_y(height))
+
+
+func _sky_step(delta: float) -> void:
+	if sky_offset == Vector3.ZERO and _sky_vel == Vector3.ZERO and _sky_spin == 0.0:
+		return
+	_sky_vel += (-SKY_SPRING * sky_offset - SKY_DAMP * _sky_vel) * delta
+	sky_offset += _sky_vel * delta
+	var bound := sky_bound()
+	if sky_offset.length() > bound:
+		sky_offset = sky_offset.normalized() * bound
+		_sky_vel *= 0.5
+	if sky_offset.length() < 0.002 and _sky_vel.length() < 0.02:
+		sky_offset = Vector3.ZERO
+		_sky_vel = Vector3.ZERO
+	mesh.rotate_y(_sky_spin * delta)
+	_sky_spin = move_toward(_sky_spin, 0.0, delta * 25.0)
+	mesh.position = global_basis.inverse() * sky_offset
+
+
+func _sky_reset() -> void:
+	sky_offset = Vector3.ZERO
+	_sky_vel = Vector3.ZERO
+	_sky_hold = 0.0
+	_sky_hold_used = 0.0
+	_sky_spin = 0.0
+	if mesh:
+		mesh.position = Vector3.ZERO
+		mesh.rotation = Vector3.ZERO
