@@ -91,6 +91,14 @@ func restart() -> void:
 	start_round()
 
 
+## Spaceballs end card: back to the title card (main.gd lays it out; A there starts a new run).
+func to_title() -> void:
+	get_tree().paused = false
+	Audio.play("ui_confirm")
+	round_index = 0
+	_set_state(State.TITLE)
+
+
 func _set_state(to: State) -> void:
 	if to == state:
 		return

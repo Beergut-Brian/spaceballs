@@ -1,4 +1,3 @@
-# PLACEHOLDER (systems grey-box): Gameplay owns the camera phases and replaces this; keep the API.
 ## Full-screen camera for approach / flight / peak / space. The pick's split screen lives in
 ## upgrade_pick.tscn; split(true) just stops the main viewport drawing 3D underneath it.
 extends Node3D
@@ -8,7 +7,9 @@ enum Mode { FIELD, FOLLOW, PEAK, SPLIT, SPACE }
 signal mode_changed(mode: Mode)
 
 ## TV-sports framing: side-on, a little behind the kicker and above.
-@export var field_offset := Vector3(9.5, 3.2, 4.5)
+@export var field_offset := Vector3(7.6, 2.7, 3.8)
+## The frog round: in close, so the tiny frog and his pathetic dribble read from the couch.
+@export var close_offset := Vector3(4.6, 1.7, 2.6)
 @export var follow_offset := Vector3(1.0, 0.15, 0.25)
 @export var follow_min := 9.0
 @export var follow_max := 70.0
@@ -24,6 +25,9 @@ var _center := Vector3.ZERO
 var _angle := 0.0
 var _dist := 9.0
 var _look := Vector3.ZERO
+var _close := false
+var _orbit_r := 7.0
+var _orbit_h := 2.5
 
 @onready var camera: Camera3D = $Camera
 
@@ -38,6 +42,10 @@ func frame_field(kicker: Node3D, tee: Vector3) -> void:
 	_tee = tee
 	_set_mode(Mode.FIELD)
 	_snap()
+
+
+func frame_close(on: bool) -> void:
+	_close = on
 
 
 func follow(ball: Node3D) -> void:
@@ -58,12 +66,19 @@ func split(on: bool) -> void:
 		_set_mode(Mode.FIELD)
 
 
-func orbit(center: Vector3) -> void:
+func orbit(center: Vector3, radius: float = 7.0, height: float = 2.5, snap: bool = true) -> void:
 	_center = center
-	_angle = 0.0
+	_orbit_r = radius
+	_orbit_h = height
 	get_viewport().disable_3d = false
 	_set_mode(Mode.SPACE)
-	_snap()
+	if snap:
+		_angle = 0.0
+		_snap()
+	else:
+		# Glide in from wherever the camera is now.
+		var d := camera.global_position - center
+		_angle = atan2(d.x, d.z)
 
 
 func _process(delta: float) -> void:
@@ -73,8 +88,13 @@ func _process(delta: float) -> void:
 		Mode.FIELD:
 			if _kicker == null:
 				return
-			var mid := (_kicker.global_position + _tee) * 0.5 + Vector3.UP * 1.0
-			want_pos = mid + field_offset
+			var mid := (_kicker.global_position + _tee) * 0.5 + Vector3.UP * (0.6 if _close else 1.0)
+			var off := field_offset
+			if _close:
+				# Starts a little wider while he is still far from the tee, then moves in.
+				var gap := Vector2(_kicker.global_position.x - _tee.x, _kicker.global_position.z - _tee.z).length()
+				off = close_offset * clampf(gap / 4.0, 1.0, 1.6)
+			want_pos = mid + off
 			want_look = mid
 		Mode.FOLLOW:
 			if _ball == null:
@@ -86,9 +106,9 @@ func _process(delta: float) -> void:
 		Mode.PEAK:
 			return
 		Mode.SPACE:
-			_angle += delta * 0.35
+			_angle += minf(delta, 0.1) * 0.35   # _snap() passes a huge delta
 			want_look = _center + Vector3.UP * 1.0
-			want_pos = _center + Vector3(sin(_angle) * 7.0, 2.5, cos(_angle) * 7.0)
+			want_pos = _center + Vector3(sin(_angle) * _orbit_r, _orbit_h, cos(_angle) * _orbit_r)
 		Mode.SPLIT:
 			return
 	var k := clampf(delta * smooth, 0.0, 1.0)
