@@ -15,6 +15,8 @@ signal shouted(player: int)
 signal gag_started(gag: StringName)
 ## Banana peel: he stepped on it (a few metres out), so the kick starts now, from here.
 signal slipped()
+## A foot comes down on the run (stride phase wraps). `hard` > 0 is a stomp (RunStyle.stomp).
+signal footfall(hard: float)
 
 const FROG_FALLBACK := preload("res://scenes/curses/frog.tscn")
 const SLOTS: Array[StringName] = [&"head", &"feet", &"back", &"hands", &"body"]
@@ -46,6 +48,11 @@ const PEEL_GAP := 3.6
 const PEEL_STEP := 0.7
 ## Run-up quality looks at this many seconds before contact: roaming first costs nothing.
 const RUNUP_WINDOW := 1.2
+## K-08, a kick needs a short real run-up: over the last RUNUP_SHORT s he must have covered at least
+## RUNUP_PACE x his top speed x RUNUP_SHORT metres, straight-line. Less (a stick wiggle at the ball,
+## a nudge from standing) is a toe-poke: a quick tap, the lowest run-up quality, still a kick.
+const RUNUP_SHORT := 0.6
+const RUNUP_PACE := 0.45
 ## Colours of the running trails (run_fx).
 const RUN_FX_COLOR := {
 	&"flame": Color(1.0, 0.3, 0.05), &"wind": Color(0.8, 0.95, 1.0), &"sparkle": Color(1.0, 0.95, 0.5),
@@ -116,6 +123,14 @@ var _kicked := false
 var _prop: Node3D
 var _dancing := false
 var _rng := RandomNumberGenerator.new()
+## How this character runs (RunStyle.for_character): bob, stomp, arms, costume. P-03 / P-04.
+var run_style: RunStyle = RunStyle.for_character("")
+## The run right now, for the rig's arms: 0..1 of top speed, and the stride phase (1 = one step).
+var run_amount := 0.0
+var stride := 0.0
+## This kick is a toe-poke (no real run-up, K-08): set in start_windup, read by the rig.
+var poking := false
+var _land_t := 10.0
 
 @onready var body: Node3D = $Body
 @onready var accent: MeshInstance3D = $Body/Accent
@@ -195,6 +210,7 @@ func set_character(id: String) -> bool:
 		equipment = null
 	rig.set_model(load(str(who.glb)) as PackedScene, id + "_hat")
 	character_id = id
+	run_style = RunStyle.for_character(id)
 	if not had:
 		return true
 	_make_equipment()
@@ -286,13 +302,16 @@ func start_windup() -> void:
 	if state != State.APPROACH:
 		return
 	var quality := _quality_now()
+	var gag := gag_of(windup)
+	poking = not frog and gag == &"" and not has_run_up()
+	if poking:
+		quality = QUALITY_MIN
 	velocity = Vector3(0.0, velocity.y, 0.0)
 	_face(_ball - global_position, 1.0)
 	_windup_t = 0.0
 	_kicked = false
 	_kill_tween()
 	_tween = create_tween()
-	var gag := gag_of(windup)
 	if frog:
 		_set_state(State.WINDUP)
 		Audio.play("windup", null, 1.3)
@@ -306,6 +325,11 @@ func start_windup() -> void:
 		_set_state(State.GAG)
 		gag_started.emit(gag)
 		call("_gag_" + String(gag), _tween)
+	elif poking:
+		# No run-up (K-08): a quick, surprised toe-poke instead of the lunatic wind-up.
+		_set_state(State.WINDUP)
+		Audio.play("squeak", null, 1.5)
+		_toe_poke(_tween)
 	else:
 		_set_state(State.WINDUP)
 		Audio.play("windup", null, 1.3)
@@ -323,6 +347,25 @@ func start_windup() -> void:
 	else:
 		_tween.tween_interval(0.5)
 	_tween.tween_callback(_end_follow_through)
+
+
+## K-08: did he cover a real (short) run-up just now? Straight-line distance over the last RUNUP_SHORT
+## s against RUNUP_PACE of his top speed. A wiggle at the ball or a nudge from standing is not one.
+func has_run_up() -> bool:
+	if _hist.size() < 2:
+		return false
+	var last := _hist[-1]
+	var i := _hist.size() - 1
+	while i > 0 and _hist[i - 1].z >= last.z - RUNUP_SHORT:
+		i -= 1
+	var first := _hist[i]
+	if last.z - first.z < RUNUP_SHORT - 0.05:
+		return false   # not running that long yet
+	var top := max_speed * _fx(&"run_speed_mult")
+	if gag_of(windup) == &"waddle":
+		top *= 0.7
+	var gone := Vector2(last.x - first.x, last.y - first.y).length()
+	return gone >= RUNUP_PACE * top * RUNUP_SHORT
 
 
 ## The upgrade's gag, if it names one this kicker knows.
@@ -762,6 +805,7 @@ func _hop(strength: float) -> bool:
 
 
 func _idle_anim() -> void:
+	run_amount = 0.0
 	if _gag != &"" and state != State.APPROACH:
 		return   # the gag tween owns Body
 	if _dancing and (state == State.CHEER or state == State.CLOUD):
@@ -781,16 +825,53 @@ func _idle_anim() -> void:
 			body.position.y = absf(sin(_anim_t * 7.0)) * 0.05
 			body.rotation.z = sin(_anim_t * 7.0) * 0.38
 		State.APPROACH, State.CHEER when state == State.APPROACH or roam:
-			# Flailing run, as wild as he is fast; a little bob standing still.
-			var run := clampf(Vector2(velocity.x, velocity.z).length() / max_speed, 0.0, 1.0)
-			if run < 0.15:
-				body.position.y = absf(sin(_anim_t * 5.0 + _phase)) * 0.06
-				body.rotation.z = lerpf(body.rotation.z, 0.0, 0.2)
-			else:
-				body.position.y = absf(sin(_anim_t * 14.0)) * 0.12 * run
-				body.rotation.z = sin(_anim_t * 9.0 + _phase) * 0.25 * run
+			_run_anim(clampf(Vector2(velocity.x, velocity.z).length() / max_speed, 0.0, 1.0))
+			return
 		_:
 			body.position.y = 0.0
+
+
+## The character's own run (RunStyle): Jeff's loose bob and sway, Chuck's lift-and-stomp.
+func _run_anim(run: float) -> void:
+	var st := run_style
+	var dt := get_physics_process_delta_time()
+	run_amount = run
+	if run < 0.15:
+		body.position.y = absf(sin(_anim_t * 5.0 + _phase)) * 0.06
+		body.rotation.z = lerpf(body.rotation.z, 0.0, 0.2)
+		body.rotation.x = lerpf(body.rotation.x, 0.0, 0.2)
+		_land_squash(dt)
+		return
+	var before := stride
+	stride += dt * st.cadence * lerpf(0.55, 1.0, run)
+	body.position.y = st.lift(stride, run)
+	# The roll goes one way per step, the other way the next.
+	body.rotation.z = sin(stride * PI + _phase) * st.sway * run
+	body.rotation.x = lerpf(body.rotation.x, -st.lean * run, 0.2)
+	if floori(stride) != floori(before) and is_on_floor():
+		_on_footfall(run)
+	_land_squash(dt)
+
+
+func _on_footfall(run: float) -> void:
+	var hard := run_style.stomp * run
+	footfall.emit(hard)
+	if hard < 0.3:
+		return
+	_land_t = 0.0
+	# Stomp: a thud and a dust puff under the heel, every step.
+	Audio.play("land", null, 0.65 + _rng.randf() * 0.1)
+	Fx.puff(global_position + Vector3.UP * 0.05, Color(0.8, 0.72, 0.55), 0.1 + 0.06 * hard)
+
+
+## A short, hard landing: the body squashes for a few frames after each stomp.
+func _land_squash(dt: float) -> void:
+	var rig := body.get_node_or_null("Jarling") as Node3D
+	if rig == null:
+		return
+	_land_t += dt
+	var k := clampf(1.0 - _land_t / 0.12, 0.0, 1.0) * run_style.land_squash
+	rig.scale = Vector3(1.0 + k * 0.6, 1.0 - k, 1.0 + k * 0.6)
 
 
 func _reads_input() -> bool:
@@ -853,6 +934,10 @@ func _set_state(to: State) -> void:
 	if to == state:
 		return
 	state = to
+	_land_t = 10.0
+	var rig := body.get_node_or_null("Jarling") as Node3D if is_node_ready() else null
+	if rig:
+		rig.scale = Vector3.ONE
 	state_changed.emit(to)
 
 
@@ -866,6 +951,14 @@ func _kick_moves(tw: Tween, speed: float) -> void:
 	tw.tween_property(body, "rotation:x", -0.5, t * 0.4).set_ease(Tween.EASE_OUT)
 	tw.tween_property(body, "rotation:y", TAU * 2.0, t * 0.6).as_relative().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(body, "rotation:x", 0.35, t * 0.6)
+
+
+## K-08, no run-up: a startled little toe-poke. Up on one leg, a tap, a wobble.
+func _toe_poke(tw: Tween) -> void:
+	tw.tween_property(body, "rotation:x", 0.25, 0.12).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(body, "position:y", 0.12, 0.12).set_ease(Tween.EASE_OUT)
+	tw.tween_property(body, "rotation:x", -0.2, 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(body, "position:y", 0.0, 0.1)
 
 
 # --- kick styles (UpgradeData.kick_style): the gear shows in the kick itself ---------------

@@ -7,7 +7,7 @@ Sources (newest last):
 - S4 `GAME.md` "Playtest 2026-11-09 #2 changes" (`playtests/2026-11-09-2.md`)
 - S5 Kaden's chat 2026-11-10: "a couple of those Spaceballs features are done, but may not be polished. And the Lawn Chair obviously isn't relevant since the other player can now run around."
 
-Audit 2026-11-10 (plan-gaps lane, `feature/plan-gaps` off `dev` at `46f115f`). Totals after this lane: 97 built, 6 partial, 0 missing, 3 superseded, 4 later (110 rows). Every row was checked
+Audit 2026-11-10 (plan-gaps lane, `feature/plan-gaps` off `dev` at `46f115f`). Totals after this lane: 97 built, 6 partial, 0 missing, 3 superseded, 4 later (110 rows); after polish-2 (2026-11-10): 100 built, 3 partial, 0 missing, 3 superseded, 4 later (110 rows). Every row was checked
 against the code and the tests on this branch, not against earlier reports. Frames are under
 `handoff/shots/` (git-excluded; Gary attaches them to the PR). Tests are `tests/<file>.gd::<test>`.
 When S1 and S2 say the same thing it is one row, sourced "S1/S2".
@@ -50,8 +50,8 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | --- | --- | --- | --- | --- | --- |
 | P-01 | S1/S2 Players | 2 players, co-op, couch, one TV | built | tests/test_run.gd::test_phase_order_two_players | |
 | P-02 | S1/S2 Players | P1 Jeff green `#3CC24A`, P2 Chuck red `#E4393C` | built | tests/test_smoke.gd::test_players_colors_are_green_and_red, tests/test_character_spawn.gd::test_defaults_are_jeff_and_chuck | since the chooser (2026-11-10) Jeff/Chuck are the defaults, any Roster pick plays |
-| P-03 | S1/S2 Players | Jeff: loose flailing barefoot run, arms windmilling, chicken costume flapping | partial | kicker.gd::_idle_anim (flailing run bob), art/scripts/jarling_rig.gd | authored run clip + procedural bob; no per-character run style or costume flap |
-| P-04 | S1/S2 Players | Chuck: stiff stomping run; hat flies off on every kick and lands back | partial | art/scripts/jarling_rig.gd (hat pop on kick_contact) | hat pop built; run style is the shared run |
+| P-03 | S1/S2 Players | Jeff: loose flailing barefoot run, arms windmilling, chicken costume flapping | built | data/run_styles/jeff.tres, art/scripts/run_style_modifier.gd, tests/test_run_style.gd::test_jeff_windmills_and_chuck_keeps_his_arms_stiff, handoff/frames/jeff_run_cycle.png | polish-2 lane: per-character RunStyle (bob 0.17, arms windmill, comb flaps) |
+| P-04 | S1/S2 Players | Chuck: stiff stomping run; hat flies off on every kick and lands back | built | data/run_styles/chuck.tres, tests/test_run_style.gd::test_chuck_stomps_with_a_landing_and_jeff_does_not, handoff/frames/chuck_run_cycle.png | polish-2 lane: stomp (lift slow, drop hard, squash, thud, dust), stiff arms; hat pop unchanged |
 | P-05 | S1/S2 Players | Drop-in: one pad active, the other sits on a lawn chair and cheers | superseded | S4 bystander + S5 "the Lawn Chair obviously isn't relevant" | the chair is still where an unjoined P2 waits (main.gd::_bench); harmless |
 | P-06 | S1/S2 Players | Any button on the 2nd pad joins; ball at the start of the next round | built | tests/test_lobby.gd::test_late_joiner_plays_from_next_round, tests/test_run.gd::test_late_joiner_plays_from_next_round | |
 | P-07 | S1/S2 Players | Run-up quality 0.8 to 1.2: straight fast run-up up to +20 % | built | tests/test_kicker.gd::test_run_up_quality_bounds, tests/test_free_roam.gd::test_runup_bonus_lifts_a_lazy_run | |
@@ -71,7 +71,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | K-05 | S1/S2 Controls | Select twice within 1 s restarts | built | tests/test_game_restart.gd::test_two_presses_within_a_second_restart | |
 | K-06 | S1/S2 Controls | A skips the end card | built | tests/test_lobby.gd::test_end_card_a_goes_to_lobby_and_door_quits | |
 | K-07 | S1/S2 Controls | Whole game playable with the stick alone | partial | kick, pick, run all stick-only | lobby ready and the end card need A (template menus, grown-up side) |
-| K-08 | S1/S2 Kid checks | Only wiggling the stick still kicks every round | partial | tests/test_kicker.gd::test_stick_toward_ball_is_quick, tests/test_lobby.gd::test_round_one_waits_for_the_run_up | free roam (S3) means no input = no kick, by Kaden's choice; a wiggle toward the ball kicks |
+| K-08 | S1/S2 Kid checks | Only wiggling the stick still kicks every round | built | tests/test_run_style.gd::test_wiggle_at_the_ball_is_a_toe_poke_that_still_kicks, ::test_short_real_run_up_is_the_full_kick, handoff/frames/k08_poke_vs_full_kick.png | polish-2 lane: a wiggle still kicks, as a toe-poke at the lowest run-up quality; the full kick needs a short real run-up (Kicker.has_run_up) |
 | K-09 | S1/S2 Kid checks | A curse is never the only choice; every draw has a normal card | built | tests/test_run.gd::test_every_draw_before_14_has_a_normal_card, ::test_curses_never_offered_in_a_pick | |
 | K-10 | S1/S2 Kid checks | No run lasts past round 15 | built | tests/test_run.gd::test_round_15_always_reaches_space, ::test_strong_only_after_round_14 | |
 | K-11 | S1/S2 Kid checks | Waiting player has something to look at and to do (cheers on a button press) | built | kicker.gd::_buttons, tests/test_plan_gaps.gd::test_bystander_cheers_on_a_button_press | 2026-11-10: test added (A on the bystander's pad = cheer hop, puff and "yaaay", never a kick) |
@@ -160,4 +160,4 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | M-01 | S3 | Main menu with a way back to the launcher | built | tests/test_lobby.gd::test_lobby_door_asks_then_quits | |
 | M-02 | S3 | Pause menu with "back to the launcher" | built | tests/test_lobby.gd::test_pause_door_asks_then_quits | |
 | M-03 | S3 | Start screen where both players ready up before round 1 | built | tests/test_lobby.gd::test_both_ready_counts_down_then_starts | |
-| M-04 | S5 | Polish counts: features that exist but feel rough get finished | partial | this file: every `partial` row | 2026-11-10 audit found 3 missing + 15 partial; this lane built the 3 missing and finished 9 partial (K-11, K-14, U-14, V-07, V-08, V-11, V-13, A-04, C-18). Left: P-03/P-04 run styles (Art), K-07/K-08 (by design since free roam), U-13 (gear-art lane) |
+| M-04 | S5 | Polish counts: features that exist but feel rough get finished | partial | this file: every `partial` row | 2026-11-10 audit found 3 missing + 15 partial; this lane built the 3 missing and finished 9 partial (K-11, K-14, U-14, V-07, V-08, V-11, V-13, A-04, C-18). Left: P-03/P-04 run styles (Art), K-07/K-08 (by design since free roam), U-13 (gear-art lane). polish-2 lane (2026-11-10) finished P-03, P-04, K-08; left K-07 (template menus), U-13 |
