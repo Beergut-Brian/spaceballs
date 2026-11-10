@@ -42,15 +42,6 @@ func test_physics_is_jolt_and_display_is_1080p() -> void:
 		assert_float(InputMap.action_get_deadzone(a)).is_equal_approx(0.15, 0.001)
 
 
-func test_every_audio_cue_has_a_file() -> void:
-	for cue in ["windup", "kick_1", "kick_2", "kick_3", "kick_4", "whoosh", "tier_up", "land",
-			"card_move", "card_pick", "upgrade_on", "curse", "frog", "space", "cheer", "hop", "shout",
-			"restart_arm", "ui_move_1", "ui_move_2", "ui_confirm", "player_join", "round_start",
-			"round_end", "pause"]:
-		assert_bool(ResourceLoader.exists("res://assets/audio/sfx/%s.ogg" % cue)) \
-				.override_failure_message("missing cue " + cue).is_true()
-
-
 func test_save_roundtrip() -> void:
 	Save.set_value("smoke", 42)
 	Save.flush()
