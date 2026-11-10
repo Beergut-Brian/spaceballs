@@ -11,6 +11,6 @@ name = "Thunder Hat"
 icon = ExtResource("2")
 tier = 3
 kind = "strong"
-power_mult = 2.75
+power_mult = 2.6
 visual = ExtResource("3")
 description = "A grumpy little storm cloud. The kick comes with lightning."

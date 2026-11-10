@@ -11,6 +11,6 @@ name = "Rocket Boots"
 icon = ExtResource("2")
 tier = 2
 kind = "normal"
-power_mult = 1.8
+power_mult = 1.85
 visual = ExtResource("3")
 description = "Boots with little rockets on the heels. Mind the lawn."

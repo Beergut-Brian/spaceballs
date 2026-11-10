@@ -11,6 +11,6 @@ name = "Moon Gravity"
 icon = ExtResource("2")
 tier = 1
 kind = "strong"
-power_mult = 2.35
+power_mult = 2.3
 visual = ExtResource("3")
 description = "A little moon follows you around and makes everything floaty."

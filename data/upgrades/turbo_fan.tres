@@ -11,6 +11,6 @@ name = "Turbo Fan"
 icon = ExtResource("2")
 tier = 3
 kind = "strong"
-power_mult = 2.8
+power_mult = 2.65
 visual = ExtResource("3")
 description = "A fan the size of a fridge strapped to the back. Hair everywhere."

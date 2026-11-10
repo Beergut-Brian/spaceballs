@@ -11,6 +11,6 @@ name = "Balloon Animal Ball"
 icon = ExtResource("2")
 tier = 2
 kind = "joke"
-power_mult = 1.15
+power_mult = 1.2
 visual = ExtResource("3")
 description = "A balloon dog for company. It squeaks when you kick."

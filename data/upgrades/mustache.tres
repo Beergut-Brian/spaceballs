@@ -11,6 +11,6 @@ name = "Mustache"
 icon = ExtResource("2")
 tier = 1
 kind = "joke"
-power_mult = 1.05
+power_mult = 1.15
 visual = ExtResource("3")
 description = "A magnificent mustache. Strength unknown, style enormous."

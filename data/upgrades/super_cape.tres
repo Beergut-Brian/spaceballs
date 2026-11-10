@@ -11,6 +11,6 @@ name = "Super Cape"
 icon = ExtResource("2")
 tier = 2
 kind = "normal"
-power_mult = 1.8
+power_mult = 1.85
 visual = ExtResource("3")
 description = "A cape made from a bath towel. Flaps heroically."

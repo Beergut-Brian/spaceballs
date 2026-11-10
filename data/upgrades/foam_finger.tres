@@ -11,6 +11,6 @@ name = "Foam Finger"
 icon = ExtResource("2")
 tier = 2
 kind = "normal"
-power_mult = 1.7
+power_mult = 1.75
 visual = ExtResource("3")
 description = "Number one kicker, says the giant foam hand."

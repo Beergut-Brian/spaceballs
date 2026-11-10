@@ -11,6 +11,6 @@ name = "Jetpack"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.6
+power_mult = 2.5
 visual = ExtResource("3")
 description = "Two fizzing rockets on the back. Strap in."

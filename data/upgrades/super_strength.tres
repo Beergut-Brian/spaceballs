@@ -11,6 +11,6 @@ name = "Super Strength"
 icon = ExtResource("2")
 tier = 2
 kind = "normal"
-power_mult = 1.75
+power_mult = 1.8
 visual = ExtResource("3")
 description = "Lifts a dumbbell with one hand. Kicks with the other foot."

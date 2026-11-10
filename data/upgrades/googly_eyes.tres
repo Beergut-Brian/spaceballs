@@ -11,6 +11,6 @@ name = "Googly Eyes"
 icon = ExtResource("2")
 tier = 3
 kind = "joke"
-power_mult = 1.0
+power_mult = 1.1
 visual = ExtResource("3")
 description = "Two enormous wobbly eyes stuck on the tummy. No help at all."

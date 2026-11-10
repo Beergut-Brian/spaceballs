@@ -11,6 +11,6 @@ name = "Tornado Spin"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.55
+power_mult = 2.45
 visual = ExtResource("3")
 description = "Spin so fast you become a small, polite tornado."

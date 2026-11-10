@@ -11,6 +11,6 @@ name = "Spring Shoes"
 icon = ExtResource("2")
 tier = 1
 kind = "normal"
-power_mult = 1.7
+power_mult = 1.75
 visual = ExtResource("3")
 description = "Boing on the way in, boing on the way out."

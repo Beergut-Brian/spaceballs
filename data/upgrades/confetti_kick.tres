@@ -11,6 +11,6 @@ name = "Confetti Kick"
 icon = ExtResource("2")
 tier = 2
 kind = "joke"
-power_mult = 1.2
+power_mult = 1.25
 visual = ExtResource("3")
 description = "Pop! The kick comes with a party."

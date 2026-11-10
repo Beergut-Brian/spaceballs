@@ -11,6 +11,6 @@ name = "Slingshot Buddy"
 icon = ExtResource("2")
 tier = 1
 kind = "strong"
-power_mult = 2.4
+power_mult = 2.35
 visual = ExtResource("3")
 description = "The other kicker holds the slingshot. Pull back... further..."

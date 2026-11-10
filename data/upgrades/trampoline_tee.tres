@@ -11,6 +11,6 @@ name = "Trampoline Tee"
 icon = ExtResource("2")
 tier = 1
 kind = "normal"
-power_mult = 1.65
+power_mult = 1.7
 visual = ExtResource("3")
 description = "The ball sits on a tiny trampoline and is very excited about it."

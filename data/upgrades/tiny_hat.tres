@@ -11,6 +11,6 @@ name = "Tiny Hat"
 icon = ExtResource("2")
 tier = 1
 kind = "joke"
-power_mult = 1.1
+power_mult = 1.2
 visual = ExtResource("3")
 description = "A very small hat. Very dignified."

@@ -11,6 +11,6 @@ name = "Pogo Legs"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.5
+power_mult = 2.45
 visual = ExtResource("3")
 description = "Two pogo sticks where the legs used to be."

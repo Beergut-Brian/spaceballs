@@ -11,6 +11,6 @@ name = "Opera Kick"
 icon = ExtResource("2")
 tier = 2
 kind = "joke"
-power_mult = 1.25
+power_mult = 1.3
 visual = ExtResource("3")
 description = "Hold the high note through the whole wind-up. LAAAA!"

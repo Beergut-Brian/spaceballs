@@ -11,6 +11,6 @@ name = "Honk Horn Shoes"
 icon = ExtResource("2")
 tier = 1
 kind = "joke"
-power_mult = 1.15
+power_mult = 1.2
 visual = ExtResource("3")
 description = "Every step honks. Every kick HONKS."

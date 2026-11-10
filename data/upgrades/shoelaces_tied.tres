@@ -11,6 +11,6 @@ name = "Shoelaces Tied"
 icon = ExtResource("2")
 tier = 2
 kind = "curse"
-power_mult = 0.15
+power_mult = 0.2
 visual = ExtResource("3")
 description = "Somebody tied your laces together. Hop, hop, bonk."

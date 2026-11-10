@@ -11,6 +11,6 @@ name = "Volcano Boots"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.5
+power_mult = 2.4
 visual = ExtResource("3")
 description = "Each boot is a tiny volcano. Hot feet, huge kick."

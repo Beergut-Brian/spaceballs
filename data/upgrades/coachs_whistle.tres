@@ -11,6 +11,6 @@ name = "Coach's Whistle"
 icon = ExtResource("2")
 tier = 2
 kind = "normal"
-power_mult = 1.75
+power_mult = 1.8
 visual = ExtResource("3")
 description = "Tweet! The ball listens to the coach."

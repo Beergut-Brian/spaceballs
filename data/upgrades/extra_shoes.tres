@@ -11,6 +11,6 @@ name = "Extra Shoes"
 icon = ExtResource("2")
 tier = 1
 kind = "joke"
-power_mult = 1.15
+power_mult = 1.25
 visual = ExtResource("3")
 description = "Now with four shoes. Nobody knows where the extra feet came from."

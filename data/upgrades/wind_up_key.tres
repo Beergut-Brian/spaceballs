@@ -11,6 +11,6 @@ name = "Wind-Up Key"
 icon = ExtResource("2")
 tier = 3
 kind = "normal"
-power_mult = 1.85
+power_mult = 1.9
 visual = ExtResource("3")
 description = "Wind the kicker up like a toy, then let go."

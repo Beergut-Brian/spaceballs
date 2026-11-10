@@ -11,6 +11,6 @@ name = "Cannon Leg"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.55
+power_mult = 2.45
 visual = ExtResource("3")
 description = "A leg that is also a cannon. Kaboom, but friendly."

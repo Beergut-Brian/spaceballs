@@ -11,6 +11,6 @@ name = "Kangaroo Tail"
 icon = ExtResource("2")
 tier = 2
 kind = "strong"
-power_mult = 2.45
+power_mult = 2.4
 visual = ExtResource("3")
 description = "Sit on the tail, bounce, kick. Ask any kangaroo."
