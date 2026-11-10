@@ -289,7 +289,9 @@ The schema Content fills (`data/upgrades/<id>.tres`). **Gameplay owns future cha
 @export_range(1, 3) var tier: int = 1   # 1: rounds 1-4, 2: 5-8, 3: 9+
 @export_enum("normal", "strong", "joke", "curse") var kind: String = "normal"
 @export var power_mult: float = 1.0     # curses < 1.0
-@export var visual: PackedScene         # attached to the kicker (see attach points)
+@export var visual: PackedScene         # wearable cards (slot not none/ball): the gear glb assets/gear/<id>.glb,
+                                        # worn through JarlingEquipment (Kicker, "Worn gear"). Other cards: a prop
+                                        # scene for the kicker's attach points.
 @export var windup_anim: StringName     # optional
 @export var kick_sfx: StringName        # optional, replaces kick_1..4 for that kick
 @export var scene_override: PackedScene # round-takeover curses (the frog)
@@ -372,7 +374,10 @@ signal gag_started(gag: StringName)           # state GAG: the full-body gag run
 func gag_of(upgrade: UpgradeData) -> StringName   # the upgrade's windup_anim if it is one of GAGS
 var stick_override: Variant                   # a Vector2 steers instead of the pad (tests, bots)
 func set_frog(on: bool, override: PackedScene = null) -> void   # this round only
-func attach_point(slot: StringName) -> Node3D # head, back, feet, hands, body
+func attach_point(slot: StringName) -> Node3D # head, back, feet, hands, body: props only (curses, ball cards)
+var equipment: JarlingEquipment              # worn gear (see "Worn gear" below)
+static func gear_for(upgrade: UpgradeData) -> JarlingGear   # assets/gear/<upgrade.id>.json, null if not wearable
+func worn_piece(slot: String) -> Node3D      # what is worn for an UpgradeData.slot, or null
 func add_upgrade_visual(upgrade: UpgradeData) -> void
 func clear_upgrade_visuals() -> void
 static func run_up_quality(path_length: float, straight_distance: float,
@@ -399,6 +404,21 @@ approach to 70 %.
 Nodes: `Body` (placeholder capsule), `Accent` (player-colour band), `Attach/{Head,Back,Feet,Hands,Body}`
 (`Marker3D`), `FrogSlot`, `Shape`. An upgrade `visual` scene picks its slot with root metadata
 `attach_point` (StringName, default `body`).
+
+**Worn gear (Gear Art, 2026-11-09 playtest).** Jeff and Chuck are the rigged Jarling glbs from
+`openjar-characters` v0.1.0, with ten `slot_<name>` markers on their bones (head, face, back, hand_l/r,
+waist, knee_l/r, foot_l/r) and separable body parts. `scripts/equipment/jarling_equipment.gd` and
+`jarling_gear.gd` are vendored from that repo (its `docs/equipment.md` is the format contract; do not
+fork it here). Every card whose `slot` is not `none`/`ball` has a gear item in `assets/gear/`:
+`<id>.glb` (the card's `visual`) + `<id>.json`, built by `art/tools/build_gear_spaceballs.py`.
+`add_upgrade_visual(upgrade)` equips it through `kicker.equipment`: a pick for an occupied slot swaps
+the item (poof + sound), a repeat pick levels it up (a little bigger, trim shown), nothing ever
+stacks. A card slot is one item even when the pieces sit on other body slots (a foam finger on one
+hand replaces gloves on both). Shoes and gloves hide the feet and hands they replace. Effect hooks in
+a gear glb, driven by the kicker: `fx_flame*` nodes show while running or kicking, `fx_spin*` nodes
+turn around their local Y (faster while running or kicking), `fx_orbit*` nodes turn slowly. The
+grey-box `kicker.tscn` has no Jarling, so it gets plain markers for the same ten slots.
+Exports must include `assets/gear/*.json` (non-resource filter).
 
 ### Ball (`scenes/ball.tscn`, `RigidBody3D`, Gameplay owns; grey-box placeholder)
 
