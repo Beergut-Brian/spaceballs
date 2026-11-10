@@ -74,7 +74,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | K-08 | S1/S2 Kid checks | Only wiggling the stick still kicks every round | partial | tests/test_kicker.gd::test_stick_toward_ball_is_quick, tests/test_lobby.gd::test_round_one_waits_for_the_run_up | free roam (S3) means no input = no kick, by Kaden's choice; a wiggle toward the ball kicks |
 | K-09 | S1/S2 Kid checks | A curse is never the only choice; every draw has a normal card | built | tests/test_run.gd::test_every_draw_before_14_has_a_normal_card, ::test_curses_never_offered_in_a_pick | |
 | K-10 | S1/S2 Kid checks | No run lasts past round 15 | built | tests/test_run.gd::test_round_15_always_reaches_space, ::test_strong_only_after_round_14 | |
-| K-11 | S1/S2 Kid checks | Waiting player has something to look at and to do (cheers on a button press) | partial | kicker.gd::_buttons (A off-turn = cheer) | works in code; no test covers it |
+| K-11 | S1/S2 Kid checks | Waiting player has something to look at and to do (cheers on a button press) | built | kicker.gd::_buttons, tests/test_plan_gaps.gd::test_bystander_cheers_on_a_button_press | 2026-11-10: test added (A on the bystander's pad = cheer hop, puff and "yaaay", never a kick) |
 | K-12 | S1/S2 Kid checks | Upgrade pick never times out | built | upgrade_pick.gd (no timer), tests/test_solo.gd::test_solo_pick_takes_p1_then_p2_from_one_pad | |
 | K-13 | S1/S2 Kid checks | Catch-up keeps the balls within two tiers after round 6 | built | tests/test_simulation.gd::test_two_players_random_picks | |
 | K-14 | S1/S2 Kid checks | Height shown with pictures, not numbers | built | tests/test_plan_gaps.gd::test_strip_blocks_are_landmark_pictures_top_down, handoff/shots/strip/strip_closeup.png | 2026-11-10 plan-gaps |
@@ -97,7 +97,7 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 | U-11 | S4 | Curses are hidden: a picked card may flip to a curse, about two per run | built | tests/test_playtest2.gd::test_curse_reveal_flips_the_picked_card, tests/test_run.gd::test_hidden_curse_rules | |
 | U-12 | S4 | Banana peel further out: slip, slide into the ball, barely goes | built | tests/test_playtest2.gd::test_banana_peel_slips_him_a_few_metres_out | |
 | U-13 | S3 | Upgrade art full redo (cards and gear) | partial | assets/icons, assets/gear (gear-art lanes 1-2), handoff/shots/base/t040.0s.png | owned by the gear-art lane; left alone here |
-| U-14 | S1 Upgrades | Frog scene: card flips, a frog hops in and kisses him, poof | partial | main.gd::_on_picked (curse reveal flip + puff), kicker.set_frog | the poof is there; no frog hopping in for a kiss |
+| U-14 | S1 Upgrades | Frog scene: card flips, a frog hops in and kisses him, poof | built | main.gd::frog_kiss, tests/test_plan_gaps.gd::test_frog_kiss_hops_in_kisses_and_poofs, handoff/shots/frog/frog_kiss.png | 2026-11-10: after the card flips to Kiss the Frog, a little frog hops in (two ribbits), jumps to his cheek (smooch squeak, pink puff), poofs; the frog round is his next kick as before |
 
 ## V: visuals, camera, juice
 

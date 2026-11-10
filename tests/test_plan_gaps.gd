@@ -19,6 +19,7 @@ func before() -> void:
 
 func after() -> void:
 	SettingsSandbox.leave()
+	await Audio.stop_all()   # the layered music's playbacks would leak at exit otherwise
 
 
 func before_test() -> void:
@@ -269,3 +270,49 @@ func test_a_level_asked_for_during_the_swap_is_kept() -> void:
 		assert_float(sync.get_sync_stream_volume(i)).is_equal_approx(0.0, 0.01)
 	Audio._music.stop()
 	Audio._track = ""
+
+
+# --- K-11: the waiting player's character cheers when they press a button ----------------------
+
+func test_bystander_cheers_on_a_button_press() -> void:
+	var main: Node = await _boot_main()
+	Engine.time_scale = 4.0
+	var t := 0.0
+	while Run.phase != Run.Phase.KICK_P1 and t < 10.0:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
+	var k: Kicker = main.kickers[P2]
+	var heard := []
+	k.shouted.connect(func(p: int) -> void: heard.append(p))
+	Game._set_state(Game.State.PLAYING)
+	var action := Players.action(P2, "action")
+	Input.action_press(action)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	Input.action_release(action)
+	assert_array(heard).contains([P2])
+	# He cheers; he never starts a kick of his own.
+	assert_bool(k.state == Kicker.State.WINDUP or k.state == Kicker.State.GAG).is_false()
+	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
+
+
+# --- U-14: Kiss the Frog: a frog hops in and kisses him ------------------------------------------
+
+func test_frog_kiss_hops_in_kisses_and_poofs() -> void:
+	var main: Node = await _boot_main()
+	var curse: UpgradeData = load("res://data/upgrades/kiss_the_frog.tres")
+	assert_object(curse.scene_override).is_not_null()
+	var done := [false]
+	var run := func() -> void:
+		await main.frog_kiss(P1, curse.scene_override)
+		done[0] = true
+	run.call()
+	var frog: Node3D = main.get_node_or_null("KissingFrog")
+	assert_object(frog).is_not_null()
+	var start: float = frog.global_position.distance_to(main.kickers[P1].global_position)
+	await get_tree().create_timer(0.5).timeout
+	assert_float(frog.global_position.distance_to(main.kickers[P1].global_position)).is_less(start)
+	await get_tree().create_timer(1.2).timeout
+	assert_bool(done[0]).is_true()
+	assert_bool(is_instance_valid(frog)).is_false()
