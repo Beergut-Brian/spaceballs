@@ -19,6 +19,11 @@ var _rest := {}
 var _hop := {}   # member -> [time left, height, speed]
 var _slump := 0.0
 var _rng := RandomNumberGenerator.new()
+## The crowd's echo of a waiting player's cheer: a few fans hop and clap back. The clap sound plays
+## at most once per ECHO_GAP s so button-mashing never stacks it; the hops always come.
+const ECHO_FANS := 4
+const ECHO_GAP := 1.2
+var _echo_clock := -100.0
 
 
 func setup(crowd_node: Node3D) -> void:
@@ -70,6 +75,21 @@ func react(level: Level) -> void:
 			_hats(0.9)
 			for m in _members:
 				Fx.puff(m.global_position + Vector3.UP * 2.2, HAT_COLORS[_rng.randi() % HAT_COLORS.size()], 0.6)
+
+
+## A waiting player pressed cheer: a few fans hop and clap along. Feedback only: it changes nothing
+## in the run.
+func echo_cheer() -> void:
+	if crowd == null or _members.is_empty():
+		return
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _echo_clock >= ECHO_GAP:
+		_echo_clock = now
+		Audio.play("crowd_clap", null, 1.15)
+	var picks := _members.duplicate()
+	picks.shuffle()
+	for i in mini(ECHO_FANS, picks.size()):
+		_start_hop(picks[i], i * 0.08, 0.22, 9.0, 0.9)
 
 
 func _cheer_anim(seconds: float) -> void:
