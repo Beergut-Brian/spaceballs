@@ -12,6 +12,8 @@ signal state_changed(state: State)
 signal kick_contact(run_up_quality: float)
 signal hopped(player: int)
 signal shouted(player: int)
+## A on the pad of a player who isn't kicking: their own cheer (the crowd joins in; never an action).
+signal cheered(player: int)
 signal gag_started(gag: StringName)
 ## Banana peel: he stepped on it (a few metres out), so the kick starts now, from here.
 signal slipped()
@@ -794,6 +796,7 @@ func _buttons() -> void:
 			shouted.emit(player)
 		else:
 			cheer()
+			cheered.emit(player)
 
 
 func _hop(strength: float) -> bool:

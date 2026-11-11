@@ -95,13 +95,17 @@ func _ready() -> void:
 	Run.phase_changed.connect(_on_phase_changed)
 	Run.run_started.connect(_on_run_started)
 	Run.reached_space.connect(_on_reached_space)
-	Run.ball_tier_reached.connect(func(_p: int, tier: int) -> void: Audio.music_level((tier - 1) / 2))
+	Run.ball_tier_reached.connect(func(_p: int, tier: int) -> void:
+		Audio.music_level(maxi(music_level_for(tier), music_floor(_run_top_tier))))
 	Run.ball_stopped.connect(func(_p: int, _h: float, _t: int) -> void: rig.hold_peak())
 	for p in [P1, P2]:
 		balls[p].kick_zone_entered.connect(_on_kick_zone.bind(p))
 		balls[p].returned.connect(_on_ball_returned.bind(p))
 		kickers[p].kick_contact.connect(_on_kick_contact.bind(p))
 		kickers[p].slipped.connect(_start_kick.bind(p))
+		kickers[p].cheered.connect(func(_q: int) -> void:
+			if Run.phase_player() >= 0:   # during a kick or a flight, not over the card pick
+				_crowd.echo_cheer())
 		hud.track(p, balls[p])
 	pick_ui.picked.connect(_on_picked)
 	end_card.restart_requested.connect(_on_end_accepted)
@@ -262,10 +266,21 @@ func _on_phase_changed(from: int, to: int) -> void:
 			_begin_end()
 
 
+## Music layer for a ball in a tier: 1-2 base loop only, 3-4 one layer, 5-6 two, 7-8 all three.
+static func music_level_for(tier: int) -> int:
+	return maxi(0, (tier - 1) / 2)
+
+
+## Between kicks the music keeps one layer less than the run's highest tier earned, so it grows
+## over the run (more layers as the balls go higher) and every big flight still climbs on top.
+static func music_floor(run_top_tier: int) -> int:
+	return maxi(0, music_level_for(run_top_tier) - 1)
+
+
 func _begin_kick(p: int) -> void:
 	Players.set_solo_focus(p)
 	Audio.music("field_loop")
-	Audio.music_level(0)
+	Audio.music_level(music_floor(_run_top_tier))   # the run so far keeps some layers on
 	var tee := _marker("Tees", p)
 	for q in [P1, P2]:
 		var k: Kicker = kickers[q]
