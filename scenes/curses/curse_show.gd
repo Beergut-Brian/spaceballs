@@ -17,6 +17,12 @@ const BADGE_SIZE := 0.8
 const BADGE_GAP := 0.45
 const CALLBACK_SIZE := 1.3
 const DRIFT_TIME := 1.0
+## Butterflies riding the ball at the kick: bigger than the prop, so they read in the close beat.
+const RIDER_SIZE := 1.7
+## The "that's why" camera looks this far over the icon (keeps the icon clear of the tier stamp).
+const CALLBACK_LOOK_UP := 0.7
+## A camera nearer than this to him puts his badge beside his head, where the shot still has it.
+const CLOSE_CAM := 6.0
 const PURPLE := Color(0.62, 0.36, 0.92)
 const ICON_DIR := "res://assets/sprites/upgrades/"
 
@@ -82,7 +88,9 @@ func _process(delta: float) -> void:
 		if fmod(b.t, 0.5) < delta:
 			b.h = _height(k)
 		node.visible = k.is_visible_in_tree()
-		node.global_position = badge_spot(k, b.h) + Vector3.UP * sin(b.t * 3.0) * 0.06
+		# Glides (not jumps) between over-his-head and beside-his-head when a close beat starts.
+		var spot := badge_spot(k, b.h) + Vector3.UP * sin(b.t * 3.0) * 0.06
+		node.global_position = node.global_position.lerp(spot, clampf(delta * 12.0, 0.0, 1.0))
 		# About the same size on screen whatever the shot: small in the close-up beats.
 		var cam := get_viewport().get_camera_3d()
 		if cam and not _popping(node):
@@ -114,7 +122,7 @@ func _process(delta: float) -> void:
 			if not is_instance_valid(bug) or ball == null:
 				continue
 			var a := TAU * i / list.size() + Time.get_ticks_msec() / 300.0
-			bug.global_position = ball.global_position + Vector3(cos(a) * 0.3, 0.32 + sin(a * 2.0) * 0.05, sin(a) * 0.3)
+			bug.global_position = ball.global_position + Vector3(cos(a) * 0.34, 0.4 + sin(a * 2.0) * 0.05, sin(a) * 0.34)
 
 
 # --- the reveal -----------------------------------------------------------------
@@ -306,11 +314,20 @@ func badge(p: int, k: Node3D, curse: UpgradeData) -> void:
 	_badges[p] = {node = node, kicker = k, h = h, t = 0.0}
 
 
-## Over his head; in the pick (whose camera stops just above his head) beside it instead.
+## Over his head; in the pick (whose camera stops just above his head) and whenever the camera is in
+## close on him (a curse beat, and the moment after it while the camera eases out; over his head
+## that cut it off) beside it instead.
 func badge_spot(k: Node3D, h: float) -> Vector3:
-	if Run.phase == Run.Phase.PICK:
+	if Run.phase == Run.Phase.PICK or _close_cam(k):
 		return k.global_position + _flat(k.global_basis.x).normalized() * 0.62 + Vector3.UP * minf(h, 1.6) * 0.72
 	return k.global_position + Vector3.UP * (h + BADGE_GAP)
+
+
+func _close_cam(k: Node3D) -> bool:
+	if rig != null and is_instance_valid(rig) and rig.has_method(&"beating") and bool(rig.call(&"beating")):
+		return true
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	return cam != null and cam.global_position.distance_to(k.global_position) < CLOSE_CAM
 
 
 func _popping(node: Node3D) -> bool:
@@ -372,11 +389,12 @@ func windup(_p: int, k: Node3D, _ball: Node3D, curse: UpgradeData) -> void:
 				Fx.puff(prop.global_position + Vector3.UP * 0.15, Color(1.0, 0.93, 0.4) if cause == &"peel" else Color(1, 1, 1), 0.4)
 				_beat(prop, BEAT_TIME, 2.6)
 			else:
-				_beat(k, BEAT_TIME, 3.0)
-		&"lunch", &"sneeze", &"butterfly", &"frog":
-			_beat(_body(k), BEAT_TIME, 3.4)
+				_beat(_chest(k), BEAT_TIME, 3.0)
 		_:
-			pass
+			# His chest, not his feet: the butterfly circling his head, his tummy, his sneeze and his
+			# badge all stay in the shot. (A beat on the butterfly itself swung the camera round with
+			# it into a top-down shot.)
+			_beat(_chest(k), BEAT_TIME, 3.4)
 
 
 ## The kick lands (after ball.launch): the cause acts on the ball, on camera.
@@ -393,7 +411,7 @@ func bite(p: int, k: Node3D, ball: Node3D, curse: UpgradeData) -> void:
 			# Butterflies land on the ball and pull it off course.
 			var bugs: Array = []
 			for i in 3:
-				var bug := _prop(curse, 1.0)
+				var bug := _prop(curse, RIDER_SIZE)
 				add_child(bug)
 				bug.global_position = mesh.global_position + Vector3(randf_range(-1.0, 1.0), 1.5, randf_range(-0.5, 0.5))
 				bugs.append(bug)
@@ -491,7 +509,13 @@ func callback(p: int, ball: Node3D, curse: UpgradeData) -> Node3D:
 			Fx.puff(pop.global_position + Vector3(0.8, -0.3, 0.0), puff_color[cause], 0.35), 0.0, 1.0, CALLBACK_TIME)
 	anim.tween_property(pop, "scale", Vector3.ONE * 0.01, 0.2).set_ease(Tween.EASE_IN)
 	anim.tween_callback(pop.queue_free)
-	_beat(icon, 0.9, 4.0)
+	# The camera looks a little above the icon, so the icon sits below the HUD's tier stamp
+	# (top centre) instead of under it.
+	var look := Node3D.new()
+	look.name = "Look"
+	pop.add_child(look)
+	look.position = Vector3.UP * CALLBACK_LOOK_UP
+	_beat(look, 0.9, 4.0)
 	return pop
 
 
@@ -500,6 +524,16 @@ func callback(p: int, ball: Node3D, curse: UpgradeData) -> Node3D:
 func _beat(target: Node3D, seconds: float, dist: float) -> void:
 	if rig and is_instance_valid(rig) and rig.has_method(&"beat") and is_instance_valid(target):
 		rig.call(&"beat", target, seconds, dist)
+
+
+## His chest (the Body attach point), so a close beat keeps him, his badge and the cause in frame.
+## The Body node sits at his feet: a beat on it put the badge and the butterfly off the top.
+func _chest(k: Node3D) -> Node3D:
+	if k.has_method(&"attach_point"):
+		var n: Node3D = k.call(&"attach_point", &"body")
+		if n:
+			return n
+	return _body(k)
 
 
 func _body(k: Node3D) -> Node3D:
