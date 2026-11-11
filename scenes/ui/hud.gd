@@ -1,6 +1,6 @@
 ## HUD: vertical height strip (8 tier blocks, each a landmark picture on its sky colour, no
 ## numbers), a ball marker per player, the profile's best-height flag (it rides up with a ball
-## that beats it), the tier stamp at every peak, and the round counter as a stack of small balls.
+## that beats it), a pennant per player in their colour at their best peak this session, the tier stamp at every peak, and the round counter as a stack of small balls.
 ## Systems owns structure, Art the look (TierIcon draws the pictures).
 extends Control
 
@@ -12,6 +12,15 @@ const STAMP_SIZE := 220.0
 const STAMP_HOLD := 1.1
 ## The best flag's x inside the strip (its pole is 24 px left of that).
 const BEST_X := 30.0
+## The session-best pennants: one per player in their colour, in that player's marker column
+## (P1 left of the strip, P2 right), pointing outwards so the strip stays clear. The pole's foot
+## is the height; the flag flies at its top, clear above that player's ball marker.
+const PENNANT := Vector2(40, 30)
+const PENNANT_POLE_H := 50.0
+const PENNANT_POLE := 6.0
+
+## Each player's highest peak since the game started (survives play-again; not saved).
+static var session_best := {}
 
 var _balls := {}
 var _tiers: TierSet
@@ -20,6 +29,8 @@ var _best_at_kick := 0.0
 var _beaten := false
 var stamp: TierIcon
 var _stamp_tween: Tween
+## Player -> the session-best pennant Control.
+var pennants := {}
 
 @onready var strip: Control = $Strip
 @onready var blocks: VBoxContainer = $Strip/Blocks
@@ -55,6 +66,8 @@ func _ready() -> void:
 	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	best_flag.add_child(line)
 	best_flag.move_child(line, 0)
+	for p in [P1, P2]:
+		pennants[p] = _make_pennant(p)
 	stamp = TierIcon.new()
 	stamp.name = "Stamp"
 	stamp.round_badge = true
@@ -94,6 +107,52 @@ func _process(_delta: float) -> void:
 		best = live   # the flag rides up with the ball that beat it
 	best_flag.visible = best > 0.0
 	best_flag.position = Vector2(BEST_X, h * (1.0 - _tiers.ladder_fraction(best)) - 12.0)
+	for p in pennants:
+		var pen: Control = pennants[p]
+		var sb := float(session_best.get(p, 0.0))
+		pen.visible = sb > 0.0
+		pen.position = Vector2(-PENNANT_POLE if p == P1 else strip.size.x, h * (1.0 - _tiers.ladder_fraction(sb)) - PENNANT_POLE_H)
+
+
+## A pole and a flag in the player's colour (white edge), pointing away from the strip.
+func _make_pennant(p: int) -> Control:
+	var pen := Control.new()
+	pen.name = "SessionBest%d" % (p + 1)
+	pen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pen.visible = false
+	var dir := -1.0 if p == P1 else 1.0
+	var pole := ColorRect.new()
+	pole.color = Color.WHITE
+	pole.size = Vector2(PENNANT_POLE, PENNANT_POLE_H)
+	pole.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pen.add_child(pole)
+	var x0 := 0.0 if p == P1 else PENNANT_POLE
+	var edge := Polygon2D.new()
+	edge.color = Color.WHITE
+	edge.polygon = PackedVector2Array([Vector2(x0, -3), Vector2(x0 + dir * (PENNANT.x + 6.0), PENNANT.y * 0.5), Vector2(x0, PENNANT.y + 3)])
+	pen.add_child(edge)
+	var flag := Polygon2D.new()
+	flag.name = "Flag"
+	flag.color = Players.COLOR[p]
+	flag.polygon = PackedVector2Array([Vector2(x0, 0), Vector2(x0 + dir * PENNANT.x, PENNANT.y * 0.5), Vector2(x0, PENNANT.y)])
+	pen.add_child(flag)
+	strip.add_child(pen)
+	strip.move_child(pen, $Strip/Markers.get_index())   # under the ball markers
+	return pen
+
+
+## A peak above this player's session best moves their pennant up to it with a pop.
+func note_peak(player: int, height: float) -> void:
+	if height <= float(session_best.get(player, 0.0)):
+		return
+	session_best[player] = height
+	var pen: Control = pennants.get(player)
+	if pen == null:
+		return
+	Fx.flash(pen, Color(1, 1, 0.7))
+	pen.pivot_offset = Vector2(0, PENNANT_POLE_H)   # grows from the foot of the pole
+	pen.create_tween().tween_property(pen, "scale", Vector2.ONE, 0.35).from(Vector2.ONE * 1.6) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 ## The height of the ball in flight now, or 0 when nothing is flying.
@@ -147,8 +206,9 @@ func _on_tier(player: int, tier: int) -> void:
 	Fx.flash(markers[player])
 
 
-func _on_ball_stopped(player: int, _h: float, tier: int) -> void:
+func _on_ball_stopped(player: int, h: float, tier: int) -> void:
 	Fx.flash(markers[player], Color(1, 1, 0.8))
+	note_peak(player, _tiers.space_height() if Run.in_space(player) else h)
 	if visible:
 		show_stamp(player, tier)
 
