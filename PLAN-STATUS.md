@@ -17,6 +17,17 @@ against the code and the tests on this branch, not against earlier reports. Fram
 `handoff/shots/` (git-excluded; Gary attaches them to the PR). Tests are `tests/<file>.gd::<test>`.
 sb-curses-1 (2026-11-10): added PT10-1..3 (S10 since the plan-status-sb-2 merge), all built; U-11's "about two per run" is superseded by PT10-2 (row text updated): 107 built, 1 partial, 0 missing, 4 superseded, 1 dropped, 3 later (116 rows).
 gap-close-5 (2026-11-10, `feature/sb-gap-close-5` off dev at `fc60170`): merged the plan-status-sb-2 re-audit, so its S10 rows (U-15..U-19, V-22) and sb-curses-1's PT10-1..3 both stand (PT10 rows point at them). Audited them on dev with new frames: U-16 polished and built; U-17, U-18 built and polished; U-19, V-22 built (audit only); U-15 stays partial (Hiccups reveal). Recounted from the rows: 116 built, 2 partial, 0 missing, 4 superseded, 1 dropped, 4 later (127 rows, PT10-1..3 included).
+launch-ready-1 audit (2026-11-10, `feature/launch-ready-1` off dev at `ea2712c`; Kaden: "I would like to have Spaceballs, Junk Yard Zap, and the Launcher done besides running it on the TV hardware"). Every row that is not built, superseded or dropped:
+- U-15 (partial, Hiccups reveal reads weak): **build now** (bigger jolting hops, picture-only hiccup bubbles, the ball knocked back hard).
+- M-04 (partial, polish rollup): closes when U-15 and the two rough built rows below are done.
+- A-06 (later, kicker and watcher barks): **build now** for every character the library has voiced (20 of 22: `cheer` / `oops` / `win` from `assets/characters/<id>/voice/`). Jeff and Chuck have no voice files yet, so their lines **need Kaden** (D37, Chuck's personality and both voices); the crowd stands in for them.
+- P-09 (later, personalities): **needs Kaden** (D37); nothing to build until the voices and barks exist.
+- S-05 (later, PhysicalBone3D ragdoll): **needs Kaden's pick**: the 2026-11-09 decision chose authored animation + procedural wobble and left ragdoll "if it's still wanted"; no playtest asked for it.
+- S-15 (later, v1.0.0 on the TV main tile): **needs the TV box** (Hermes promotes after a playtest on the real TV).
+- Built rows rough in frames (gap-close-5's Next up): V-24 (green P1 ring weak on the grass) and C-13 (28 px round dots easy to miss on a TV): **polish now**.
+- PT10-3 / V-22 note: `dragon_purr` is a designed placeholder until the library renders her voice: **listed for Gary** (cue name `dragon_purr`).
+Re-check in real frames this lane: the playtest 2026-11-10 rows (U-15..U-19, V-22, PT10-1..3) and the session flow; results in `handoff/REPORT.md` and `docs/launch-checklist.md`.
+
 When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 
 ## C: core loop
