@@ -11,6 +11,9 @@ class_name CurseShow
 extends Node3D
 
 const REVEAL_TIME := 2.4
+## Hiccups reveal: his hop speed on each "hic" and how far each one knocks the demo ball back.
+const HIC_HOP := 5.0
+const HIC_KNOCK := 0.42
 const CALLBACK_TIME := 1.6
 const BEAT_TIME := 0.75
 const BADGE_SIZE := 0.8
@@ -248,15 +251,26 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			tw.tween_property(body, "scale", rest_scale, 0.3)
 			_sad_plop(tw, ball, ball_at + away * 0.25)
 		&"hiccup":
-			# Hic! Hic! Hic! Every hiccup bounces him up and knocks the ball sideways.
+			# HIC! HIC! HIC! Each hiccup jolts him (stretch, a big hop), a hiccup bubble pops out of his
+			# mouth, and the ball gets knocked back hard, a little further each time.
+			var mouth := feet + Vector3.UP * 1.45 + toward * 0.3
 			for i in 3:
-				tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0 + i * 0.1))
-				tw.tween_callback(_hop.bind(k, 3.0))
-				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * (1.5 + 0.2 * i) - side * 0.45, Color(0.7, 0.9, 1.0), 0.25))
-				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1) + Vector3.UP * 0.3, 0.17).set_ease(Tween.EASE_OUT)
-				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1), 0.17).set_ease(Tween.EASE_IN)
-				tw.tween_interval(0.16)
-			_sad_plop(tw, ball, ball_at + away * 0.9)
+				var from := ball_at + away * HIC_KNOCK * i
+				var knock := ball_at + away * HIC_KNOCK * (i + 1)
+				tw.tween_callback(func() -> void:
+					Audio.play(cue_of(curse), null, 1.0 + i * 0.12)
+					_hop(k, HIC_HOP)
+					_hic_bubble(stage, mouth + side * (0.12 * i - 0.12), toward)
+					Fx.puff(mouth, Color(0.7, 0.9, 1.0), 0.3))
+				tw.tween_property(body, "scale", rest_scale * Vector3(0.82, 1.28, 0.82), 0.06).set_ease(Tween.EASE_OUT)
+				tw.parallel().tween_property(body, "rotation:x", rest_rot.x - 0.25, 0.06)
+				tw.parallel().tween_method(func(u: float) -> void:
+					ball.global_position = from.lerp(knock, u) + Vector3.UP * sin(u * PI) * 0.4
+					ball.rotation.z = -(i + u) * 2.5, 0.0, 1.0, 0.26)
+				tw.tween_property(body, "scale", rest_scale, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+				tw.parallel().tween_property(body, "rotation:x", rest_rot.x, 0.16)
+				tw.tween_interval(0.12)
+			_sad_plop(tw, ball, ball_at + away * HIC_KNOCK * 3.0)
 		&"frog":
 			# He turns into the frog for a moment; the ball just dribbles off.
 			tw.tween_callback(func() -> void:
@@ -283,6 +297,47 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 		body.scale = rest_scale
 	stage.queue_free()
 	badge(p, k, curse)
+
+
+## A hiccup bubble: a shiny see-through bubble that pops out of his mouth, floats up and bursts.
+func _hic_bubble(stage: Node3D, at: Vector3, toward: Vector3) -> Node3D:
+	var b := MeshInstance3D.new()
+	b.name = "HicBubble"
+	var sph := SphereMesh.new()
+	sph.radius = 0.2
+	sph.height = 0.4
+	b.mesh = sph
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.72, 0.92, 1.0, 0.55)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.rim_enabled = true
+	mat.rim = 1.0
+	mat.metallic_specular = 1.0
+	mat.roughness = 0.05
+	b.material_override = mat
+	var shine := MeshInstance3D.new()
+	var dot := SphereMesh.new()
+	dot.radius = 0.05
+	dot.height = 0.1
+	shine.mesh = dot
+	var smat := StandardMaterial3D.new()
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	smat.albedo_color = Color.WHITE
+	shine.material_override = smat
+	shine.position = Vector3(-0.08, 0.09, 0.12)
+	b.add_child(shine)
+	stage.add_child(b, true)   # readable names: HicBubble, HicBubble2, ...
+	b.global_position = at
+	b.scale = Vector3.ONE * 0.05
+	var tw := b.create_tween()
+	tw.tween_property(b, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(b, "global_position", at + toward * 0.25 + Vector3.UP * 0.25, 0.18)
+	tw.tween_property(b, "global_position", at + toward * 0.3 + Vector3.UP * 0.75, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(func() -> void:
+		Audio.play("sky_pop", null, 1.7)
+		Fx.puff(b.global_position, Color(0.8, 0.95, 1.0), 0.3)
+		b.queue_free())
+	return b
 
 
 ## The ball's sad little hop and plop that ends every reveal demo.
