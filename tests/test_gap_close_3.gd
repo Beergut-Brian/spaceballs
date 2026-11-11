@@ -28,6 +28,7 @@ func before_test() -> void:
 	_heard.clear()
 	Audio.played.connect(_on_played)
 	Run.stop_run()
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 
 
 func after_test() -> void:
@@ -40,9 +41,9 @@ func after_test() -> void:
 	Run.demo = false
 	Game.demo = false
 	Run.save_enabled = true
-	Engine.time_scale = 1.0
 	Run.phase = Run.Phase.IDLE
 	Run.stop_run()
+	PhysicsPin.leave()
 
 
 func _on_played(cue: String, _pitch: float) -> void:

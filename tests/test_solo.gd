@@ -23,6 +23,7 @@ func before_test() -> void:
 	Run.save_enabled = false
 	Game._set_state(Game.State.TITLE)
 	get_tree().paused = false
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 
 
 func after_test() -> void:
@@ -31,7 +32,7 @@ func after_test() -> void:
 			n.free()
 	_nodes.clear()
 	Players.reset()
-	Engine.time_scale = 1.0
+	PhysicsPin.leave()
 	Run.demo = false
 	Game.demo = false
 	Run.save_enabled = true
@@ -310,6 +311,7 @@ func test_full_solo_round_reaches_round_two(timeout := 240000) -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
 	_nodes.append(main)
 	get_tree().root.add_child(main)
+	PhysicsPin.seed_main(main)
 	Players.set_solo(true)   # what --solo does, before the demo's deferred joins
 	var focus_at := {}
 	var picks := []

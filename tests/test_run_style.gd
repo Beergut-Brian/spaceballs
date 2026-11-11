@@ -16,8 +16,12 @@ func after() -> void:
 
 
 func before_test() -> void:
-	Engine.time_scale = 1.0
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 	await get_tree().physics_frame
+
+
+func after_test() -> void:
+	PhysicsPin.leave()
 
 
 # --- the styles -----------------------------------------------------------------------

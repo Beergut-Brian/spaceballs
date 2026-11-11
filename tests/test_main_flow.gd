@@ -18,13 +18,13 @@ func before_test() -> void:
 	Game._set_state(Game.State.TITLE)
 	Run.save_enabled = false
 	Run.demo = true
-	Engine.time_scale = 8.0
+	PhysicsPin.enter(8.0)   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 
 
 func after_test() -> void:
 	if is_instance_valid(_main):
 		_main.free()
-	Engine.time_scale = 1.0
+	PhysicsPin.leave()
 	Run.demo = false
 	Game.demo = false
 	Run.save_enabled = true
@@ -51,6 +51,7 @@ func _wait_for(cond: Callable, seconds: float) -> bool:
 func test_round_one_plays_through_pick_into_round_two(timeout := 240000) -> void:
 	_main = load("res://scenes/main.tscn").instantiate()
 	get_tree().root.add_child(_main)
+	PhysicsPin.seed_main(_main)
 	var kicked := []
 	Run.kicked.connect(func(p, _power): kicked.append(p))
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.KICK_P1, 3.0)).is_true()

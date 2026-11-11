@@ -7,8 +7,12 @@ extends GdUnitTestSuite
 const BALL := preload("res://scenes/ball.tscn")
 
 
+func before_test() -> void:
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
+
+
 func after_test() -> void:
-	Engine.time_scale = 1.0
+	PhysicsPin.leave()
 	await Audio.stop_all()
 
 

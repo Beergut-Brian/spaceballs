@@ -8,12 +8,12 @@ const JEFF := preload("res://scenes/players/jeff.tscn")
 
 
 func before_test() -> void:
-	Engine.time_scale = 4.0
+	PhysicsPin.enter(4.0)   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 	Run._ensure_data()
 
 
 func after_test() -> void:
-	Engine.time_scale = 1.0
+	PhysicsPin.leave()
 	await Audio.stop_all()
 
 
