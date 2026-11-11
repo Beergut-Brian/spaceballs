@@ -491,6 +491,24 @@ func _dress_trees(d: Node3D) -> void:
 			crowns.set_instance_transform(i * 4 + k, Transform3D(Basis.from_scale(Vector3.ONE * blobs[k][1]), p + blobs[k][0]))
 			crowns.set_instance_color(i * 4 + k, blobs[k][2])
 	var trees := node(d, "Trees")
+	# The camera keeps its lens out of these (camera_rig.gd::set_trees); stored as plain data because a
+	# headless run can't read MultiMesh transforms back.
+	var occ := PackedVector4Array()
+	for i in spots.size():
+		var p: Vector3 = spots[i][0]
+		var h: float = spots[i][1]
+		var r := h * 0.32
+		var blobs := [[Vector3(0, h * 0.75, 0), r], [Vector3(r * 0.6, h * 0.62, r * 0.2), r * 0.7],
+			[Vector3(-r * 0.5, h * 0.66, -r * 0.3), r * 0.75], [Vector3(r * 0.1 * sin(i * 2.3), h * 0.98, 0), r * 0.6]]
+		for b in blobs:
+			var c: Vector3 = p + b[0]
+			occ.append(Vector4(c.x, c.y, c.z, b[1]))
+		var tr := 0.09 * sqrt(h)
+		var y := 0.0
+		while y <= h * 0.7 + 0.000001:
+			occ.append(Vector4(p.x, y, p.z, 1.1 * tr + 0.15))
+			y += 0.5
+	trees.set_meta(&"occluders", occ)
 	var t1 := MultiMeshInstance3D.new()
 	t1.name = "Trunks"
 	t1.multimesh = trunks

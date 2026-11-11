@@ -32,7 +32,7 @@ var _tw: Tween
 
 func _ready() -> void:
 	_ball = get_parent()
-	_mesh = _ball.get_node("Mesh")
+	_mesh = _ball.get_node("Grow/Mesh")
 	_imm = ImmediateMesh.new()
 	_trail = MeshInstance3D.new()
 	_trail.mesh = _imm
@@ -112,6 +112,7 @@ func _update_trail(flying: bool, delta: float) -> void:
 	if _points.size() < 2 or cam == null:
 		return
 	var tint: Color = ACCENTS[clampi(int(_ball.get("player")), 0, 1)].lerp(Color.WHITE, 0.6)
+	var grown: float = _mesh.get_parent().scale.x if _mesh.get_parent() != _ball else 1.0   # ball.gd's Grow
 	_imm.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
 	var n := _points.size()
 	for i in n:
@@ -121,7 +122,7 @@ func _update_trail(flying: bool, delta: float) -> void:
 		var dir := (nxt - prv).normalized()
 		var side := dir.cross(cam.global_position - p).normalized()
 		var u := float(i) / float(n - 1)   # 0 tail .. 1 head
-		var w := trail_width * u
+		var w := trail_width * grown * u
 		var c := tint
 		c.a = u * u * 0.45
 		_imm.surface_set_color(c)
