@@ -326,4 +326,7 @@ func test_full_solo_round_reaches_round_two(timeout := 240000) -> void:
 	assert_int(Players.device_of(P1)).is_equal(Players.device_of(P2))
 	assert_int(focus_at.get(Run.Phase.KICK_P2, -1)).is_equal(P2)
 	assert_int(focus_at.get(Run.Phase.KICK_P1, -1)).is_equal(P1)
+	# Both picked, once each. Not in order: a card that flips into a curse plays its 2-3 s reveal demo
+	# before Run.pick, so P2's pick can land first (playtest 2026-11-10: 40 % on the first pick).
+	picks.sort()
 	assert_array(picks).is_equal([P1, P2])

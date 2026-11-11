@@ -61,6 +61,8 @@ const CROWD_BEAT := 0.35
 var _turn: TurnMarker
 var slow_mo: SlowMo
 var hit_stop: HitStop
+## Playtest 2026-11-10 #1: every curse shows what it does, when it bites and why (scenes/curses/).
+var curse_show: CurseShow
 ## The waving alien at the orbit moment (null when there is none).
 var visitor: Node3D
 var _crowd: CrowdReactions
@@ -112,6 +114,12 @@ func _ready() -> void:
 	add_child(slow_mo)
 	hit_stop = HitStop.new()
 	add_child(hit_stop)
+	curse_show = CurseShow.new()
+	curse_show.name = "CurseShow"
+	curse_show.rig = rig
+	curse_show.height_of = _stack_height
+	curse_show.ball_looks = [balls[P1].mesh, balls[P2].mesh]
+	add_child(curse_show)
 	_lengthen_field()
 	_crowd = CrowdReactions.new()
 	add_child(_crowd)
@@ -225,6 +233,7 @@ func _layout_lobby() -> void:
 
 func _on_run_started() -> void:
 	_run_top_tier = 1
+	curse_show.clear_all()
 	_clear_visitor()
 	end_card.close()
 	pick_ui.close()
@@ -362,6 +371,8 @@ func _start_kick(p: int) -> void:
 	_turn.hide_marker()
 	if Kicker.gag_of(kickers[p].windup) != &"" and not kickers[p].frog:
 		rig.frame_close(true)   # move in so the gag reads
+	if Run.curse_of(p) != null:
+		curse_show.windup(p, kickers[p], balls[p], Run.curse_of(p))   # the cause, on camera
 
 
 func _physics_process(delta: float) -> void:
@@ -423,12 +434,15 @@ func _on_kick_contact(quality: float, p: int) -> void:
 	var fx: Dictionary = kickers[p].effects
 	balls[p].effects.assign(fx.get(&"ball_effects", []) if not kickers[p].frog else [])
 	if not kickers[p].frog:
-		Fx.puff(balls[p].global_position, Color(1, 1, 0.8), 0.8 + tier * 0.3)
+		# A cursed kick's puff stays small so the cause (butterflies, sneeze) shows on the ball.
+		Fx.puff(balls[p].global_position, Color(1, 1, 0.8), 0.35 if Run.curse_of(p) != null else 0.8 + tier * 0.3)
 		var juice := field.get_node_or_null("Juice")
 		if juice and juice.has_method("shake") and float(fx.get(&"shake", 0.0)) > 0.0:
 			juice.call_deferred("shake", float(fx.get(&"shake", 0.0)))   # after its own kick shake
 	balls[p].launch(power, height)
 	var cursed := Run.curse_of(p) != null
+	if cursed:
+		curse_show.bite(p, kickers[p], balls[p], Run.curse_of(p))   # butterflies on the ball, ...
 	if SlowMo.wants(tier, cursed or kickers[p].frog):
 		slow_mo.trigger()   # the strongest kicks: half a second of slow motion on the boot
 	elif HitStop.wants(tier, cursed or kickers[p].frog) and not slow_mo.active():
@@ -514,6 +528,7 @@ func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 	var curse := Run.curse_of(p)
 	if curse == null:
 		return
+	curse_show.callback(p, balls[p], curse)   # that's why: the curse pops over where it landed
 	_crowd.react(CrowdReactions.Level.AWW)
 	if curse.scene_override == null:
 		return
@@ -592,8 +607,13 @@ func _on_picked(p: int, u: UpgradeData) -> void:
 		if Run.phase != Run.Phase.PICK:
 			return
 	if u.is_curse():
+		# What it will do to him: a picture-only demo, then his curse badge pops on.
+		await curse_show.reveal(p, kickers[p], u, pick_ui.camera_of(p) as Camera3D)
+		if Run.phase != Run.Phase.PICK:
+			return
+	if u.is_curse():
 		Audio.play("curse")
-		Fx.puff(kickers[p].global_position + Vector3.UP, Color(0.6, 0.4, 0.9), 2.0)
+		Fx.puff(kickers[p].global_position + Vector3.UP * 0.2, Color(0.6, 0.4, 0.9), 0.5)   # the badge stays in sight
 		Fx.pop(kickers[p].body, 1.4)
 	else:
 		kickers[p].add_upgrade_visual(u)
@@ -652,6 +672,7 @@ func frog_kiss(p: int, scene: PackedScene) -> void:
 
 func _begin_end() -> void:
 	rig.split(false)
+	curse_show.clear_all()
 	hud.visible = false   # the end card's shelves take the edges
 	_turn.hide_marker()
 	# Up among the stars, so the sky ramp shows space and the planet below.
