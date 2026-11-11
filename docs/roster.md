@@ -50,8 +50,11 @@ outside every game's `user://`. Keyed by the launcher's save profile (`Save.prof
 ```
 
 Written the moment a pick changes: read, change only this profile's two slots, keep every other
-key, write `players.json.tmp`, rename. Tests point `Roster.picks_path` at `user://` so they never
-write the real one.
+key, write `players.json.tmp`, rename. Tests and scripted runs never read or write the real one:
+`RunSandbox.active()` (the gdUnit runner, `--demo`, `--shots=`, `--shot-dir=`, `--screenshot-after=`,
+`--ui=`, `--timescale=`, `--log-phases` or `--sandbox`) points `Roster.picks_path` and
+`Save.settings_path` at `user://sandbox/` from boot. A suite that points them elsewhere calls
+`Roster.reload()` after (`SettingsSandbox.enter()` does both).
 
 ## 4. The chooser
 

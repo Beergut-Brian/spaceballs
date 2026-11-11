@@ -25,6 +25,9 @@ func before() -> void:
 	Save.settings_path = "user://test_settings.json"
 	_real_picks = Roster.picks_path
 	Roster.picks_path = "user://test_lobby_players.json"
+	DirAccess.remove_absolute(Roster.picks_path)
+	Save.reload_settings()
+	Roster.reload()   # boot resolved the picks from whatever file was live then: re-resolve
 	Game.quit_exits = false
 	Game.quit_requested.connect(_on_quit)
 	Game.lobby_ready.connect(_on_lobby_ready)

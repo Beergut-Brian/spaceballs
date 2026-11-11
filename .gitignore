@@ -15,3 +15,5 @@ reports/
 # store/jar.glb is the launcher's jar world, read raw at runtime: never import it (art/tools/make_jar.py)
 !store/jar.glb.import
 .scratch/
+# Written by CI from the release tag (release.yml "Stamp the version"); never commit it
+data/build.json
