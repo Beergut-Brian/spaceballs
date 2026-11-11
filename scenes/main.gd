@@ -55,6 +55,8 @@ const SNAP_GAP := 0.75
 const BUMP_PUSH := 4.0
 ## The field's picket fence is 30 m long; the long run-up (spawns 30 m out) gets a second length.
 const FENCE_LENGTH := 30.0
+## The other player's cheer bark comes this long after the kicker's own.
+const BARK_ECHO := 0.7
 ## A great kick holds the shot this long on the kicker and the cheering crowd before following the ball.
 const CROWD_BEAT := 0.35
 
@@ -474,6 +476,7 @@ func _on_kick_contact(quality: float, p: int) -> void:
 	var other := P2 if p == P1 else P1
 	if kickers[other].state == Kicker.State.CHEER or kickers[other].state == Kicker.State.CLOUD:
 		kickers[other].cheer()
+	_kick_barks(p, other, level, cursed or kickers[p].frog)
 	if not balls[p].dribbles(Run.curse_of(p)):
 		# A big one: a beat on the kick and the crowd going up, then off after the ball.
 		if level >= CrowdReactions.Level.GREAT:
@@ -542,6 +545,7 @@ func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 		_celebrate_orbit()
 		_space_visitor(balls[p].orbit_center)
 		kickers[p].dance(true)   # the victory dance; he keeps it up on his cloud
+		bark(p, "win")
 		return
 	var curse := Run.curse_of(p)
 	if curse == null:
@@ -733,6 +737,29 @@ func _on_end_accepted() -> void:
 func _on_reached_space(p: int) -> void:
 	Audio.play("space")
 	Audio.music("space_pad", 1.5)
+
+
+## A-06: the kicker's own voice reacts to his kick ("oops" on a cursed one, "cheer" on a great one)
+## and the other player's character cheers him on a great one. Only characters the library has
+## voiced; Jeff and Chuck have no voice yet (D37), so the crowd stands in for them.
+func _kick_barks(p: int, other: int, level: int, cursed: bool) -> void:
+	if cursed:
+		bark(p, "oops")
+		return
+	if level < CrowdReactions.Level.GREAT:
+		return
+	bark(p, "cheer")
+	if Players.is_active(other) and (Run.in_run(other) or Run.in_space(other)):
+		get_tree().create_timer(BARK_ECHO).timeout.connect(bark.bind(other, "cheer"))
+
+
+## Player p's character says one of its named barks on p's own voice. False if it has none.
+func bark(p: int, bark_name: String) -> bool:
+	var id := Roster.pick(p)
+	var who := Roster.info(id)
+	if who.is_empty() or who.voice == "" or not bark_name in who.barks:
+		return false
+	return Roster._say(p, id, "%s%s.ogg" % [who.voice, bark_name])
 
 
 ## The ball has settled into orbit: the crowd goes wild, confetti rains, everybody cheers.
