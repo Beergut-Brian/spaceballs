@@ -127,6 +127,8 @@ var _gag := &""
 var _windup_t := 0.0
 var _kicked := false
 var _prop: Node3D
+## Dust on a cursed kick (see contact_dust).
+const CURSED_DUST := 0.3
 var _dancing := false
 var _rng := RandomNumberGenerator.new()
 ## How this character runs (RunStyle.for_character): bob, stomp, arms, costume. P-03 / P-04.
@@ -766,8 +768,16 @@ func _contact(quality: float) -> void:
 		return
 	_kicked = true
 	_set_state(State.FOLLOW_THROUGH)
-	Fx.puff(global_position + Vector3.UP * 0.3, Color(0.85, 0.75, 0.6), 0.5 if frog else 1.2)
+	Fx.puff(global_position + Vector3.UP * 0.3, Color(0.85, 0.75, 0.6), contact_dust())
 	kick_contact.emit(quality)
+
+
+## The kick's dust cloud. A cursed kick's is a wisp: the camera is in close on the cause then, and a
+## full cloud hid him, the ball and the butterflies (gap-close-5, U-16).
+func contact_dust() -> float:
+	if frog:
+		return 0.5
+	return CURSED_DUST if windup != null and windup.is_curse() else 1.2
 
 
 func _end_follow_through() -> void:
