@@ -1063,6 +1063,75 @@ def sky_flap(rng):
 # ---------------------------------------------------------------- files
 # stem: (make, kind, trim dB). A stem ending in _<n> is variant n of its cue (Audio.gd picks one).
 
+
+# ---------------------------------------------------------------- gap-close-3: cues the gags asked for
+
+def inhale(f0):
+    """Sneeze build-up: one breathy rising "hah" (the gag plays it three times, pitched up)."""
+    def make(rng):
+        out = silence(0.4)
+        air = svf(noise(0.3, rng), 1800, 0.8, "band")
+        mix(out, [v * ar(0.3, 0.15, 0.08)(i / SR) for i, v in enumerate(air)], 0.0, 0.35)
+        mix(out, voice(lambda t: f0 * (1.0 + 0.3 * t / 0.22), 0.22, "a", ar(0.22, 0.08, 0.07), rng,
+                       0.3, 1.15), 0.08, 0.6)
+        return out
+    return make
+
+
+def choo(rng):
+    # The sneeze itself: a quick breathy "AH", then a soft band-limited "CHOO" that falls.
+    out = silence(0.7)
+    mix(out, voice(lambda t: 440 * (1.0 + 0.2 * t / 0.12), 0.12, "a", ar(0.12, 0.02, 0.04), rng,
+                   0.25, 1.15), 0.0, 0.8)
+    ch = svf(noise(0.1, rng), 3200, 1.4, "band")
+    mix(out, [v * ar(0.1, 0.004, 0.06)(i / SR) for i, v in enumerate(ch)], 0.13, 0.55)
+    mix(out, voice(lambda t: 480 * (1.0 - 0.35 * t / 0.4), 0.4, "u", ar(0.4, 0.01, 0.25), rng,
+                   0.12, 1.15), 0.18, 1.0)
+    return out
+
+
+def burp(rng):
+    # Too Much Lunch: a long, low, rattly "buuuurp" with a little pop at the end.
+    out = silence(0.8)
+    mix(out, voice(lambda t: 95 * (1.0 + 0.15 * math.sin(math.pi * t / 0.55)), 0.55, "o",
+                   ar(0.55, 0.03, 0.15), rng, 0.1, 0.9, rough=0.55), 0.0, 1.0)
+    mix(out, thump(180, 90, 0.08, 0.03), 0.55, 0.4)
+    return out
+
+
+def uh_oh(rng):
+    # The picked card shivers before the curse flips: a Jarling "uh-oh!" (two notes, down).
+    out = silence(0.6)
+    mix(out, voice(lambda t: 420.0, 0.16, "u", ar(0.16, 0.02, 0.05), rng, 0.05, 1.2), 0.0, 0.8)
+    mix(out, voice(lambda t: 330 * (1.0 - 0.08 * t / 0.28), 0.28, "o", ar(0.28, 0.02, 0.12), rng,
+                   0.05, 1.2), 0.2, 1.0)
+    return out
+
+
+def poof(rng):
+    # Gear swaps on, or the frog turns back: a soft cushiony "pff" of smoke, a low pop, two twinkles.
+    out = silence(0.7)
+    air = svf(noise(0.3, rng), 900, 0.7, "band")
+    mix(out, [v * ar(0.3, 0.01, 0.22)(i / SR) for i, v in enumerate(air)], 0.0, 0.7)
+    mix(out, thump(240, 120, 0.09, 0.03), 0.0, 0.5)
+    mix(out, sparkle(rng, 4, 0.08, 0.45, 0.25), 0.0, 1.0)
+    return out
+
+
+def crowd_clap(n, sec):
+    """A decent kick: the sideline claps (no "yaaay"), a few whoops underneath."""
+    def make(rng):
+        out = silence(sec)
+        for _ in range(n):
+            mix(out, clap(rng), rng.uniform(0.0, sec - 0.15), rng.uniform(0.3, 0.6))
+        for _ in range(2):
+            f = rng.uniform(380, 520)
+            mix(out, voice(lambda t, f=f: f * (1.0 + 0.3 * min(1.0, t / 0.1)), 0.25, "u",
+                           ar(0.25, 0.03, 0.1), rng, 0.08, 1.2), rng.uniform(0.05, 0.4), 0.2)
+        return out
+    return make
+
+
 FILES = {
     "windup_jeff_1": (windup_char("bare", 8, 0.16, 0.08, 520, 1900), "sfx", 0.0),
     "windup_jeff_2": (windup_char("bare", 9, 0.14, 0.07, 600, 2100), "sfx", 0.0),
@@ -1138,6 +1207,13 @@ FILES = {
     "waddle_2": (waddle((43, 41, 38)), "sfx", -1.0),
     "butterfly_1": (butterfly((88, 91, 93, 96, 100)), "sfx", -2.0),
     "butterfly_2": (butterfly((86, 91, 95, 98)), "sfx", -2.0),
+    "inhale": (inhale(300), "sfx", -2.0),
+    "choo": (choo, "sfx", 0.0),
+    "burp": (burp, "sfx", -1.0),
+    "uh_oh": (uh_oh, "sfx", -1.0),
+    "poof": (poof, "sfx", -2.0),
+    "crowd_clap_1": (crowd_clap(14, 1.1), "sfx", -1.0),
+    "crowd_clap_2": (crowd_clap(18, 1.3), "sfx", -1.0),
     # sky objects (Sky lane, scenes/sky/)
     "sky_pop_1": (sky_pop(2200), "sfx", -1.0),
     "sky_pop_2": (sky_pop(2600), "sfx", -1.0),

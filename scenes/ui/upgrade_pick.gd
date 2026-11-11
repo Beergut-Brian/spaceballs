@@ -172,7 +172,7 @@ func reveal_curse(p: int, curse: UpgradeData) -> void:
 	var tw := create_tween()
 	tw.tween_interval(0.3)
 	# Uh oh: it shivers first.
-	tw.tween_callback(Audio.play.bind("card_move", null, 0.55))
+	tw.tween_callback(Audio.play.bind("uh_oh"))
 	for i in 6:
 		tw.tween_property(card, "rotation", 0.09 * (1.0 if i % 2 == 0 else -1.0), 0.06)
 	tw.tween_property(card, "rotation", 0.0, 0.05)

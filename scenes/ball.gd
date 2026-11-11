@@ -5,6 +5,8 @@ extends RigidBody3D
 
 signal kick_zone_entered(body: Node3D)
 signal returned()
+## Each touch-down of the comedy drop onto the tee (1.0 the first, smaller after; 0.3 the last).
+signal bounced(strength: float)
 ## Sky hook (docs/contracts.md, Ball): a real flight started (not the frog dribble).
 signal launched(peak_height: float)
 
@@ -19,7 +21,9 @@ const ARC_TIME_MAX := 6.0
 const PEAK_HOLD := 0.8
 const SPACE_HOLD := 2.0
 const DROP_HEIGHT := 12.0
-const DROP_TIME := 0.55
+## The fall onto the tee, then the bounce heights (metres) after it.
+const DROP_TIME := 0.36
+const DROP_BOUNCES := [1.1, 0.3]
 const TEE_HEIGHT := 0.35
 ## Landmarks with a little sound gag on top of the tier sparkle (assets/audio/sfx/gag_<id>.ogg).
 const TIER_GAGS: Array[StringName] = [&"rooftops", &"treetops", &"clouds", &"edge", &"space"]
@@ -272,7 +276,7 @@ func _reach_peak() -> void:
 		# Settle into orbit: the ball swings round a point beside its peak, smiling.
 		orbit_around(global_position + Vector3(-ORBIT_RADIUS, 0.0, 0.0), ORBIT_RADIUS, 0.3, 0.0)
 		_return_in = SPACE_HOLD
-		Audio.play("tier_up", null, 1.5)
+		Audio.play("orbit_chime")
 	Run.notify_stopped(player, peak_height)
 
 
@@ -285,9 +289,17 @@ func _drop() -> void:
 	_tween = create_tween()
 	var rest := _tee + Vector3.UP * TEE_HEIGHT
 	if has_effect(&"floaty"):
-		_tween.tween_property(self, "global_position", rest, DROP_TIME * 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_tween.tween_property(self, "global_position", rest, 1.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	else:
-		_tween.tween_property(self, "global_position", rest, DROP_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+		# The comedy drop: it falls, then bounces twice, smaller each time, and every touch-down
+		# thuds, puffs dust and squashes the ball.
+		_tween.tween_property(self, "global_position", rest, DROP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		for i in DROP_BOUNCES.size():
+			var h: float = DROP_BOUNCES[i]
+			var up := sqrt(h) * 0.13
+			_tween.tween_callback(_bounce.bind(1.0 - i * 0.35))
+			_tween.tween_property(self, "global_position", rest + Vector3.UP * h, up).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_tween.tween_property(self, "global_position", rest, up).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	if has_effect(&"bouncy"):
 		# Boing, boing, boing back onto the tee.
 		for h in [1.6, 0.7, 0.25]:
@@ -296,9 +308,18 @@ func _drop() -> void:
 			_tween.tween_property(self, "global_position", rest, 0.12 + h * 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_tween.tween_callback(func() -> void:
 		Audio.play("land", null, 1.3)
-		Fx.puff(_tee + Vector3.UP * 0.2, Color(0.8, 0.7, 0.55), 1.0)
+		Fx.puff(_tee, Color(0.8, 0.7, 0.55), 0.6)   # settles; small enough that the ball shows
+		bounced.emit(0.3)
 		flight = Flight.TEE
 		returned.emit())
+
+
+## One touch-down of the comedy drop (`strength` 1 for the first, smaller after).
+func _bounce(strength: float) -> void:
+	Audio.play("land", null, 0.9 + (1.0 - strength) * 0.5)
+	Fx.puff(_tee, Color(0.8, 0.7, 0.55), 0.12 + strength * 0.18)   # small: the ball must stay in sight
+	Fx.pop(mesh, 1.0 + 0.4 * strength)
+	bounced.emit(strength)
 
 
 func _on_zone_body_entered(body: Node3D) -> void:

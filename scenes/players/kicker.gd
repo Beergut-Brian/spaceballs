@@ -1130,7 +1130,7 @@ func _gag_chase(tw: Tween) -> void:
 	var bug := _prop
 	if bug:
 		bug.top_level = true
-	tw.tween_callback(_sfx.bind("flutter", "card_move", 1.6))
+	tw.tween_callback(_sfx.bind("butterfly", "card_move", 1.6))
 	tw.tween_method(_chase_step.bind(bug), 0.0, 1.0, 1.5)
 	tw.tween_callback(func() -> void:
 		_sfx("shout", "hop", 1.2)
@@ -1157,6 +1157,7 @@ func _chase_step(u: float, bug: Node3D) -> void:
 
 ## Too Much Lunch: waddles to a stop, rocks, burps, and belly-bumps the ball.
 func _gag_waddle(tw: Tween) -> void:
+	tw.tween_callback(_sfx.bind("waddle", "frog", 0.55))   # three squishy tuba steps under the rocking
 	for i in 2:
 		tw.tween_property(body, "rotation:z", 0.4, 0.22).set_trans(Tween.TRANS_SINE)
 		tw.tween_property(body, "rotation:z", -0.4, 0.22).set_trans(Tween.TRANS_SINE)
@@ -1169,7 +1170,7 @@ func _gag_waddle(tw: Tween) -> void:
 	tw.tween_property(body, "rotation:x", -0.45, 0.12).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(body, "position:z", -0.35, 0.12)
 	tw.parallel().tween_property(body, "scale", _rest_scale, 0.12)
-	tw.tween_callback(_sfx.bind("boing", "hop", 0.6))
+	tw.tween_callback(_sfx.bind("sky_boing", "hop", 0.6))
 
 
 ## Shoelaces Tied: three stumbling hops, each worse, then a faceplant; the heel boots the ball.
@@ -1198,7 +1199,7 @@ func _gag_sneeze(tw: Tween) -> void:
 		tw.tween_interval(0.12)
 	tw.tween_interval(0.2)
 	tw.tween_callback(func() -> void:
-		_sfx("achoo", "curse", 1.3)
+		_sfx("choo", "achoo", 1.0)
 		_set_state(State.WINDUP)   # the tissue box prop pops on WINDUP
 		Fx.puff(global_position + Vector3.UP * 1.5 + global_basis.z * -1.0, Color(0.9, 1.0, 0.95), 0.7))
 	tw.tween_property(body, "rotation:x", -0.7, 0.08)
