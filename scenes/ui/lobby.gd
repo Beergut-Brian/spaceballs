@@ -91,7 +91,7 @@ func _ready() -> void:
 	_settings.closed.connect(_on_settings_closed)
 	_confirm.chosen.connect(_on_confirm_chosen)
 	visible = Game.state == Game.State.LOBBY
-	# Solo is playtest-only and never on at boot (Kaden's rule), so a saved solo is not restored.
+	# Solo is playtest-only and never on at boot (the designer's rule), so a saved solo is not restored.
 	open()
 	UiPreview.run.call_deferred(self)
 

@@ -7,7 +7,7 @@ extends Node
 
 ## Peak tier from which a kick gets the slow motion: edge of space and space (the sonic-boom kick).
 const FROM_TIER := 7
-## 0.4x: Kaden's audit 2026-11-10 asked for "around 0.4" (it was 0.25).
+## 0.4x: the designer's audit 2026-11-10 asked for "around 0.4" (it was 0.25).
 const SCALE := 0.4
 const SECONDS := 0.5
 

@@ -17,3 +17,4 @@ reports/
 .scratch/
 # Written by CI from the release tag (release.yml "Stamp the version"); never commit it
 data/build.json
+__pycache__/

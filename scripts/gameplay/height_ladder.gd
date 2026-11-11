@@ -1,6 +1,5 @@
-# PLACEHOLDER (systems grey-box): Gameplay owns height_ladder.tscn and replaces this.
-## Builds a placeholder landmark ring at each tier's height from data/tiers.tres (or the tier's
-## landmark scene if Content set one) and steps the sky colour with the camera's height.
+## Places each tier's landmark scene at its height from data/tiers.tres (a plain ring of boxes if a
+## tier has none) and steps the sky colour with the camera's height.
 extends Node3D
 
 @export var environment: WorldEnvironment

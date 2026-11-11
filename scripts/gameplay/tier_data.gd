@@ -1,4 +1,3 @@
-# PLACEHOLDER (systems grey-box): schema only. Gameplay owns the class, Content the numbers.
 ## One rung of the height ladder (data/tiers.tres holds eight of these, lowest first).
 class_name TierData
 extends Resource

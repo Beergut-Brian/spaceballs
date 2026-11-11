@@ -154,7 +154,12 @@ func _ready() -> void:
 	_phase = _rng.randf() * TAU
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = Players.COLOR[player]
+	# The colour glows a little, so P1's green ring reads on the green grass as well as P2's red.
+	mat.emission_enabled = true
+	mat.emission = Players.COLOR[player]
+	mat.emission_energy_multiplier = 0.45
 	accent.material_override = mat
+	_outline_accent()
 	helmet.visible = false
 	if body.has_node("Jarling"):
 		var id := character_id if character_id != "" else Roster.pick(player)
@@ -195,6 +200,30 @@ func _make_equipment() -> void:
 ## Become Roster character `id` (its vendored Jarling .glb) in place: same rig, collision, state,
 ## frog form and actions, and the gear worn now moves onto the new body at the same levels.
 ## False (and nothing changes) for an unknown id or a missing .glb.
+## A white band either side of the player-colour ring at his feet (V-24): the ring stands off the
+## grass whatever the colour. Only for the Jarling's flat torus ring.
+func _outline_accent() -> void:
+	var torus := accent.mesh as TorusMesh
+	if torus == null or accent.has_node("Outline"):
+		return
+	var o := MeshInstance3D.new()
+	o.name = "Outline"
+	var t := TorusMesh.new()
+	t.inner_radius = torus.inner_radius - 0.06
+	t.outer_radius = torus.outer_radius + 0.06
+	t.rings = torus.rings
+	t.ring_segments = torus.ring_segments
+	o.mesh = t
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color(1, 1, 1, 0.95)
+	o.material_override = m
+	o.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	o.position = Vector3(0, -0.04, 0)
+	o.scale = Vector3(1, 0.35, 1)   # flatter than the colour ring, so the colour sits on top
+	accent.add_child(o)
+
+
 func set_character(id: String) -> bool:
 	var who := Roster.info(id)
 	var rig := body.get_node_or_null("Jarling")

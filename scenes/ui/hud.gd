@@ -36,6 +36,8 @@ var pennants := {}
 @onready var blocks: VBoxContainer = $Strip/Blocks
 @onready var markers := {P1: $Strip/Markers/P1, P2: $Strip/Markers/P2}
 @onready var best_flag: Control = $Strip/BestFlag
+## The round counter: one ball per round played, bottom-left (C-13: 28 px dots were easy to miss).
+const ROUND_BALL := 44.0
 @onready var rounds: VBoxContainer = $Rounds
 @onready var restart_hint: Control = $RestartHint
 
@@ -225,14 +227,33 @@ func _refresh_rounds() -> void:
 		c.queue_free()
 	for i in Run.round_index:
 		var ball := Panel.new()
-		ball.custom_minimum_size = Vector2(28, 28)
-		_style_circle(ball, Color(1, 1, 1, 0.95), 28.0)
+		ball.custom_minimum_size = Vector2(ROUND_BALL, ROUND_BALL)
+		ball.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN   # round, not stretched to the column
+		var now := i == Run.round_index - 1
+		# Big ink-outlined balls, readable from the sofa; this round's ball is golden and bigger.
+		_style_ball(ball, Color(1.0, 0.85, 0.25) if now else Color(1, 1, 1, 0.97), ROUND_BALL)
 		ball.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		rounds.add_child(ball)
-		if i == Run.round_index - 1:
+		ball.pivot_offset = Vector2.ONE * ROUND_BALL * 0.5
+		if now:
 			ball.scale = Vector2.ONE * 0.1
-			ball.pivot_offset = Vector2(14, 14)
-			ball.create_tween().tween_property(ball, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK)
+			var tw := ball.create_tween()
+			tw.tween_property(ball, "scale", Vector2.ONE * 1.2, 0.3).set_trans(Tween.TRANS_BACK)
+			tw.tween_property(ball, "scale", Vector2.ONE, 0.2)
+
+
+## A round-counter ball: fill, a dark ink rim and a soft shadow (it sits on bright sky and grass).
+static func _style_ball(c: Control, color: Color, d: float) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = color
+	sb.set_corner_radius_all(int(d * 0.5))
+	sb.border_color = Color(0.12, 0.1, 0.2, 0.95)
+	sb.set_border_width_all(4)
+	sb.shadow_color = Color(0, 0, 0, 0.35)
+	sb.shadow_size = 4
+	sb.shadow_offset = Vector2(0, 3)
+	c.add_theme_stylebox_override("panel", sb)
+	c.size = Vector2(d, d)
 
 
 static func _style_circle(c: Control, color: Color, d: float) -> void:

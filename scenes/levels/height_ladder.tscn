@@ -4,4 +4,3 @@
 
 [node name="HeightLadder" type="Node3D"]
 script = ExtResource("1_ladder")
-metadata/_placeholder = "PLACEHOLDER (systems grey-box): Gameplay owns this scene."

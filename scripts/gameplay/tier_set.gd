@@ -1,4 +1,3 @@
-# PLACEHOLDER (systems grey-box): schema only. Gameplay owns the class, Content the numbers.
 ## The whole height ladder. Tier 8's threshold is the space line.
 class_name TierSet
 extends Resource
