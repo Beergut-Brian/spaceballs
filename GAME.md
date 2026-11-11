@@ -190,6 +190,18 @@ Source: `playtests/2026-11-09-2.md`.
 - **The camera follows big jumps** (rocket boots, jetpack) up and settles back down.
 - **No accidental jump-overs:** a low hop over your own ball snaps you in front of it and kicks; a big jump far above it still flies over.
 
+## Playtest 2026-11-10 changes (Kaden; these supersede the sections above)
+
+Notes quoted in `playtests/2026-11-10.md`.
+
+1. **Every curse is obvious** (Kaden: "Curses should be obvious why they're impacting you. Like I got a butterfly curse, and I had no idea what happened. Or why it would cause me to fail."). For every curse (Kiss the Frog, Banana Peel, Sneeze, Shoelaces Tied, Too Much Lunch, Butterfly and any others):
+   - **Reveal shows what it will do:** when the picked card flips to a curse, a 2-3 s picture-only demo plays on the card or over the character (the butterflies swarm the ball and nudge it off course; the laces knot and he trips), with its own sound.
+   - **The effect is visible at the moment it bites:** during the run-up and kick, the cause is on screen and the camera gives it a beat (butterflies land on the ball and pull it sideways; the banana peel is right there under the foot).
+   - **A "that's why" beat after the kick:** a short picture callback (the curse icon pops over the ball's landing spot with the cause animation) so a weak kick is never a mystery.
+   - The cursed player wears a small curse icon above them until the cursed kick is done.
+2. **New curse odds** (supersedes "average two curses per run"; Kaden: "a 40% chance from the start to get curse 1. 20% after that to get curse 2. Then 0% chance after that."). Gary's reading: per player, each picked card has a **40%** chance to flip into a curse until that player's first curse, then **20%** per pick until their second, then **0%**. So curses arrive early (not in the last rounds) and never more than two per player per run. Kept in data (`data/curse_odds.tres` or the tier set) so it can be tuned.
+3. **Dragon cameo** (Kaden: "get the dragon cameo flying in some layer"): The Hill's Dragon (library resident, `openjar-characters` v0.5.1, giant body) glides through the **Clouds** tier (tier 5), big, sleepy and friendly. The ball can bonk her: a happy sleepy roll, a puff of cloud, a rumble-purr, maybe a tiny height boost. Not every run: a tuned chance, so seeing her is a treat. She is not a playable character and never blocks a run.
+
 ## Decisions made without Kaden
 
 - 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.
