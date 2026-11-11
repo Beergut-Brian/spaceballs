@@ -33,6 +33,7 @@ func after() -> void:
 
 
 func before_test() -> void:
+	PhysicsPin.enter()   # a sped-up clock left by another suite finished his toe-poke inside one frame
 	if FileAccess.file_exists(FILE):
 		DirAccess.remove_absolute(FILE)
 	Players.reset()
@@ -54,6 +55,7 @@ func after_test() -> void:
 	var w := get_tree().root.get_node_or_null("ShowtimeWipe")
 	if w:
 		w.free()
+	PhysicsPin.leave()
 
 
 ## The stand-in roster, with these launch args (like the launcher's --p1-char= / --p2-char=).
@@ -151,7 +153,9 @@ func test_lobby_pick_changes_the_field_kicker_and_podium() -> void:
 	assert_str(Roster.pick(P1)).is_equal("standin")
 	assert_str(main.kickers[P1].character_id).is_equal("standin")
 	assert_str(_model(main.kickers[P1]).scene_file_path).is_equal(STANDIN_GLB)
-	await await_millis(200)   # the podium swaps at the bottom of its squash (70 ms)
+	# The podium swaps at the bottom of its squash (70 ms of game time): wait in game time, not
+	# wall-clock (on a slow runner the game clock falls behind the wall one).
+	await get_tree().create_timer(0.2).timeout
 	var podium: Node = lobby.get_node("Spots/P1/Character").character
 	assert_str(podium.id).is_equal("standin")
 	assert_str(podium.get_node("Jarling/Model").scene_file_path).is_equal(STANDIN_GLB)
@@ -187,8 +191,17 @@ func test_kick_and_cheer_on_the_stand_in() -> void:
 		assert_bool(anim.has_animation(a)).override_failure_message("no %s animation" % a).is_true()
 	k.begin_approach(k.global_position + Vector3(0, 0, -3))
 	assert_str(anim.current_animation).is_equal("run")
+	var hit := [false]
+	k.kick_contact.connect(func(_q: float) -> void: hit[0] = true)
 	k.start_windup()
 	assert_str(anim.current_animation).is_equal("kick")
+	# The end card cheers a kicker whose kick is done: let the foot meet the ball first. Dancing
+	# mid-wind-up raced the toe-poke, whose contact lands inside one long frame on a slow runner.
+	var t := 0.0
+	while not hit[0] and t < Kicker.KICK_DEADLINE + 1.0:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+	assert_bool(hit[0]).override_failure_message("the kick never landed").is_true()
 	k.dance(true)   # the end-card cheer
 	await await_idle_frame()
 	assert_int(k.state).is_equal(Kicker.State.CHEER)
