@@ -19,7 +19,12 @@ func before() -> void:
 func after() -> void:
 	SettingsSandbox.leave()
 
+func before_test() -> void:
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
+
+
 func after_test() -> void:
+	PhysicsPin.leave()
 	for r in _runs:
 		r.free()
 	_runs.clear()
@@ -188,6 +193,7 @@ func test_kick_fires_on_contact_with_own_ball_only(timeout := 60000) -> void:
 	Run.demo = true
 	_main = load("res://scenes/main.tscn").instantiate()
 	get_tree().root.add_child(_main)
+	PhysicsPin.seed_main(_main)
 	assert_bool(await _wait_for(func(): return Run.phase == Run.Phase.KICK_P1, 3.0)).is_true()
 	var jeff: Kicker = _main.kickers[Players.P1]
 	var chuck: Kicker = _main.kickers[Players.P2]

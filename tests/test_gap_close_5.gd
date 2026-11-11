@@ -12,11 +12,12 @@ const CameraRigScript := RIG
 
 
 func before_test() -> void:
+	PhysicsPin.enter()   # fixed 60 Hz step, seeded RNG, no curse left in Run by another suite
 	Run._ensure_data()
 
 
 func after_test() -> void:
-	Engine.time_scale = 1.0
+	PhysicsPin.leave()
 	await Audio.stop_all()
 
 
