@@ -225,20 +225,15 @@ func test_curses_never_offered_in_a_pick() -> void:
 
 
 func test_hidden_curse_rules() -> void:
-	# Never on the first pick, for a player who is behind, twice in a row, past the cap,
-	# or in the strong-only rounds; otherwise allowed.
-	assert_bool(RunScript.curse_allowed(1, false, 0, false)).is_false()
-	assert_bool(RunScript.curse_allowed(2, false, 0, false)).is_true()
+	# Playtest 2026-11-10 #2: from the very first pick, never for a player who is behind, never twice
+	# in a row, never a third, never in the strong-only rounds; otherwise allowed.
+	assert_bool(RunScript.curse_allowed(0, false, 0, false)).is_false()
+	assert_bool(RunScript.curse_allowed(1, false, 0, false)).is_true()
 	assert_bool(RunScript.curse_allowed(5, true, 0, false)).is_false()
 	assert_bool(RunScript.curse_allowed(5, false, 0, true)).is_false()
-	assert_bool(RunScript.curse_allowed(5, false, RunScript.CURSE_MAX, false)).is_false()
+	assert_bool(RunScript.curse_allowed(5, false, 1, false)).is_true()
+	assert_bool(RunScript.curse_allowed(5, false, 2, false)).is_false()
 	assert_bool(RunScript.curse_allowed(RunScript.STRONG_ONLY_AFTER - 1, false, 0, false)).is_false()
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3
-	var hits := 0
-	for i in 20000:
-		hits += 1 if RunScript.rolls_curse(5, false, 0, false, rng) else 0
-	assert_float(hits / 20000.0).is_between(RunScript.CURSE_REVEAL_ODDS - 0.01, RunScript.CURSE_REVEAL_ODDS + 0.01)
 
 
 func test_reveal_gives_a_curse_from_the_band() -> void:

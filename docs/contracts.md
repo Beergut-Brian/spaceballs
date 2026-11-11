@@ -403,11 +403,12 @@ Draw rules (`draw_cards`): three different cards. Per card the kind is rolled 65
 before round 14. Catch-up (2+ tiers behind): only `normal` / `strong` cards with
 `power_mult >= 1.7`. Picks after round 14: `strong` only.
 
-Hidden curses: after a pick, `main.gd` asks `reveal_curse(p)`. With `CURSE_REVEAL_ODDS` (14 %) the
+Hidden curses: after a pick, `main.gd` asks `reveal_curse(p)`. With the odds in `data/curse_odds.tres`
+(`CurseOdds`: 40 % per pick until the player's first curse, 20 % until the second, then 0 %) the
 card turns out to be a curse of the round's band: the pick UI flips it (`UpgradePick.reveal_curse`,
-awaitable) and `main.gd` calls `pick(p, curse)` instead of the picked card. Never on the first pick
-(round 1), never for a player on catch-up, never two rounds running, at most `CURSE_MAX` (2) per
-player, none in the strong-only rounds. About two per two-player run (`tests/test_simulation.gd`).
+awaitable) and `main.gd` calls `pick(p, curse)` instead of the picked card. From the first pick,
+never for a player on catch-up, never two rounds running, never a third per player, none in the
+strong-only rounds (`tests/test_curse_odds.gd`).
 
 ### `UpgradeData` (`scripts/gameplay/upgrade_data.gd`, `class_name UpgradeData extends Resource`)
 

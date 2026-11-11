@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CurseOdds" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/curse_odds.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+by_curses_so_far = PackedFloat32Array(0.4, 0.2, 0.0)
+from_round = 1
