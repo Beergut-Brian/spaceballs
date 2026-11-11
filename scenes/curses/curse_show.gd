@@ -21,6 +21,8 @@ const DRIFT_TIME := 1.0
 const RIDER_SIZE := 1.7
 ## The "that's why" camera looks this far over the icon (keeps the icon clear of the tier stamp).
 const CALLBACK_LOOK_UP := 0.7
+## A camera nearer than this to him puts his badge beside his head, where the shot still has it.
+const CLOSE_CAM := 6.0
 const PURPLE := Color(0.62, 0.36, 0.92)
 const ICON_DIR := "res://assets/sprites/upgrades/"
 
@@ -312,16 +314,20 @@ func badge(p: int, k: Node3D, curse: UpgradeData) -> void:
 	_badges[p] = {node = node, kicker = k, h = h, t = 0.0}
 
 
-## Over his head; in the pick (whose camera stops just above his head) and in a close camera beat
-## on his cursed kick (which cut it off over a tall gear pile) beside it instead.
+## Over his head; in the pick (whose camera stops just above his head) and whenever the camera is in
+## close on him (a curse beat, and the moment after it while the camera eases out; over his head
+## that cut it off) beside it instead.
 func badge_spot(k: Node3D, h: float) -> Vector3:
-	if Run.phase == Run.Phase.PICK or _close_beat():
+	if Run.phase == Run.Phase.PICK or _close_cam(k):
 		return k.global_position + _flat(k.global_basis.x).normalized() * 0.62 + Vector3.UP * minf(h, 1.6) * 0.72
 	return k.global_position + Vector3.UP * (h + BADGE_GAP)
 
 
-func _close_beat() -> bool:
-	return rig != null and is_instance_valid(rig) and rig.has_method(&"beating") and bool(rig.call(&"beating"))
+func _close_cam(k: Node3D) -> bool:
+	if rig != null and is_instance_valid(rig) and rig.has_method(&"beating") and bool(rig.call(&"beating")):
+		return true
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	return cam != null and cam.global_position.distance_to(k.global_position) < CLOSE_CAM
 
 
 func _popping(node: Node3D) -> bool:

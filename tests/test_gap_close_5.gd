@@ -175,6 +175,11 @@ func test_the_badge_stays_in_frame_during_the_close_beat() -> void:
 	assert_bool(Rect2(Vector2.ZERO, vp).has_point(px)).override_failure_message("badge at %s" % px).is_true()
 	await get_tree().create_timer(0.6).timeout
 	assert_bool(rig.beating()).is_false()
+	# The beat is over but the camera is still in close: the badge stays where the shot has it.
+	await get_tree().create_timer(0.3).timeout
+	assert_bool(cam.is_position_in_frustum(show.badge_of(0).global_position)).is_true()
+	# Back out to the field distance: over his head again.
+	cam.global_position = k.global_position + Vector3(0, 6, 12)
 	await get_tree().create_timer(0.4).timeout
 	assert_float(show.badge_of(0).global_position.y).is_greater(3.0)
 	show.clear_all()
