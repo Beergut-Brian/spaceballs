@@ -86,7 +86,7 @@ func _process(delta: float) -> void:
 		# About the same size on screen whatever the shot: small in the close-up beats.
 		var cam := get_viewport().get_camera_3d()
 		if cam and not _popping(node):
-			node.scale = Vector3.ONE * clampf(cam.global_position.distance_to(node.global_position) / 10.0, 0.3, 1.0)
+			node.scale = Vector3.ONE * clampf(cam.global_position.distance_to(node.global_position) / 12.0, 0.2, 1.0)
 		node.rotation.z = sin(b.t * 2.0) * 0.12
 	for p in _drifts.keys():
 		var d: Dictionary = _drifts[p]
@@ -209,11 +209,11 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			_sad_plop(tw, ball, ball_at + away * 1.0)
 		&"laces":
 			# The laces knot at his feet; two tied-up hops and a wobbly tip forward.
-			var laces := _prop(curse, 1.5)
+			var laces := _prop(curse, 3.0)
 			stage.add_child(laces)
-			laces.global_position = feet + Vector3.UP * 0.08 + toward * 0.15
+			laces.global_position = feet + Vector3.UP * 0.1 + toward * 0.35
 			laces.scale = Vector3.ONE * 0.01
-			tw.tween_property(laces, "scale", Vector3.ONE * 1.5, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			tw.tween_property(laces, "scale", Vector3.ONE * 3.0, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 			tw.parallel().tween_property(laces, "rotation:y", TAU, 0.4)
 			for i in 2:
 				tw.tween_callback(Audio.play.bind("hop", null, 1.1 + i * 0.15))
@@ -244,7 +244,7 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			for i in 3:
 				tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0 + i * 0.1))
 				tw.tween_callback(_hop.bind(k, 3.0))
-				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * 1.6, Color(0.7, 0.9, 1.0), 0.35))
+				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * 1.1 + toward * 0.4, Color(0.7, 0.9, 1.0), 0.5))
 				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1) + Vector3.UP * 0.3, 0.17).set_ease(Tween.EASE_OUT)
 				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1), 0.17).set_ease(Tween.EASE_IN)
 				tw.tween_interval(0.16)
@@ -309,7 +309,7 @@ func badge(p: int, k: Node3D, curse: UpgradeData) -> void:
 ## Over his head; in the pick (whose camera stops just above his head) beside it instead.
 func badge_spot(k: Node3D, h: float) -> Vector3:
 	if Run.phase == Run.Phase.PICK:
-		return k.global_position + _flat(k.global_basis.x).normalized() * 0.8 + Vector3.UP * minf(h, 1.6) * 0.72
+		return k.global_position + _flat(k.global_basis.x).normalized() * 0.62 + Vector3.UP * minf(h, 1.6) * 0.72
 	return k.global_position + Vector3.UP * (h + BADGE_GAP)
 
 
@@ -462,7 +462,7 @@ func callback(p: int, ball: Node3D, curse: UpgradeData) -> Node3D:
 		&"sneeze", &"lunch", &"hiccup", &"generic":
 			pass
 		_:
-			var prop := _prop(curse, 1.4)
+			var prop := _prop(curse, 3.0 if cause == &"laces" else 1.4)
 			pop.add_child(prop)
 			props.append(prop)
 	for bug in riders:
