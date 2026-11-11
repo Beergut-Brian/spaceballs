@@ -12,7 +12,7 @@ extends Node3D
 
 const REVEAL_TIME := 2.4
 ## Hiccups reveal: his hop speed on each "hic" and how far each one knocks the demo ball back.
-const HIC_HOP := 5.0
+const HIC_HOP := 3.9
 const HIC_KNOCK := 0.42
 const CALLBACK_TIME := 1.6
 const BEAT_TIME := 0.75
@@ -253,15 +253,15 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 		&"hiccup":
 			# HIC! HIC! HIC! Each hiccup jolts him (stretch, a big hop), a hiccup bubble pops out of his
 			# mouth, and the ball gets knocked back hard, a little further each time.
-			var mouth := feet + Vector3.UP * 1.45 + toward * 0.3
+			var mouth := feet + Vector3.UP * 1.2 + toward * 0.3
 			for i in 3:
 				var from := ball_at + away * HIC_KNOCK * i
 				var knock := ball_at + away * HIC_KNOCK * (i + 1)
 				tw.tween_callback(func() -> void:
 					Audio.play(cue_of(curse), null, 1.0 + i * 0.12)
 					_hop(k, HIC_HOP)
-					_hic_bubble(stage, mouth + side * (0.12 * i - 0.12), toward)
-					Fx.puff(mouth, Color(0.7, 0.9, 1.0), 0.3))
+					_hic_bubble(stage, mouth + side * (0.12 * i - 0.12), away)
+					Fx.puff(from + Vector3.UP * 0.1, Color(0.7, 0.9, 1.0), 0.25))   # on the ball, never over his face
 				tw.tween_property(body, "scale", rest_scale * Vector3(0.82, 1.28, 0.82), 0.06).set_ease(Tween.EASE_OUT)
 				tw.parallel().tween_property(body, "rotation:x", rest_rot.x - 0.25, 0.06)
 				tw.parallel().tween_method(func(u: float) -> void:
@@ -299,13 +299,14 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 	badge(p, k, curse)
 
 
-## A hiccup bubble: a shiny see-through bubble that pops out of his mouth, floats up and bursts.
-func _hic_bubble(stage: Node3D, at: Vector3, toward: Vector3) -> Node3D:
+## A hiccup bubble: a shiny see-through bubble that pops out of his mouth, drifts off with the ball
+## (away from the camera, inside the narrow pick view) and bursts.
+func _hic_bubble(stage: Node3D, at: Vector3, drift: Vector3) -> Node3D:
 	var b := MeshInstance3D.new()
 	b.name = "HicBubble"
 	var sph := SphereMesh.new()
-	sph.radius = 0.2
-	sph.height = 0.4
+	sph.radius = 0.26
+	sph.height = 0.52
 	b.mesh = sph
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = Color(0.72, 0.92, 1.0, 0.55)
@@ -331,8 +332,8 @@ func _hic_bubble(stage: Node3D, at: Vector3, toward: Vector3) -> Node3D:
 	b.scale = Vector3.ONE * 0.05
 	var tw := b.create_tween()
 	tw.tween_property(b, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.parallel().tween_property(b, "global_position", at + toward * 0.25 + Vector3.UP * 0.25, 0.18)
-	tw.tween_property(b, "global_position", at + toward * 0.3 + Vector3.UP * 0.75, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(b, "global_position", at + drift * 0.2 + Vector3.UP * 0.1, 0.18)
+	tw.tween_property(b, "global_position", at + drift * 0.5 + Vector3.UP * 0.35, 0.45).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func() -> void:
 		Audio.play("sky_pop", null, 1.7)
 		Fx.puff(b.global_position, Color(0.8, 0.95, 1.0), 0.3)
