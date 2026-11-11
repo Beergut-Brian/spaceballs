@@ -405,7 +405,7 @@ func _physics_process(delta: float) -> void:
 		_start_kick(p)
 
 
-## Kaden: "if you're close to the top of the ball and you're having to jump over it, maybe we just
+## designer: "if you're close to the top of the ball and you're having to jump over it, maybe we just
 ## snap the animation to in front of the ball and still have you kick it anyway."
 static func over_ball(k: Kicker, ball: Node3D) -> bool:
 	if k.is_on_floor() or k.state != Kicker.State.APPROACH or k.is_slipping():

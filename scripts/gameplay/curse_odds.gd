@@ -1,4 +1,4 @@
-## Hidden-curse odds (playtest 2026-11-10 #2, Kaden: "a 40% chance from the start to get curse 1.
+## Hidden-curse odds (playtest 2026-11-10 #2, designer: "a 40% chance from the start to get curse 1.
 ## 20% after that to get curse 2. Then 0% chance after that."). Per player: each picked card flips
 ## into a curse with `by_curses_so_far[n]`, n = that player's curses this run; past the end it is 0.
 ## Data: data/curse_odds.tres (tune it there). Run loads it; tests/test_curse_odds.gd proves it.
