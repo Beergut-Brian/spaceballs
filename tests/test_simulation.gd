@@ -22,6 +22,7 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 	r.start_run(players)
 	var max_gap_after_6 := 0
 	var curses := {0: 0, 1: 0}
+	var curse_rounds := {0: [], 1: []}   # the round each curse bites (the pick feeds the next round)
 	var floored := 0
 	while r.phase != RunScript.Phase.END and r.round_index <= 20:
 		if r.phase == RunScript.Phase.PICK:
@@ -43,6 +44,7 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 				if curse != null:
 					card = curse
 					curses[p] += 1
+					curse_rounds[p].append(r.round_index + 1)
 				r.pick(p, card)
 			continue
 		var p: int = r.phase_player()
@@ -62,6 +64,7 @@ static func simulate(seed: int, players: Array, policy := "random") -> Dictionar
 		"rounds": players.map(func(p): return r.space_round(p)),
 		"gap": max_gap_after_6,
 		"curses": curses,
+		"curse_rounds": curse_rounds,
 		"floored": floored,
 	}
 	r.free()
@@ -123,10 +126,13 @@ func test_single_player_random_picks() -> void:
 func test_two_players_random_picks() -> void:
 	var rounds := _check("2P", [0, 1], "random")
 	assert_float(median(rounds)).is_between(10.0, 12.0)
-	# Kaden: "in an average game, let's have two curse cards come up" (both players together).
-	assert_float(last_mean_curses).is_between(1.7, 2.3)
+	# Playtest 2026-11-10 #2 (40 % / 20 % / 0 % per player): almost every player gets two, never three.
+	# tests/test_curse_odds.gd checks the odds themselves.
+	assert_float(last_mean_curses).is_between(3.0, 4.0)
 
 
 func test_best_picks_are_faster_but_capped() -> void:
 	var rounds := _check("1P", [0], "best")
-	assert_float(median(rounds)).is_less(10.0)
+	# 2026-11-10: was < 10; the new curse odds (about 1.7 curses per player, not 1) cost each run
+	# about a round. Best picks still beat random picks (median 12) by two rounds.
+	assert_float(median(rounds)).is_less_equal(10.0)

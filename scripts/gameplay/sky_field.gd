@@ -36,6 +36,7 @@ var _juice: Node
 
 
 func _ready() -> void:
+	add_to_group(&"sky_field")   # DragonCameo finds it here
 	sky = load(SKY_PATH)
 	tiers = load(Run.TIERS_PATH)
 	rng.randomize()
@@ -164,6 +165,15 @@ func _on_launched(peak: float, ball: Node3D) -> void:
 	clear(ball)
 	_flights[ball] = {plan = plan(peak, rng.randi()), next = 0, live = [], base = ball.global_position,
 			last = ball.global_position}
+
+
+## A sky thing spawned outside the plan (the Dragon cameo) joins this ball's flight: the same hit
+## test, culling and clean-up as the planned ones. No flight, no adoption: it is freed.
+func adopt(ball: Node3D, o: SkyObject) -> void:
+	if not _flights.has(ball):
+		o.queue_free()
+		return
+	(_flights[ball].live as Array).append(o)
 
 
 ## Free this ball's sky objects.

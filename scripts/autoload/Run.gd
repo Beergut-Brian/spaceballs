@@ -32,12 +32,11 @@ const QUALITY_MIN := 0.8
 const QUALITY_MAX := 1.2
 ## Card odds per slot. Curses are never offered (playtest 2026-11-09 #2): they hide behind a pick.
 const KIND_ODDS := { "normal": 0.65, "strong": 0.22, "joke": 0.13 }
-## Hidden curses: after a pick, the card turns out to be a curse this often (data/BALANCE.md),
-## about two per run with both players. Never on the first pick, never for a player who is
-## behind (catch-up), never twice in a row, at most CURSE_MAX per player, none in strong-only rounds.
-const CURSE_REVEAL_ODDS := 0.14
-const CURSE_MAX := 2
-const CURSE_FROM_ROUND := 2
+## Hidden curses (playtest 2026-11-10 #2): after a pick, the card turns out to be a curse with the
+## odds in data/curse_odds.tres: 40 % per pick until the player's first curse, 20 % until the
+## second, then never. Never for a player who is behind (catch-up), never twice in a row, none in
+## the strong-only rounds.
+const CURSE_ODDS_PATH := "res://data/curse_odds.tres"
 const CATCH_UP_TIERS := 2
 const CATCH_UP_MIN_MULT := 1.7
 const CATCH_UP_STRONG_ODDS := 0.6
@@ -56,6 +55,7 @@ var save_enabled := true
 var demo := false
 
 var tiers: TierSet
+var curse_odds: CurseOdds
 var pool: Array[UpgradeData] = []
 var rng := RandomNumberGenerator.new()
 
@@ -247,7 +247,8 @@ func _mark_seen(cards: Array) -> void:
 func reveal_curse(player: int, with_rng: RandomNumberGenerator = null) -> UpgradeData:
 	_ensure_data()
 	var r := with_rng if with_rng else rng
-	if not rolls_curse(round_index, catch_up_for(player), curses_of(player), curse_of(player) != null, r):
+	if not rolls_curse(round_index, catch_up_for(player), curses_of(player), curse_of(player) != null, r,
+			curse_odds):
 		return null
 	var curse := pick_curse(pool, round_index, r)
 	_mark_seen([curse])
@@ -262,14 +263,26 @@ func curses_of(player: int) -> int:
 # --- draw rules (static so tests and the simulation share them) ------------
 
 ## r_index: the round just played (the pick feeds round r_index + 1).
-static func curse_allowed(r_index: int, catch_up: bool, so_far: int, cursed_now: bool) -> bool:
-	return r_index >= CURSE_FROM_ROUND and r_index + 1 < STRONG_ONLY_AFTER and not catch_up \
-			and so_far < CURSE_MAX and not cursed_now
+static func curse_allowed(r_index: int, catch_up: bool, so_far: int, cursed_now: bool,
+		odds: CurseOdds = null) -> bool:
+	var o := odds if odds else default_curse_odds()
+	return r_index >= o.from_round and r_index + 1 < STRONG_ONLY_AFTER and not catch_up \
+			and o.chance(so_far) > 0.0 and not cursed_now
 
 
+## One roll per allowed pick. The roll is always drawn when allowed, so a seeded run is repeatable.
 static func rolls_curse(r_index: int, catch_up: bool, so_far: int, cursed_now: bool,
-		r: RandomNumberGenerator) -> bool:
-	return curse_allowed(r_index, catch_up, so_far, cursed_now) and r.randf() < CURSE_REVEAL_ODDS
+		r: RandomNumberGenerator, odds: CurseOdds = null) -> bool:
+	var o := odds if odds else default_curse_odds()
+	return curse_allowed(r_index, catch_up, so_far, cursed_now, o) and r.randf() < o.chance(so_far)
+
+
+static func default_curse_odds() -> CurseOdds:
+	if ResourceLoader.exists(CURSE_ODDS_PATH):
+		var o := load(CURSE_ODDS_PATH) as CurseOdds
+		if o:
+			return o
+	return CurseOdds.new()
 
 
 static func pick_curse(all: Array[UpgradeData], r_index: int, r: RandomNumberGenerator) -> UpgradeData:
@@ -548,6 +561,8 @@ func _tiers() -> TierSet:
 
 
 func _ensure_data() -> void:
+	if curse_odds == null:
+		curse_odds = default_curse_odds()
 	if tiers == null and ResourceLoader.exists(TIERS_PATH):
 		tiers = load(TIERS_PATH)
 	if pool.is_empty():

@@ -40,6 +40,10 @@ var _orbit_r := 7.0
 var _orbit_h := 2.5
 var _lead := Vector3.ZERO
 var _lift := 0.0
+## A curse's camera beat (CurseShow): for a moment the lens moves in on the cause, whatever the mode.
+var _beat_target: Node3D
+var _beat_t := 0.0
+var _beat_dist := 3.2
 
 @onready var camera: Camera3D = $Camera
 
@@ -96,7 +100,30 @@ func orbit(center: Vector3, radius: float = 7.0, height: float = 2.5, snap: bool
 		_angle = atan2(d.x, d.z)
 
 
+## A beat on `target` (the butterflies on the ball, the peel under his foot): `seconds` of close-up,
+## `dist` metres out along the current view, then back to whatever the rig was doing.
+func beat(target: Node3D, seconds: float = 0.7, dist: float = 3.2) -> void:
+	_beat_target = target
+	_beat_t = seconds
+	_beat_dist = dist
+
+
+func beating() -> bool:
+	return _beat_t > 0.0 and is_instance_valid(_beat_target)
+
+
 func _process(delta: float) -> void:
+	if beating() and mode != Mode.SPLIT:
+		_beat_t -= delta
+		var at := _beat_target.global_position
+		var dir := camera.global_position - at
+		dir = dir.normalized() if dir.length() > 0.01 else Vector3.BACK
+		var kb := clampf(delta * smooth * 2.5, 0.0, 1.0)
+		camera.global_position = camera.global_position.lerp(at + dir * _beat_dist + Vector3.UP * 0.25, kb)
+		_look = _look.lerp(at, kb)
+		if not camera.global_position.is_equal_approx(_look):
+			camera.look_at(_look)
+		return
 	var want_pos := camera.global_position
 	var want_look := _look
 	match mode:

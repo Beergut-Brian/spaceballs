@@ -7,10 +7,13 @@ Content owns this file. Re-run `tests/test_simulation.gd` and update it whenever
 - Kick power = `BASE_POWER x product(power_mult of every upgrade picked) x run-up quality (0.8 to 1.2)`.
   Height = power² / 2g, so every x1.75 normal pick roughly triples the height.
 - Card odds per slot: normal 65 %, strong 22 %, joke 13 %. Every draw has a normal. Curses are never offered.
-- Hidden curses (playtest 2026-11-09 #2): after a pick, 14 % (`CURSE_REVEAL_ODDS`) that the card turns out
-  to be a curse instead (the card flips). Not on the first pick, not on catch-up, not two rounds
-  running, max 2 per player, none in the strong-only rounds. Simulation: **1.99 curses per 2P run**
-  (median 2, 40 of 400 runs have none, max 4), 1.05 per 1P run.
+- Hidden curses (playtest 2026-11-10 #2, supersedes 14 % / "about two per run"): `data/curse_odds.tres`.
+  Per player, a picked card flips into a curse 40 % of the time until their first curse, then 20 %
+  until their second, then never. From the very first pick; not on catch-up, not two rounds running,
+  none in the strong-only rounds. Simulation (`tests/test_curse_odds.gd`, 1200 player-runs): 0 curses 9,
+  1 curse 305, 2 curses 886, never 3; first curse median round 3 (78 % by round 4), second median round 7.
+  `tests/test_simulation.gd`: 3.46 curses per 2P run, 1.75 per 1P run. Each costs about a round:
+  random-pick median is now 12 (top of the 10-12 band), best picks 10 (was under 10).
 - Tier band: rounds 1-4 draw tier-1 cards, 5-8 tiers 1-2, 9+ all three (`c.tier <= band`).
 - Catch-up: a player 2+ tiers behind gets normals of x1.7+ and 60 % strong slots (was 40 %, see log).
 - No duplicate gear: a draw never offers a card the player already has; a hidden curse can repeat.
@@ -23,7 +26,7 @@ Content owns this file. Re-run `tests/test_simulation.gd` and update it whenever
 ## Target curve (GAME.md)
 
 Median 11 rounds to space, 10 to 12 OK; two early strongs can do it in 7 or 8; three curses
-stretch to 14 or 15 (hidden curses: about two per run, both players together); nobody passes round 15; P1 and P2 stay within 2 tiers after round 6.
+stretch to 14 or 15 (hidden curses: 40 % / 20 % / 0 % per player, so nearly always two each); nobody passes round 15; P1 and P2 stay within 2 tiers after round 6.
 
 ### Best tier reached by round (1P, 400 random-pick runs)
 

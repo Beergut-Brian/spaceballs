@@ -403,11 +403,12 @@ Draw rules (`draw_cards`): three different cards. Per card the kind is rolled 65
 before round 14. Catch-up (2+ tiers behind): only `normal` / `strong` cards with
 `power_mult >= 1.7`. Picks after round 14: `strong` only.
 
-Hidden curses: after a pick, `main.gd` asks `reveal_curse(p)`. With `CURSE_REVEAL_ODDS` (14 %) the
+Hidden curses: after a pick, `main.gd` asks `reveal_curse(p)`. With the odds in `data/curse_odds.tres`
+(`CurseOdds`: 40 % per pick until the player's first curse, 20 % until the second, then 0 %) the
 card turns out to be a curse of the round's band: the pick UI flips it (`UpgradePick.reveal_curse`,
-awaitable) and `main.gd` calls `pick(p, curse)` instead of the picked card. Never on the first pick
-(round 1), never for a player on catch-up, never two rounds running, at most `CURSE_MAX` (2) per
-player, none in the strong-only rounds. About two per two-player run (`tests/test_simulation.gd`).
+awaitable) and `main.gd` calls `pick(p, curse)` instead of the picked card. From the first pick,
+never for a player on catch-up, never two rounds running, never a third per player, none in the
+strong-only rounds (`tests/test_curse_odds.gd`).
 
 ### `UpgradeData` (`scripts/gameplay/upgrade_data.gd`, `class_name UpgradeData extends Resource`)
 
@@ -691,3 +692,11 @@ plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heig
 playtests and screenshots. `--p1-char=<id>` / `--p2-char=<id>`: who plays (Roster, as the launcher
 passes it). Dev only: `--roster=<res path>` reads another roster file before the kickers spawn
 (`tests/fixtures/roster_standin.json`: Jeff, Chuck and a generic stand-in; `tests/` never ships).
+
+### Curse show and Dragon cameo (sb-curses-1, 2026-11-10)
+
+- `CurseShow` (`scenes/curses/curse_show.gd`, main.gd's `curse_show`): `reveal(p, kicker, curse, cam)` (awaitable, 2.4 s, then the badge), `badge(p, kicker, curse)` / `clear_badge(p)`, `windup(...)` at the cursed run-up's kick start, `bite(...)` after `ball.launch`, `callback(p, ball, curse)` on `Run.ball_stopped`. `CurseShow.cause_of(curse)` maps a curse card to its picture (`CAUSES`; new curse cards fall back on their `windup_anim`). Cosmetic only.
+- `CameraRig.beat(target, seconds, dist)`: a short close-up on `target` over whatever mode the rig is in (not the split pick).
+- `SkyField.adopt(ball, sky_object)`: a sky thing spawned outside the plan joins this ball's flight (hit test, culling, clean-up). SkyField is in group `sky_field`.
+- `DragonCameo` (`scripts/gameplay/dragon_cameo.gd`, main.gd child) + `SkyDragon` (`scenes/sky/sky_dragon.gd`, a `SkyObject`); data `data/dragon_cameo.tres` (`CameoData`). `-- --dragon` forces her on every run (playtests, frames).
+
