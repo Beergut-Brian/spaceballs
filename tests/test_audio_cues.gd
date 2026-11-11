@@ -7,8 +7,7 @@ const CODE_DIRS := ["res://scenes", "res://scripts"]
 const CUES_DOC := "res://assets/audio/CUES.md"
 ## Files made ahead of the code that will play them (see CUES.md): an upgrade kick_sfx the
 ## Upgrades lane has not written yet, and gags the Gameplay lane asked for.
-const PENDING_DATA := ["opera", "frog_bloop", "crowd_aww", "orbit_chime", "crowd_wild", "trip",
-		"waddle", "butterfly"]
+const PENDING_DATA := ["opera"]
 
 
 func test_every_cue_resolves_to_a_stream() -> void:
@@ -80,7 +79,7 @@ func _load_cue(cue: String) -> AudioStream:
 ## Literal cue names in Audio.play(...) calls, plus the ones picked from constants and data.
 func _all_cues() -> Dictionary:
 	var cues := {}
-	var call := RegEx.create_from_string("Audio\\.play\\((.*)\\)")
+	var call := RegEx.create_from_string("(?:Audio\\.play|_sfx)(?:\\.bind)?\\((.*)\\)")
 	var lit := RegEx.create_from_string("\"([a-z0-9_]+)\"")
 	for path in _gd_files():
 		for line in FileAccess.get_file_as_string(path).split("\n"):

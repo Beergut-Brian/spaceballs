@@ -53,7 +53,7 @@ func react(level: Level) -> void:
 			Audio.play("crowd_aww")
 			_slump = 1.6
 		Level.CLAP:
-			Audio.play("cheer", null, 1.15)
+			Audio.play("crowd_clap")
 			_cheer_anim(1.6)
 			for m in _members:
 				_start_hop(m, _rng.randf() * 0.3, 0.12, 9.0, 1.2)

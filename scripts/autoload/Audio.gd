@@ -17,6 +17,9 @@ const ALIASES := {
 	"count_tick": ["card_move", 1.5], "solo_on": ["player_join", 1.5], "solo_off": ["player_join", 0.6],
 }
 
+## Every cue asked for, as asked (before an alias), even one with no file. Tests listen to it.
+signal played(cue: String, pitch: float)
+
 var _pool: Array[AudioStreamPlayer] = []
 var _music: AudioStreamPlayer
 var _warned := {}
@@ -106,6 +109,7 @@ func _exit_tree() -> void:
 func play(cue: String, _position = null, pitch: float = 1.0) -> void:
 	if _silenced:
 		return
+	played.emit(cue, pitch)
 	if ALIASES.has(cue) and not _has_file(cue):
 		pitch *= ALIASES[cue][1]
 		cue = ALIASES[cue][0]

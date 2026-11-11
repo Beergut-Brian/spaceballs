@@ -284,6 +284,7 @@ func join_virtual(player: int) -> void
 
 # Audio
 func play(cue: String, position = null, pitch: float = 1.0) -> void   # pitch is new, optional
+signal played(cue: String, pitch: float)                            # every play() as asked, before an alias (tests listen)
 
 # Fx (scripts/autoload/Fx.gd): placeholder visuals for "a visual on every action".
 # Art replaces the insides with particles; the calls stay.
@@ -592,6 +593,7 @@ Exports must include `assets/gear/*.json` (non-resource filter).
 ```gdscript
 signal kick_zone_entered(body: Node3D)   # the KickZone Area3D, while armed
 signal returned()                         # comedy drop finished, ball back on the tee
+signal bounced(strength: float)           # each touch-down of the drop: 1.0, 0.65, then 0.3 as it settles
 @export var player: int
 func place_on_tee(tee: Vector3) -> void
 func arm(on: bool) -> void

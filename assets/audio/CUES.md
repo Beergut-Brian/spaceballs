@@ -53,13 +53,19 @@ frequent cues sit 1 to 3 dB under (trim column in `FILES`).
 | squawk | sfx/squawk.ogg | Rubber Chicken piece gag | rubber chicken: squeezed nasal "bwaaa-aaak" that wheezes out |
 | squeak | sfx/squeak.ogg | Balloon Animal Ball piece gag | two twisty balloon squeaks: "eek-eeek" |
 | whistle | sfx/whistle.ogg | Coach's Whistle piece gag | pea whistle "tweet-TWEEEET" (rounder and lower than a real one) |
-| frog_bloop | sfx/frog_bloop_1..2.ogg | **for Gameplay:** a sad frog moment | a sad little falling bloop, then a smaller lower "blp" |
+| frog_bloop | sfx/frog_bloop_1..2.ogg | the frog round's cursed ball goes nowhere (`main._on_ball_stopped`) | a sad little falling bloop, then a smaller lower "blp" |
 | crowd_aww | sfx/crowd_aww_1..2.ogg | **for Gameplay:** a near miss / sympathy | the Jarling crowd's falling "awww" |
-| orbit_chime | sfx/orbit_chime_1..2.ogg | **for Gameplay:** a ball settles into orbit | rising bell run, shimmering ring, sparkles |
+| orbit_chime | sfx/orbit_chime_1..2.ogg | a ball settles into orbit (`Ball._reach_peak`) | rising bell run, shimmering ring, sparkles |
 | crowd_wild | sfx/crowd_wild.ogg | **for Gameplay:** a huge kick / big moment | a bigger crowd: waves of "yaaay!", lots of claps, two-finger whistles |
-| trip | sfx/trip_1..2.ogg | **for Gameplay:** Shoelaces Tied stumble | scuff, startled "whoa!", two stumbling steps, soft flop |
-| waddle | sfx/waddle_1..2.ogg | **for Gameplay:** Too Much Lunch waddle | three heavy squishy steps, each with a tuba "bwomp" and a belly jiggle |
-| butterfly | sfx/butterfly_1..2.ogg | **for Gameplay:** Butterfly flutters by / chase | soft wing flaps and a light rising glockenspiel twinkle |
+| trip | sfx/trip_1..2.ogg | Shoelaces Tied: the stumble before the faceplant | scuff, startled "whoa!", two stumbling steps, soft flop |
+| waddle | sfx/waddle_1..2.ogg | Too Much Lunch: under the rocking stop (`Kicker._gag_waddle`) | three heavy squishy steps, each with a tuba "bwomp" and a belly jiggle |
+| butterfly | sfx/butterfly_1..2.ogg | Butterfly curse: he forgets the ball and chases it (`Kicker._gag_chase`) | soft wing flaps and a light rising glockenspiel twinkle |
+| inhale | sfx/inhale.ogg | Sneeze curse build-up, three times, rising (`Kicker._gag_sneeze`) | one breathy rising "hah" |
+| choo | sfx/choo.ogg | Sneeze curse: the sneeze that throws him into the kick | a quick "AH", then a soft falling "CHOO" |
+| burp | sfx/burp.ogg | Too Much Lunch: he rocks to a stop and burps (`Kicker._gag_waddle`) | long, low, rattly "buuuurp" with a little pop |
+| poof | sfx/poof.ogg | worn gear swaps on an occupied slot; the frog turns back into him | soft "pff" of smoke, a low pop, two twinkles |
+| uh_oh | sfx/uh_oh.ogg | the picked card shivers before it flips to a curse (`UpgradePick.reveal_curse`) | a Jarling "uh-oh!": two notes, down |
+| crowd_clap | sfx/crowd_clap_1..2.ogg | the crowd's CLAP level, a decent kick (`CrowdReactions.react`; GREAT is `cheer`, ROAR `crowd_wild`) | the sideline claps with a few whoops, no "yaaay" |
 
 `honk` and `opera` also suit a `kick_sfx` in `data/upgrades/` (`main.gd::_kick_cue` already
 honours it); `confetti` suits a Confetti Kick's. Barks for Jeff and Chuck (`Audio.bark`) come

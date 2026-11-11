@@ -25,6 +25,9 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 const ORBIT_SHOW := 2.0
 ## The alien who drops by to wave at a ball in orbit (the Sky lane's saucer, as scenery).
 const VisitorScene := preload("res://scenes/sky/saucer.tscn")
+## The end card camera circles the two of them this close (it was 6.5 m: they were small on the TV).
+const END_ORBIT_RADIUS := 5.0
+const END_ORBIT_HEIGHT := 1.3
 const VISITOR_SCALE := 0.35
 const VISITOR_AT := Vector3(2.0, 1.1, -0.6)
 ## Kiss the Frog at the pick: the visiting frog's size (the frog form is 1.3).
@@ -57,6 +60,7 @@ const CROWD_BEAT := 0.35
 
 var _turn: TurnMarker
 var slow_mo: SlowMo
+var hit_stop: HitStop
 ## The waving alien at the orbit moment (null when there is none).
 var visitor: Node3D
 var _crowd: CrowdReactions
@@ -106,6 +110,8 @@ func _ready() -> void:
 	add_child(_turn)
 	slow_mo = SlowMo.new()
 	add_child(slow_mo)
+	hit_stop = HitStop.new()
+	add_child(hit_stop)
 	_lengthen_field()
 	_crowd = CrowdReactions.new()
 	add_child(_crowd)
@@ -425,6 +431,8 @@ func _on_kick_contact(quality: float, p: int) -> void:
 	var cursed := Run.curse_of(p) != null
 	if SlowMo.wants(tier, cursed or kickers[p].frog):
 		slow_mo.trigger()   # the strongest kicks: half a second of slow motion on the boot
+	elif HitStop.wants(tier, cursed or kickers[p].frog) and not slow_mo.active():
+		hit_stop.trigger(tier)   # every other kick: a blink of stillness on contact
 	var level := CrowdReactions.kick_level(tier, Run.tier_of_height(Run.best_height(p)), quality, cursed)
 	if not cursed and tier > _run_top_tier:
 		# Headed for a height nobody has reached this run: the crowd roars.
@@ -509,7 +517,7 @@ func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 	_crowd.react(CrowdReactions.Level.AWW)
 	if curse.scene_override == null:
 		return
-	_sfx("bloop", "frog", 0.6)
+	_sfx("frog_bloop", "frog", 0.6)
 	Fx.puff(balls[p].global_position + Vector3.UP * 0.3, Color(0.6, 0.9, 0.4), 0.4)
 	# Both of them laugh it off: the frog does a happy hop, the other one cheers.
 	kickers[p].cheer()
@@ -660,7 +668,7 @@ func _begin_end() -> void:
 		var b: Node3D = balls[p]
 		b.visible = true
 		b.orbit_around(center + Vector3.UP * 1.3, 2.6, 0.35 if p == P1 else -0.35, 0.0 if p == P1 else PI)
-	rig.orbit(center, 6.5, 1.6)
+	rig.orbit(center, END_ORBIT_RADIUS, END_ORBIT_HEIGHT)   # close enough that the two of them fill the TV
 	Audio.play("space")
 	Audio.play("cheer")
 	Audio.music("space_pad", 1.5)
