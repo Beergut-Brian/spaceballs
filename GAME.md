@@ -233,6 +233,9 @@ Notes quoted in `playtests/2026-11-10.md`.
 - 2026-11-10: the end card shows the run's picks per player (a shelf each, P1 left, P2 right) and, across the top, the profile's whole collection: every card, the ones ever drawn in colour, the rest dark silhouettes. A revealed hidden curse counts as seen. `runs_completed` is saved but still not shown.
 - 2026-11-10: Kiss the Frog gets the plan's frog scene at the pick: after the card flips, a little frog hops in, kisses him and poofs. The frog round is still his next kick.
 - 2026-11-10: the lawn chair stays as scenery and as the seat of a P2 who hasn't joined; Kaden: "the Lawn Chair obviously isn't relevant since the other player can now run around" (PLAN-STATUS P-05 superseded).
+- 2026-11-10 (sb-curses-1): the new curse odds keep the old safety rules: never for a player who is behind (catch-up), never two rounds running, none in the strong-only rounds; but they start from the very first pick. Nearly every player now gets two curses, so a run is about a round longer (random-pick median 12, top of the 10-12 band); Content may retune if playtest #3 feels long.
+- 2026-11-10 (sb-curses-1): the reveal demo plays beside the kicker in his pick half (a little copy of his own ball and the curse's own prop), not on the card (the pick UI is another lane's). Hiccups gets the same treatment as the six named curses. The curse badge sits beside his head during the pick (the pick camera stops just above it) and over his head on the field, kept about the same size on screen.
+- 2026-11-10 (sb-curses-1): the Dragon comes on 35 % of runs, on the first flight of the run that climbs through the Clouds, across the ball's path 70 % of the time (else she glides by and waves). The bonk's "height boost" is a cosmetic bounce and a short hang on her tummy; real heights never change, so balance and the round-15 promise are untouched.
 
 ## Open questions
 

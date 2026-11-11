@@ -8,5 +8,5 @@ chance_per_run = 0.35
 tier_id = &"clouds"
 per_run = 1
 on_path_chance = 0.7
-size_mult = 0.55
+size_mult = 0.75
 boost = 8.0

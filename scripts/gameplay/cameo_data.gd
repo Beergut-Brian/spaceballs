@@ -11,6 +11,6 @@ extends Resource
 ## Chance she glides right across the ball's path (a bonk); else she glides by beside it.
 @export_range(0.0, 1.0) var on_path_chance := 0.7
 ## Her size against the tier's sky things (SkyTier.scale): she is big.
-@export var size_mult := 0.55
+@export var size_mult := 0.75
 ## The ball's cosmetic bounce off her tummy (m/s up, SkyObject push). Heights never change.
 @export var boost := 8.0

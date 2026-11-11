@@ -25,7 +25,7 @@ static func make() -> SkyDragon:
 	d.hit_offset = Vector3(0.0, 1.6, 0.0)
 	d.near_radius = 3.2
 	d.push = 8.0
-	d.hold = 0.25
+	d.hold = 0.55   # the arc waits a beat on her tummy (SkyObject hit-stop, max 0.6)
 	d.spin = 4.0
 	d.shake = 0.12
 	d.puff_color = Color.WHITE

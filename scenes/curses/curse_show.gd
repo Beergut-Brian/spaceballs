@@ -83,6 +83,10 @@ func _process(delta: float) -> void:
 			b.h = _height(k)
 		node.visible = k.is_visible_in_tree()
 		node.global_position = badge_spot(k, b.h) + Vector3.UP * sin(b.t * 3.0) * 0.06
+		# About the same size on screen whatever the shot: small in the close-up beats.
+		var cam := get_viewport().get_camera_3d()
+		if cam and not _popping(node):
+			node.scale = Vector3.ONE * clampf(cam.global_position.distance_to(node.global_position) / 10.0, 0.3, 1.0)
 		node.rotation.z = sin(b.t * 2.0) * 0.12
 	for p in _drifts.keys():
 		var d: Dictionary = _drifts[p]
@@ -135,7 +139,9 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 	var feet := k.global_position
 	var ball := _mini_ball(p)
 	stage.add_child(ball)
-	var ball_at := feet + side * 0.55 + Vector3.UP * 0.2
+	var ball_at := feet + side * 0.4 + toward * 0.45 + Vector3.UP * 0.2
+	# Where the curse sends the ball: back and a little aside, so it stays in his half of the screen.
+	var away := (side * 0.5 - toward).normalized()
 	ball.global_position = ball_at
 	var tw := stage.create_tween()
 	tw.tween_callback(Fx.pop.bind(ball, 1.4))
@@ -146,7 +152,7 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			for i in 3:
 				var bug := _prop(curse, 1.3)
 				stage.add_child(bug)
-				bug.global_position = ball_at + side * (0.5 * i - 0.3) + Vector3.UP * 1.7
+				bug.global_position = ball_at + away * (0.5 * i - 0.3) + Vector3.UP * 1.7
 				bugs.append(bug)
 			tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0))
 			tw.tween_method(func(u: float) -> void:
@@ -156,14 +162,14 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 					bugs[i].position.y += sin(u * 30.0 + i) * 0.02, 0.0, 1.0, 0.7)
 			tw.tween_callback(Audio.play.bind("butterfly", null, 1.3))
 			tw.tween_method(func(u: float) -> void:
-				ball.global_position = ball_at + side * u * 0.3 + Vector3.UP * sin(u * PI) * 0.9
+				ball.global_position = ball_at + away * u * 0.9 + Vector3.UP * sin(u * PI) * 0.9
 				for i in bugs.size():
 					bugs[i].global_position = ball.global_position + Vector3(cos(i * 2.1 + u * 9.0) * 0.2, 0.24, sin(i * 2.1 + u * 9.0) * 0.2), 0.0, 1.0, 0.8)
 			tw.tween_callback(func() -> void:
 				for bug in bugs:
 					var fly := bug.create_tween()
 					fly.tween_property(bug, "global_position", bug.global_position + Vector3(randf_range(-1, 1), 2.5, 0), 0.6))
-			_sad_plop(tw, ball, ball_at + side * 0.35)
+			_sad_plop(tw, ball, ball_at + away * 0.95)
 		&"peel":
 			# The peel slides under his foot, his feet fly up, he lands on his bottom.
 			var peel := _prop(curse, 1.6)
@@ -180,9 +186,11 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			tw.tween_callback(func() -> void:
 				Audio.play("land", null, 0.7)
 				Fx.puff(feet + Vector3.UP * 0.1, Color(1.0, 0.93, 0.4), 0.6))
+			# The peel lands on the grass beside him, out of his face.
+			tw.parallel().tween_property(peel, "global_position", feet - side * 0.7 + Vector3.UP * 0.03, 0.3).set_ease(Tween.EASE_IN)
 			tw.tween_interval(0.35)
 			tw.tween_property(body, "rotation", rest_rot, 0.25)
-			_sad_plop(tw, ball, ball_at + side * 0.3)
+			_sad_plop(tw, ball, ball_at + away * 0.3)
 		&"sneeze":
 			# Ah... ah... CHOO! The sneeze blows the ball away sideways.
 			for i in 2:
@@ -196,9 +204,9 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 					Fx.puff(feet + Vector3.UP * 1.4 + (ball_at - feet - Vector3.UP * 1.2) * (0.3 + 0.3 * j), Color(0.88, 1.0, 0.94), 0.45))
 			tw.tween_property(body, "rotation:x", rest_rot.x - 0.5, 0.08)
 			tw.parallel().tween_property(body, "scale", rest_scale, 0.12)
-			tw.parallel().tween_property(ball, "global_position", ball_at + side * 0.4 + Vector3.UP * 0.3, 0.45).set_ease(Tween.EASE_OUT)
+			tw.parallel().tween_property(ball, "global_position", ball_at + away * 1.0 + Vector3.UP * 0.3, 0.45).set_ease(Tween.EASE_OUT)
 			tw.tween_property(body, "rotation", rest_rot, 0.2)
-			_sad_plop(tw, ball, ball_at + side * 0.4)
+			_sad_plop(tw, ball, ball_at + away * 1.0)
 		&"laces":
 			# The laces knot at his feet; two tied-up hops and a wobbly tip forward.
 			var laces := _prop(curse, 1.5)
@@ -216,7 +224,7 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			tw.tween_callback(Fx.puff.bind(feet + toward * 0.6, Color(0.85, 0.75, 0.6), 0.5))
 			tw.tween_interval(0.25)
 			tw.tween_property(body, "rotation", rest_rot, 0.25)
-			_sad_plop(tw, ball, ball_at + side * 0.2)
+			_sad_plop(tw, ball, ball_at + away * 0.2)
 		&"lunch":
 			# His tummy swells, he rocks, burps, and the ball barely rolls.
 			tw.tween_callback(Audio.play.bind("waddle", null, 0.9))
@@ -230,17 +238,17 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 				Fx.puff(feet + Vector3.UP * 1.5 + toward * 0.4, Color(0.85, 1.0, 0.7), 0.7))
 			tw.tween_interval(0.25)
 			tw.tween_property(body, "scale", rest_scale, 0.3)
-			_sad_plop(tw, ball, ball_at + side * 0.25)
+			_sad_plop(tw, ball, ball_at + away * 0.25)
 		&"hiccup":
 			# Hic! Hic! Hic! Every hiccup bounces him up and knocks the ball sideways.
 			for i in 3:
 				tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0 + i * 0.1))
 				tw.tween_callback(_hop.bind(k, 3.0))
 				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * 1.6, Color(0.7, 0.9, 1.0), 0.35))
-				tw.tween_property(ball, "global_position", ball_at + side * 0.13 * (i + 1) + Vector3.UP * 0.3, 0.17).set_ease(Tween.EASE_OUT)
-				tw.tween_property(ball, "global_position", ball_at + side * 0.13 * (i + 1), 0.17).set_ease(Tween.EASE_IN)
+				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1) + Vector3.UP * 0.3, 0.17).set_ease(Tween.EASE_OUT)
+				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1), 0.17).set_ease(Tween.EASE_IN)
 				tw.tween_interval(0.16)
-			_sad_plop(tw, ball, ball_at + side * 0.4)
+			_sad_plop(tw, ball, ball_at + away * 0.9)
 		&"frog":
 			# He turns into the frog for a moment; the ball just dribbles off.
 			tw.tween_callback(func() -> void:
@@ -250,13 +258,13 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			tw.tween_interval(0.3)
 			tw.tween_callback(Audio.play.bind("frog", null, 1.2))
 			tw.tween_method(func(u: float) -> void:
-				ball.global_position = ball_at + side * 0.35 * u + Vector3.UP * absf(sin(u * PI * 3.0)) * 0.12 * (1.0 - u)
+				ball.global_position = ball_at + away * 0.6 * u + Vector3.UP * absf(sin(u * PI * 3.0)) * 0.12 * (1.0 - u)
 				ball.rotation.z = -u * 6.0, 0.0, 1.0, 0.7)
 			tw.tween_interval(0.3)
 			tw.tween_callback(func() -> void:
 				if k.has_method(&"set_frog"):
 					k.call(&"set_frog", false))
-			_sad_plop(tw, ball, ball_at + side * 0.35)
+			_sad_plop(tw, ball, ball_at + away * 0.6)
 		_:
 			tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0))
 			tw.tween_interval(1.2)
@@ -290,8 +298,10 @@ func badge(p: int, k: Node3D, curse: UpgradeData) -> void:
 	var h := _height(k)
 	node.global_position = badge_spot(k, h)
 	node.scale = Vector3.ONE * 0.01
+	node.set_meta(&"popping", true)
 	var tw := node.create_tween()
 	tw.tween_property(node, "scale", Vector3.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(node.set_meta.bind(&"popping", false))
 	Audio.play("poof", null, 1.3)
 	_badges[p] = {node = node, kicker = k, h = h, t = 0.0}
 
@@ -299,8 +309,12 @@ func badge(p: int, k: Node3D, curse: UpgradeData) -> void:
 ## Over his head; in the pick (whose camera stops just above his head) beside it instead.
 func badge_spot(k: Node3D, h: float) -> Vector3:
 	if Run.phase == Run.Phase.PICK:
-		return k.global_position + _flat(k.global_basis.x).normalized() * 0.85 + Vector3.UP * minf(h, 1.6)
+		return k.global_position + _flat(k.global_basis.x).normalized() * 0.8 + Vector3.UP * minf(h, 1.6) * 0.72
 	return k.global_position + Vector3.UP * (h + BADGE_GAP)
+
+
+func _popping(node: Node3D) -> bool:
+	return node.has_meta(&"popping") and node.get_meta(&"popping")
 
 
 func has_badge(p: int) -> bool:
@@ -318,6 +332,7 @@ func clear_badge(p: int, poof := true) -> void:
 	_badges.erase(p)
 	if not is_instance_valid(node):
 		return
+	node.set_meta(&"popping", true)
 	if poof and node.is_inside_tree():
 		Fx.puff(node.global_position, PURPLE.lightened(0.3), 0.4)
 		var tw := node.create_tween()

@@ -692,3 +692,11 @@ plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heig
 playtests and screenshots. `--p1-char=<id>` / `--p2-char=<id>`: who plays (Roster, as the launcher
 passes it). Dev only: `--roster=<res path>` reads another roster file before the kickers spawn
 (`tests/fixtures/roster_standin.json`: Jeff, Chuck and a generic stand-in; `tests/` never ships).
+
+### Curse show and Dragon cameo (sb-curses-1, 2026-11-10)
+
+- `CurseShow` (`scenes/curses/curse_show.gd`, main.gd's `curse_show`): `reveal(p, kicker, curse, cam)` (awaitable, 2.4 s, then the badge), `badge(p, kicker, curse)` / `clear_badge(p)`, `windup(...)` at the cursed run-up's kick start, `bite(...)` after `ball.launch`, `callback(p, ball, curse)` on `Run.ball_stopped`. `CurseShow.cause_of(curse)` maps a curse card to its picture (`CAUSES`; new curse cards fall back on their `windup_anim`). Cosmetic only.
+- `CameraRig.beat(target, seconds, dist)`: a short close-up on `target` over whatever mode the rig is in (not the split pick).
+- `SkyField.adopt(ball, sky_object)`: a sky thing spawned outside the plan joins this ball's flight (hit test, culling, clean-up). SkyField is in group `sky_field`.
+- `DragonCameo` (`scripts/gameplay/dragon_cameo.gd`, main.gd child) + `SkyDragon` (`scenes/sky/sky_dragon.gd`, a `SkyObject`); data `data/dragon_cameo.tres` (`CameoData`). `-- --dragon` forces her on every run (playtests, frames).
+
