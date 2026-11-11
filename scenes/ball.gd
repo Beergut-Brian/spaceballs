@@ -48,6 +48,12 @@ var effects: Array[StringName] = []
 
 ## Floaty (Helium Ball, Moon Gravity): this much gravity, a longer arc and a longer hang at the top.
 const FLOAT_GRAVITY := 0.4
+## In flight the ball never looks smaller than this share of the screen's height (about 54 px at
+## 1080p): at the flight camera's widest (70 m) it was a 9 px speck. Look only; the body is unchanged.
+const READ_FRACTION := 0.05
+const GROW_MAX := 7.0
+const GROW_RATE := 8.0
+const RADIUS := 0.3
 const TRAIL_COLOR := {
 	&"rocket": Color(1.0, 0.3, 0.05), &"sparkle": Color(1.0, 0.95, 0.5), &"floaty": Color(1.0, 0.45, 0.8),
 	&"curve": Color(0.75, 0.9, 1.0),
@@ -89,7 +95,9 @@ var _sky_hold_used := 0.0
 var _sky_spin := 0.0
 
 @onready var zone: Area3D = $KickZone
-@onready var mesh: MeshInstance3D = $Mesh
+@onready var mesh: MeshInstance3D = $Grow/Mesh
+## Scales the ball's look (not its body) so it stays readable when the flight camera zooms out.
+@onready var grow: Node3D = $Grow
 
 
 func _ready() -> void:
@@ -104,6 +112,26 @@ func _ready() -> void:
 	mat.albedo_color = Players.COLOR[player].lerp(Color.WHITE, 0.55)
 	mat.rim_enabled = true
 	mesh.material_override = mat
+
+
+func _process(delta: float) -> void:
+	var want := 1.0
+	if flight == Flight.PHYSICS or flight == Flight.SCRIPTED or flight == Flight.PEAK:
+		want = read_scale(get_viewport().get_camera_3d())
+	if grow.scale.x != want:
+		var g := lerpf(grow.scale.x, want, clampf(delta * GROW_RATE, 0.0, 1.0))
+		if absf(g - want) < 0.01:
+			g = want
+		grow.scale = Vector3.ONE * g
+
+
+## How much bigger the ball has to look from `cam` to fill READ_FRACTION of the screen's height.
+func read_scale(cam: Camera3D) -> float:
+	if cam == null:
+		return 1.0
+	var d := cam.global_position.distance_to(global_position)
+	var view_h := 2.0 * d * tan(deg_to_rad(cam.fov) * 0.5)
+	return clampf(READ_FRACTION * view_h / (2.0 * RADIUS), 1.0, GROW_MAX)
 
 
 func place_on_tee(tee: Vector3) -> void:
@@ -121,6 +149,7 @@ func place_on_tee(tee: Vector3) -> void:
 	_stop_orbit()
 	_sky_reset()
 	mesh.scale = Vector3.ONE
+	grow.scale = Vector3.ONE
 	gravity_scale = 1.0
 	constant_force = Vector3.ZERO
 
@@ -282,6 +311,7 @@ func _reach_peak() -> void:
 
 func _drop() -> void:
 	flight = Flight.DROP
+	grow.scale = Vector3.ONE   # back on the lawn: its real size for the comedy drop
 	freeze = true
 	global_position = _tee + Vector3.UP * (TEE_HEIGHT + DROP_HEIGHT)
 	height = 0.0

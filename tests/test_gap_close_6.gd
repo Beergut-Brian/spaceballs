@@ -146,3 +146,46 @@ func test_main_gives_the_camera_the_lawn_trees(timeout := 60000) -> void:
 	await Audio.stop_all()
 	await get_tree().physics_frame
 
+
+## C-08 / V-10: in flight the camera zooms out to 70 m and the ball was a 9 px speck. Its look now
+## grows so it never fills less than READ_FRACTION of the screen's height; back to its real size for
+## the drop, and its body (what the sky objects hit) never changes.
+func test_flying_ball_stays_big_enough_to_see(timeout := 30000) -> void:
+	var root := Node3D.new()
+	var cam := Camera3D.new()
+	cam.fov = 55.0
+	root.add_child(cam)
+	var ball: Node3D = load("res://scenes/ball.tscn").instantiate()
+	root.add_child(ball)
+	add_child(root)
+	auto_free(root)
+	cam.make_current()
+	ball.place_on_tee(Vector3.ZERO)
+	var body_r: float = (ball.get_node("Shape") as CollisionShape3D).shape.radius
+	# On the tee: real size whatever the camera does.
+	cam.global_position = ball.global_position + Vector3(0, 0, 70)
+	await get_tree().process_frame
+	assert_float(ball.grow.scale.x).is_equal(1.0)
+	# Flying, camera 70 m out: grows until it reads. (The arc itself is held still: only the look.)
+	ball.set_physics_process(false)
+	ball.flight = ball.Flight.SCRIPTED
+	await get_tree().create_timer(1.0).timeout
+	var d := cam.global_position.distance_to(ball.global_position)
+	var view_h := 2.0 * d * tan(deg_to_rad(cam.fov) * 0.5)
+	var share: float = 2.0 * ball.RADIUS * ball.grow.scale.x / view_h
+	assert_float(share).is_greater_equal(ball.READ_FRACTION - 0.002)
+	assert_float(share * 1080.0).is_greater(50.0)
+	assert_float(ball.mesh.global_transform.basis.get_scale().x).is_greater(5.0)
+	assert_float((ball.get_node("Shape") as CollisionShape3D).shape.radius).is_equal(body_r)
+	# Camera close (the start of a flight, 9 m): no growth.
+	cam.global_position = ball.global_position + Vector3(0, 0, 9)
+	await get_tree().create_timer(1.0).timeout
+	assert_float(ball.grow.scale.x).is_equal_approx(1.0, 0.05)
+	# Far again, then the drop: straight back to its real size on the lawn.
+	cam.global_position = ball.global_position + Vector3(0, 0, 70)
+	await get_tree().create_timer(1.0).timeout
+	assert_float(ball.grow.scale.x).is_greater(3.0)
+	ball._drop()
+	assert_float(ball.grow.scale.x).is_equal(1.0)
+	await get_tree().process_frame
+	assert_float(ball.grow.scale.x).is_equal(1.0)
