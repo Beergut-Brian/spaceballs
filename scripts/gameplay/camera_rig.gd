@@ -46,6 +46,18 @@ var _beat_t := 0.0
 var _beat_dist := 3.2
 const BEAT_TILT_MIN := 0.12   # rad, about 7 degrees over the target
 const BEAT_TILT_MAX := 0.55   # rad, about 32 degrees: over his shoulder, not over his head
+## Lawn trees the shot must not sit in or look through: Vector4(x, y, z, radius) spheres.
+var occluders: Array[Vector4] = []
+## A tree between the lens and the subject whose edge comes within this angle of the view's centre
+## crowds the shot (a canopy a metre off the sight line by the lens fills half the screen).
+const CROWD_ANGLE := 0.35   # rad, about 20 degrees
+## Air kept round a tree when the lens has to be pulled in, and the closest it comes to the subject.
+const OCCLUDER_MARGIN := 0.5
+const OCCLUDER_MIN_DIST := 2.5
+## Swings tried around the subject (rad, nearest first) before pulling in, and how fast it swings.
+const SWINGS: Array[float] = [0.0, 0.3, -0.3, 0.6, -0.6, 0.9, -0.9, 1.2, -1.2]
+const SWING_RATE := 2.5
+var _swing := 0.0
 
 @onready var camera: Camera3D = $Camera
 
@@ -55,12 +67,123 @@ func _ready() -> void:
 	camera.fov = 55.0
 
 
+## The field's lawn trees (`Dressing/Trees`, its `occluders` meta: crown blobs and trunk spheres from
+## art/tools/build_scenes.gd) become occluders. A kicker running past the trees by the field's edge
+## had the run-up camera beside a canopy: half the screen leaves.
+func set_trees(trees: Node) -> void:
+	occluders.clear()
+	if not trees is Node3D or not trees.has_meta(&"occluders"):
+		return
+	var xf := (trees as Node3D).global_transform
+	for o: Vector4 in trees.get_meta(&"occluders"):
+		var c := xf * Vector3(o.x, o.y, o.z)
+		occluders.append(Vector4(c.x, c.y, c.z, o.w))
+
+
+## How far out along `look` -> `want` the lens can sit before a tree is in the way.
+func clear_reach(look: Vector3, want: Vector3) -> float:
+	var arm := want - look
+	var length := arm.length()
+	if occluders.is_empty() or length < 0.01:
+		return length
+	var dir := arm / length
+	var reach := length
+	for o in occluders:
+		var c := Vector3(o.x, o.y, o.z)
+		var r := o.w + OCCLUDER_MARGIN
+		var oc := look - c
+		if oc.length_squared() <= r * r:
+			continue   # he is right by this tree: it is his scenery, nothing to pull in front of
+		var b := oc.dot(dir)
+		var disc := b * b - (oc.length_squared() - r * r)
+		if disc < 0.0:
+			continue
+		var t := -b - sqrt(disc)
+		if t > 0.0 and t < reach:
+			reach = t
+	return reach
+
+
+## How close (rad) the nearest tree in front of the subject comes to the middle of the picture; a
+## tree round the lens counts as -1. INF when nothing is in the way.
+func crowd_gap(look: Vector3, lens: Vector3) -> float:
+	var sight := look - lens
+	var dist := sight.length()
+	if dist < 0.01:
+		return INF
+	var f := sight / dist
+	var gap := INF
+	for o in occluders:
+		var c := Vector3(o.x, o.y, o.z)
+		if c.distance_to(look) < o.w + 1.0:
+			continue   # he is standing in this tree: it is his scenery
+		var v := c - lens
+		var d := v.length()
+		if d < o.w + OCCLUDER_MARGIN:
+			return -1.0
+		var along := v.dot(f)
+		if along <= 0.0 or along > dist:
+			continue   # behind the lens, or behind him
+		gap = minf(gap, acos(clampf(along / d, -1.0, 1.0)) - asin(minf(o.w / d, 1.0)))
+	return gap
+
+
+func crowded(look: Vector3, lens: Vector3) -> bool:
+	return crowd_gap(look, lens) < CROWD_ANGLE
+
+
+## Where the lens can go: `want` pulled in toward `look` until no tree sits in between (a spring
+## arm), never closer than OCCLUDER_MIN_DIST.
+func clear_view(look: Vector3, want: Vector3) -> Vector3:
+	var arm := want - look
+	var length := arm.length()
+	if length < 0.01:
+		return want
+	var reach := clear_reach(look, want)
+	if reach >= length:
+		return want
+	return look + arm / length * maxf(reach, OCCLUDER_MIN_DIST)
+
+
+## The shot swung round `look` to the nearest clear angle (eased over time, `delta` >= 1 snaps),
+## then pulled in only if no swing is clear. A tree by the field's edge is walked round, not zoomed
+## through.
+func swing_clear(look: Vector3, want: Vector3, delta: float) -> Vector3:
+	if occluders.is_empty():
+		_swing = 0.0
+		return want
+	var arm := want - look
+	var target := _swing
+	if crowded(look, look + arm.rotated(Vector3.UP, _swing)):
+		# nearest clear swing to the plain shot, ties to the side we are already on; if none is
+		# clear (he is right by a tree), the least crowded one
+		var best := INF
+		var widest := -INF
+		var found := false
+		for a in SWINGS:
+			var g := crowd_gap(look, look + arm.rotated(Vector3.UP, a))
+			if g >= CROWD_ANGLE:
+				var cost := absf(a) + absf(a - _swing) * 0.5
+				if cost < best:
+					best = cost
+					target = a
+					found = true
+			elif not found and g > widest + 0.02:
+				widest = g
+				target = a
+	elif _swing != 0.0 and not crowded(look, want):
+		target = 0.0   # the way is clear again: drift back to the plain shot
+	_swing = lerpf(_swing, target, clampf(delta * SWING_RATE, 0.0, 1.0))
+	return clear_view(look, look + arm.rotated(Vector3.UP, _swing))
+
+
 ## Frames only this kicker (and his ball on `tee`); the bystander may leave the shot.
 func frame_field(kicker: Node3D, tee: Vector3) -> void:
 	_kicker = kicker
 	_tee = tee
 	_lead = Vector3.ZERO
 	_lift = 0.0
+	_swing = 0.0
 	_set_mode(Mode.FIELD)
 	_snap()
 
@@ -160,6 +283,10 @@ func _process(delta: float) -> void:
 			want_pos = _center + Vector3(sin(_angle) * _orbit_r, _orbit_h, cos(_angle) * _orbit_r)
 		Mode.SPLIT:
 			return
+	if mode == Mode.FIELD:
+		want_pos = swing_clear(want_look, want_pos, delta)
+	elif mode == Mode.SPACE:
+		want_pos = clear_view(want_look, want_pos)
 	var k := clampf(delta * smooth, 0.0, 1.0)
 	if mode == Mode.FOLLOW:
 		k = clampf(delta * smooth * 2.0, 0.0, 1.0)

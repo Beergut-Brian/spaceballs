@@ -10,12 +10,25 @@ const TIER_IDS := [&"backyard", &"rooftops", &"treetops", &"kites", &"clouds", &
 var _sky: SkySet
 var _nodes: Array[Node] = []
 var _save_was := true
+var _ticks_was := 60
+var _steps_was := 8
 
 
+## Every flight here is staged, not inherited: suites run in a different order on CI, and a suite
+## that plays a real round (test_main_flow) can leave a curse on P1. A dribble curse makes the ball
+## dribble for a second instead of climbing, so nothing flew and nothing was hit.
 func before_test() -> void:
 	_sky = load(SkyField.SKY_PATH)
 	_save_was = Run.save_enabled
 	Run.save_enabled = false
+	Run._clear()   # no curse, upgrade, space or best height left from another suite
+	Engine.time_scale = 1.0
+	# A fixed physics step: 60 ticks a second, at most 8 a frame (the project's values, pinned).
+	_ticks_was = Engine.physics_ticks_per_second
+	_steps_was = Engine.max_physics_steps_per_frame
+	Engine.physics_ticks_per_second = 60
+	Engine.max_physics_steps_per_frame = 8
+	seed(20261109)   # the ball's launch spin and the bump pushes use the global RNG
 
 
 func after_test() -> void:
@@ -24,11 +37,10 @@ func after_test() -> void:
 			n.free()
 	_nodes.clear()
 	Engine.time_scale = 1.0
+	Engine.physics_ticks_per_second = _ticks_was
+	Engine.max_physics_steps_per_frame = _steps_was
 	Run.save_enabled = _save_was
-	Run._last.clear()
-	Run._best.clear()
-	Run._in_space.clear()
-	Run._space_round.clear()
+	Run._clear()
 
 
 func _cue_exists(cue: StringName) -> bool:
@@ -128,14 +140,22 @@ func _ball() -> Node3D:
 
 
 ## Flies `ball` to its peak; `each` runs every physics frame. Returns the flight's seconds.
+## Fails unless the ball really climbed (a dribble curse skips the climb) and peaked in time, so
+## a flight test can never pass on a flight that did not happen.
 func _fly(ball: Node3D, peak: float, each: Callable) -> float:
 	Engine.time_scale = 4.0
+	var launched := [false]   # a dribble curse skips launched (and the sky with it)
+	var on_launch := func(_p: float) -> void: launched[0] = true
+	ball.launched.connect(on_launch)
 	ball.launch(Run.BASE_POWER * 4.0, peak)
+	ball.launched.disconnect(on_launch)
 	var t := 0.0
 	while ball.flight != ball.Flight.PEAK and t < 20.0:
 		await get_tree().physics_frame
 		t += get_physics_process_delta_time()
 		each.call()
+	assert_bool(launched[0]).override_failure_message("the ball never climbed (curse %s)" % Run.curse_of(ball.player)).is_true()
+	assert_int(ball.flight).override_failure_message("no peak in %.1f s" % t).is_equal(ball.Flight.PEAK)
 	return t
 
 
@@ -166,12 +186,19 @@ func test_a_flight_hits_things_and_frees_them() -> void:
 	f.rng.seed = 5
 	var b := _ball()
 	f.watch(b)
-	var hit := [0]
+	var hit := {}   # every object hit during the flight, once (popped ones free themselves)
 	var moved := [0.0]
 	await _fly(b, 50000.0, func() -> void:
 		moved[0] = maxf(moved[0], b.sky_offset.length())
-		hit[0] = maxi(hit[0], f.get_children().filter(func(o: Node) -> bool: return o is SkyObject and o.was_hit).size()))
-	assert_int(hit[0]).override_failure_message("no sky object was hit on a 50 km kick").is_greater_equal(2)
+		for o in f.get_children():
+			if o is SkyObject and o.was_hit:
+				hit[o.get_instance_id()] = true)
+	# Path objects spawn on the ball's column and home onto it, so geometry, not luck, says every
+	# one of them gets hit (4 on a 50 km kick, SkyField.hits_for).
+	var path: int = (f._flights.get(b, {}).get("plan", []) as Array).filter(func(i: Dictionary) -> bool: return i.on_path).size()
+	assert_int(path).is_greater_equal(2)
+	assert_int(hit.size()).override_failure_message("%d of %d path objects hit on a 50 km kick" % [hit.size(), path]) \
+			.is_greater_equal(path)
 	assert_float(moved[0]).is_greater(0.05)
 	assert_int(f.live_objects(b).size()).is_greater(0)
 	# The next launch clears the old sky first; returned frees it all.

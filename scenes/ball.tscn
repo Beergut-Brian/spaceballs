@@ -27,7 +27,9 @@ script = ExtResource("1_ball")
 [node name="Shape" type="CollisionShape3D" parent="."]
 shape = SubResource("ball_shape")
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
+[node name="Grow" type="Node3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Grow"]
 mesh = SubResource("ball_mesh")
 
 [node name="KickZone" type="Area3D" parent="."]

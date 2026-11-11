@@ -130,6 +130,7 @@ func _ready() -> void:
 	dragon.name = "DragonCameo"
 	add_child(dragon)
 	_lengthen_field()
+	rig.set_trees(field.get_node_or_null("Dressing/Trees"))
 	_crowd = CrowdReactions.new()
 	add_child(_crowd)
 	_crowd.setup(field.find_child("Crowd", true, false))
