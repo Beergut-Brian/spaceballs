@@ -244,7 +244,7 @@ func reveal(p: int, k: Node3D, curse: UpgradeData, cam: Camera3D = null) -> void
 			for i in 3:
 				tw.tween_callback(Audio.play.bind(cue_of(curse), null, 1.0 + i * 0.1))
 				tw.tween_callback(_hop.bind(k, 3.0))
-				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * 1.1 + toward * 0.4, Color(0.7, 0.9, 1.0), 0.5))
+				tw.tween_callback(Fx.puff.bind(feet + Vector3.UP * (1.5 + 0.2 * i) - side * 0.45, Color(0.7, 0.9, 1.0), 0.25))
 				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1) + Vector3.UP * 0.3, 0.17).set_ease(Tween.EASE_OUT)
 				tw.tween_property(ball, "global_position", ball_at + away * 0.3 * (i + 1), 0.17).set_ease(Tween.EASE_IN)
 				tw.tween_interval(0.16)
