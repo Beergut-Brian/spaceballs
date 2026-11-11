@@ -17,6 +17,8 @@ var _settings: Dictionary = {}
 
 func _ready() -> void:
 	profile = profile_from_args(OS.get_cmdline_args() + OS.get_cmdline_user_args(), profile)
+	if RunSandbox.active():
+		settings_path = RunSandbox.SETTINGS   # tests and scripted runs keep off the real settings
 	_load()
 	reload_settings()
 
@@ -62,6 +64,7 @@ func get_setting(key: String, default = null):
 
 func set_setting(key: String, value) -> void:
 	_settings[key] = value
+	DirAccess.make_dir_recursive_absolute(settings_path.get_base_dir())
 	var f := FileAccess.open(settings_path, FileAccess.WRITE)
 	if f == null:
 		push_warning("Save: could not open %s" % settings_path)

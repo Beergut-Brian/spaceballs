@@ -21,7 +21,8 @@ const VOICE_PAN := { P1: -0.3, P2: 0.3 }
 
 ## Tests point this at a fixture, then reload().
 var data_path := "res://data/roster.json"
-## The shared picks file, outside every game's user://. Tests point this at user://.
+## The shared picks file, outside every game's user://. Tests and scripted runs use
+## RunSandbox.PICKS from boot (scripts/autoload/run_sandbox.gd); suites may point it elsewhere.
 var picks_path := shared_path()
 ## The openjar-characters tag data/roster.json was synced from.
 var characters_tag := ""
@@ -43,6 +44,11 @@ static func shared_path() -> String:
 	return OS.get_data_dir().path_join("openjar").path_join("players.json")
 
 
+## Where the picks live from boot: the shared file, or RunSandbox.PICKS for a test or scripted run.
+static func boot_picks_path(args: PackedStringArray = PackedStringArray()) -> String:
+	return RunSandbox.PICKS if RunSandbox.active(args) else shared_path()
+
+
 ## "--p1-char=chuck" -> {P1: "chuck"}; either side of "--".
 static func picks_from_args(args: PackedStringArray) -> Dictionary:
 	var out := {}
@@ -55,6 +61,7 @@ static func picks_from_args(args: PackedStringArray) -> Dictionary:
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	picks_path = boot_picks_path()   # tests and scripted runs never read or write the real file
 	_voice = AudioStreamPlayer.new()
 	_voice.bus = "SFX"
 	add_child(_voice)
