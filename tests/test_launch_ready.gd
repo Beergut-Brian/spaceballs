@@ -170,8 +170,8 @@ func test_round_counter_balls_are_big_and_this_round_is_gold() -> void:
 
 
 ## A-06: a voiced character reacts to his own kick ("cheer" on a great one, "oops" on a cursed one)
-## and the other player's character cheers him; Jeff and Chuck (no voice yet, D37) stay quiet.
-func test_voiced_characters_bark_at_kicks_jeff_and_chuck_stay_quiet(timeout := 60000) -> void:
+## and the other player's character cheers him; a character without a voice yet stays quiet.
+func test_voiced_characters_bark_at_kicks_unvoiced_stay_quiet(timeout := 60000) -> void:
 	SettingsSandbox.enter("user://test_launch_ready.json")
 	Players.reset()
 	Run.stop_run()
@@ -182,9 +182,15 @@ func test_voiced_characters_bark_at_kicks_jeff_and_chuck_stay_quiet(timeout := 6
 	var said: Array = []
 	var hear := func(slot: int, _id: String, path: String) -> void: said.append([slot, path.get_file()])
 	Roster.said.connect(hear)
-	# Jeff (P1 default) has no voice: nothing said, the crowd stands in.
+	# A character with no voice: nothing said, the crowd stands in. Every real roster entry is voiced since
+	# openjar-characters v0.5.3, so this half runs on the stand-in fixture (unvoiced Jeff), then the real roster.
+	var real_data: String = Roster.data_path
+	Roster.data_path = "res://tests/fixtures/roster_standin.json"
+	Roster.reload()
 	Roster.set_pick(Players.P1, "jeff")
 	assert_bool(main.bark(Players.P1, "cheer")).is_false()
+	Roster.data_path = real_data
+	Roster.reload()
 	var voiced := ""
 	for id in Roster.roster():
 		if "cheer" in Roster.info(id).barks and "oops" in Roster.info(id).barks and id != Roster.pick(Players.P2):
