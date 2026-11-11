@@ -23,7 +23,6 @@ angular_damp = 0.5
 freeze = true
 freeze_mode = 1
 script = ExtResource("1_ball")
-metadata/_placeholder = "PLACEHOLDER (systems grey-box): Gameplay owns scenes/ball.tscn; Art swaps Mesh for the ball with a face."
 
 [node name="Shape" type="CollisionShape3D" parent="."]
 shape = SubResource("ball_shape")
