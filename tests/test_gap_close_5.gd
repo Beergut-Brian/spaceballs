@@ -8,6 +8,7 @@ extends GdUnitTestSuite
 const JEFF := preload("res://scenes/players/jeff.tscn")
 const BALL := preload("res://scenes/ball.tscn")
 const RIG := preload("res://scripts/gameplay/camera_rig.gd")
+const CameraRigScript := RIG
 
 
 func before_test() -> void:
@@ -116,6 +117,30 @@ func test_the_thats_why_camera_looks_over_the_icon_clear_of_the_stamp() -> void:
 	assert_object(look.get_parent()).is_same(why)
 	assert_float(look.global_position.y - why.global_position.y).is_equal_approx(CurseShow.CALLBACK_LOOK_UP, 0.01)
 	assert_float(CurseShow.CALLBACK_LOOK_UP).is_greater(0.4)
+
+
+## A close beat from the high field camera looked straight down on his head (hiccups and butterfly
+## wind-up frames); it now comes in over his shoulder.
+func test_a_beat_from_high_above_comes_in_over_the_shoulder() -> void:
+	var rig: Node3D = RIG.new()
+	var cam := Camera3D.new()
+	cam.name = "Camera"
+	rig.add_child(cam)
+	add_child(rig)
+	auto_free(rig)
+	var target := Node3D.new()
+	rig.add_child(target)
+	target.global_position = Vector3(0, 0.9, 0)
+	cam.global_position = Vector3(0, 14, 1.0)   # nearly overhead
+	rig.beat(target, 1.0, 3.4)
+	await get_tree().create_timer(0.8).timeout
+	var d := cam.global_position - target.global_position
+	var tilt := rad_to_deg(atan2(d.y, Vector2(d.x, d.z).length()))
+	assert_float(tilt).is_less(36.0)
+	assert_float(tilt).is_greater(5.0)
+	assert_float(d.length()).is_between(2.5, 5.0)
+	# Level views keep their side: a beat from behind stays behind.
+	assert_vector(CameraRigScript.beat_dir(Vector3(0, 1, 6))).is_equal_approx(Vector3(0, 1, 6).normalized(), Vector3.ONE * 0.01)
 
 
 ## U-18: in the close beat on his chest the badge sits beside his head, inside the frame, even over

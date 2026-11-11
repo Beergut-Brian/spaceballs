@@ -44,6 +44,8 @@ var _lift := 0.0
 var _beat_target: Node3D
 var _beat_t := 0.0
 var _beat_dist := 3.2
+const BEAT_TILT_MIN := 0.12   # rad, about 7 degrees over the target
+const BEAT_TILT_MAX := 0.55   # rad, about 32 degrees: over his shoulder, not over his head
 
 @onready var camera: Camera3D = $Camera
 
@@ -108,6 +110,17 @@ func beat(target: Node3D, seconds: float = 0.7, dist: float = 3.2) -> void:
 	_beat_dist = dist
 
 
+## Where a beat looks from: the way the camera already is, but never steeper than BEAT_TILT_MAX (a
+## close beat from the high field camera looked straight down on his head) nor flatter than
+## BEAT_TILT_MIN.
+static func beat_dir(from_target: Vector3) -> Vector3:
+	var flat := Vector3(from_target.x, 0.0, from_target.z)
+	flat = flat.normalized() if flat.length() > 0.01 else Vector3.BACK
+	var tilt := atan2(from_target.y, Vector2(from_target.x, from_target.z).length())
+	tilt = clampf(tilt, BEAT_TILT_MIN, BEAT_TILT_MAX)
+	return flat * cos(tilt) + Vector3.UP * sin(tilt)
+
+
 func beating() -> bool:
 	return _beat_t > 0.0 and is_instance_valid(_beat_target)
 
@@ -116,8 +129,7 @@ func _process(delta: float) -> void:
 	if beating() and mode != Mode.SPLIT:
 		_beat_t -= delta
 		var at := _beat_target.global_position
-		var dir := camera.global_position - at
-		dir = dir.normalized() if dir.length() > 0.01 else Vector3.BACK
+		var dir := beat_dir(camera.global_position - at)
 		var kb := clampf(delta * smooth * 2.5, 0.0, 1.0)
 		camera.global_position = camera.global_position.lerp(at + dir * _beat_dist + Vector3.UP * 0.25, kb)
 		_look = _look.lerp(at, kb)
