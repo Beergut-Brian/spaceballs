@@ -157,7 +157,9 @@ func test_round_counter_balls_are_big_and_this_round_is_gold() -> void:
 	var balls: Array = hud.rounds.get_children().filter(func(c: Node) -> bool: return not c.is_queued_for_deletion())
 	Run.round_index = keep
 	assert_int(balls.size()).is_equal(4)
+	await get_tree().process_frame
 	for b: Control in balls:
+		assert_float(b.size.x).override_failure_message("ball %s" % b.size).is_equal_approx(b.size.y, 0.5)
 		assert_float(b.custom_minimum_size.x).is_greater_equal(44.0)
 		var sb := b.get_theme_stylebox("panel") as StyleBoxFlat
 		assert_int(sb.border_width_left).is_greater_equal(4)

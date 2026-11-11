@@ -228,6 +228,7 @@ func _refresh_rounds() -> void:
 	for i in Run.round_index:
 		var ball := Panel.new()
 		ball.custom_minimum_size = Vector2(ROUND_BALL, ROUND_BALL)
+		ball.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN   # round, not stretched to the column
 		var now := i == Run.round_index - 1
 		# Big ink-outlined balls, readable from the sofa; this round's ball is golden and bigger.
 		_style_ball(ball, Color(1.0, 0.85, 0.25) if now else Color(1, 1, 1, 0.97), ROUND_BALL)
