@@ -120,6 +120,9 @@ func _ready() -> void:
 	curse_show.height_of = _stack_height
 	curse_show.ball_looks = [balls[P1].mesh, balls[P2].mesh]
 	add_child(curse_show)
+	var dragon := DragonCameo.new()
+	dragon.name = "DragonCameo"
+	add_child(dragon)
 	_lengthen_field()
 	_crowd = CrowdReactions.new()
 	add_child(_crowd)

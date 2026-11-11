@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CameoData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/cameo_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+chance_per_run = 0.35
+tier_id = &"clouds"
+per_run = 1
+on_path_chance = 0.7
+size_mult = 0.55
+boost = 8.0
