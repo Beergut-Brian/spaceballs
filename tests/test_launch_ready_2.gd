@@ -102,3 +102,28 @@ func test_every_menu_cue_is_a_real_file_and_keeps_its_pitch() -> void:
 	UiSound.play("ui_move", 0.89)
 	Audio.played.disconnect(hear)
 	assert_array(heard).is_equal([["count_tick", 1.24], ["ui_move", 0.89]])
+
+
+## Ship hygiene: the library's voice lines are ElevenLabs TTS, so their credits say so (the
+## release brief asks for every ElevenLabs asset to be credited as such), not "in-house".
+func test_every_voice_credit_names_elevenlabs() -> void:
+	var credits := FileAccess.get_file_as_string("res://assets/CREDITS.md")
+	var roster: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/roster.json"))
+	var checked := 0
+	for id in roster["characters"]:
+		var c: Dictionary = roster["characters"][id]
+		var rows: Array[String] = []
+		if c.has("voice"):
+			rows.append("`characters/%s/voice/*.ogg`" % id)
+		if c.has("catchphrase"):
+			rows.append("`characters/%s/voice/catchphrase.ogg`" % id)
+		for key in rows:
+			var line := ""
+			for l in credits.split("\n"):
+				if l.begins_with("| " + key):
+					line = l
+			assert_str(line).override_failure_message("no credits row for " + key).is_not_empty()
+			var license := line.rstrip(" |").get_slice("|", line.rstrip(" |").get_slice_count("|") - 1)
+			assert_str(license).override_failure_message(key + " license: " + license).contains("ElevenLabs")
+			checked += 1
+	assert_int(checked).is_greater_equal(44)
