@@ -747,6 +747,87 @@ def restart_arm(rng):
     return notes_seq([(79, 0.0), (74, 0.13)], rng, WOOD, 0.04)
 
 
+# ---------------------------------------------------------------- cues: menus (Showtime kit)
+# scenes/ui/kit/ui_sound.gd plays sfx/<cue>.ogg when it exists (else a raw code synth) and passes
+# its pitch through, so P1 / P2 and the countdown's rising ticks keep their pitch moves.
+
+def ui_move(rng):
+    return struck(midi(84), 0.03, rng, XYLO, click=0.3)[:int(0.12 * SR)]
+
+
+def ui_back(rng):
+    return notes_seq([(79, 0.0), (72, 0.06)], rng, WOOD, 0.045)
+
+
+def ui_tick(rng):
+    return struck(midi(91), 0.012, rng, WOOD, click=0.35)[:int(0.06 * SR)]
+
+
+def ui_toggle(rng):
+    out = silence(0.16)
+    mix(out, struck(midi(67), 0.025, rng, WOOD, click=0.4), 0.0, 0.9)
+    mix(out, struck(midi(79), 0.03, rng, XYLO, click=0.2), 0.04, 0.6)
+    return out
+
+
+def player_ready(rng):
+    out = notes_seq([(72, 0.0), (76, 0.07), (79, 0.14)], rng, MARIMBA, 0.1)
+    mix(out, thump(160, 70, 0.18, 0.06), 0.21, 0.8)
+    mix(out, chord((84, 88), 0.14, rng), 0.21, 0.6)
+    return out
+
+
+def player_unready(rng):
+    return notes_seq([(76, 0.0), (69, 0.09)], rng, MARIMBA, 0.08)
+
+
+def count_tick(rng):
+    # A woodblock "tok" with a little marimba tone in it: the lobby raises its pitch each dot.
+    out = silence(0.2)
+    mix(out, struck(midi(81), 0.03, rng, WOOD, click=0.35), 0.0, 1.0)
+    mix(out, struck(midi(81), 0.06, rng, MARIMBA, click=0.0), 0.0, 0.35)
+    return out
+
+
+def ui_go(rng):
+    out = chord((72, 76, 79, 84), 0.22, rng)
+    mix(out, thump(120, 55, 0.3, 0.1), 0.0, 0.9)
+    mix(out, chirp(500, 1600, 0.12), 0.0, 0.25)
+    return out
+
+
+def ui_wipe(rng):
+    out = silence(0.55)
+    for i, at in enumerate((0.0, 0.13, 0.26)):
+        mix(out, whoosh(400 + 150 * i, 2400 + 300 * i, 0.22, False)(rng), at, 0.8)
+    return out
+
+
+def ui_card(rng):
+    # A soft cymbal-ish swell (low-passed noise, nothing above 9.5 kHz) into a marimba ding.
+    sec = 0.55
+    sw = svf(noise(sec, rng), lambda t: 2500 + 4500 * t / sec, 0.9, "band")
+    out = silence(0.85)
+    mix(out, [v * (i / SR / sec) ** 2 for i, v in enumerate(sw)], 0.0, 0.5)
+    mix(out, chord((84, 91), 0.12, rng), sec, 0.8)
+    return out
+
+
+def ui_pause(rng):
+    out = silence(0.65)
+    mix(out, chirp(700, 260, 0.16, ((1, 1.0, 0.0), (2, 0.3, 0.0))), 0.0, 0.6)
+    mix(out, notes_seq([(64, 0.0), (60, 0.1)], rng, MARIMBA, 0.14), 0.12, 0.8)
+    return out
+
+
+def char_swap(rng):
+    out = silence(0.25)
+    puff = svf(noise(0.08, rng), 1400, 0.8, "band")
+    mix(out, [v * math.sin(math.pi * i / SR / 0.08) for i, v in enumerate(puff)], 0.0, 0.5)
+    mix(out, chirp(380, 1100, 0.11), 0.05, 0.6)
+    return out
+
+
 # ---------------------------------------------------------------- cues: upgrade-piece gags
 # upgrade_piece.gd plays gag_cue only if sfx/<cue>.ogg exists (no _N variants), so one file each.
 
@@ -1183,6 +1264,19 @@ FILES = {
     "round_end": (round_end, "sfx", 0.0),
     "pause": (pause, "sfx", -2.0),
     "restart_arm": (restart_arm, "sfx", -1.0),
+    # menus (Showtime kit, see above)
+    "ui_move": (ui_move, "sfx", -4.0),
+    "ui_back": (ui_back, "sfx", -3.0),
+    "ui_tick": (ui_tick, "sfx", -5.0),
+    "ui_toggle": (ui_toggle, "sfx", -3.0),
+    "player_ready": (player_ready, "sfx", 0.0),
+    "player_unready": (player_unready, "sfx", -2.0),
+    "count_tick": (count_tick, "sfx", -2.0),
+    "ui_go": (ui_go, "sfx", 0.0),
+    "ui_wipe": (ui_wipe, "sfx", -3.0),
+    "ui_card": (ui_card, "sfx", -2.0),
+    "ui_pause": (ui_pause, "sfx", -1.0),
+    "char_swap": (char_swap, "sfx", -2.0),
     # upgrade-piece gags (one file each, see above)
     "achoo": (achoo, "sfx", 0.0),
     "cannon_boom": (cannon_boom, "sfx", 0.0),

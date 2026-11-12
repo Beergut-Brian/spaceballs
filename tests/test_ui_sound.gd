@@ -30,11 +30,11 @@ func test_play_does_not_crash() -> void:
 
 
 func test_play_twice_reuses_pool_node() -> void:
-	UiSound.play("ui_move")
-	await get_tree().process_frame
-	var first := get_tree().root.get_node_or_null("UiSound")
+	# Every Spaceballs menu cue has a real file now, so the synth pool is driven directly.
+	var first := UiSound._ensure_pool()
 	assert_object(first).is_not_null()
-	UiSound.play("ui_tick")
+	await get_tree().process_frame
+	assert_object(UiSound._ensure_pool()).is_same(first)
 	await get_tree().process_frame
 	assert_int(get_tree().root.get_children().filter(func(c): return c.name == "UiSound").size()).is_equal(1)
 	assert_object(get_tree().root.get_node_or_null("UiSound")).is_same(first)

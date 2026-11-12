@@ -43,6 +43,8 @@ func test_every_sfx_file_is_used() -> void:
 	for c in PENDING_DATA:
 		cues[c] = true
 	cues.merge(_piece_gag_cues())
+	for c in UiSound.CUES:   # menu cues: UiSound.play plays sfx/<cue>.ogg through Audio
+		cues[c] = true
 	for id in Kicker.GEAR_CUES:   # worn gear's kick sounds (kicker.gd)
 		cues[Kicker.GEAR_CUES[id][0]] = true
 	for id in Roster.roster():   # a character's own wind-up voice (Kicker.voice_cue)

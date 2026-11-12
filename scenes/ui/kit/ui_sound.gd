@@ -5,7 +5,7 @@
 ## Otherwise it plays a cue synthesized in code (16-bit mono 44.1 kHz AudioStreamWAV),
 ## so every menu action makes a sound before the Audio lane delivers files.
 ## Dropping an .ogg with the same name into assets/audio/sfx replaces the synth
-## automatically. Pitch (pitch_scale) only applies to the synth; callers vary it per player.
+## automatically. Pitch applies to both (callers vary it per player and per countdown dot).
 ##
 ## Cues: ui_move, ui_back, ui_confirm, ui_tick, ui_toggle, player_ready,
 ## player_unready, player_join, count_tick, ui_go, ui_wipe, ui_card, ui_pause.
@@ -45,7 +45,7 @@ static func play(cue: String, pitch := 1.0) -> void:
 	if has_file(cue):
 		var audio := _audio()
 		if audio:
-			audio.play(cue)
+			audio.play(cue, null, pitch)   # P1 / P2 and the countdown's rising ticks keep their pitch
 			return
 	var s := stream(cue)
 	if s == null:

@@ -44,6 +44,18 @@ frequent cues sit 1 to 3 dB under (trim column in `FILES`).
 | round_end | sfx/round_end.ogg | `Game.end_round` | marimba "ta-da" |
 | pause | sfx/pause.ogg | pause / resume | two soft xylophone notes down |
 | restart_arm | sfx/restart_arm.ogg | first Select press (a second within 1 s restarts) | wood-block tick-tock |
+| ui_move | sfx/ui_move.ogg | menu focus step (Showtime kit `UiSound`, pitch per player) | one xylophone tick |
+| ui_back | sfx/ui_back.ogg | menu back / cancel | two woodblock notes down |
+| ui_tick | sfx/ui_tick.ogg | Settings slider step (pitch follows the value) | tiny woodblock click |
+| ui_toggle | sfx/ui_toggle.ogg | Settings on/off | woodblock clack + xylophone tick |
+| player_ready | sfx/player_ready.ogg | lobby: a player readies (P1 higher, P2 lower) | three marimba notes up + stamp |
+| player_unready | sfx/player_unready.ogg | lobby: B un-readies | two marimba notes down |
+| count_tick | sfx/count_tick.ogg | lobby countdown dot (pitch rises per dot) | woodblock tok with a marimba tone |
+| ui_go | sfx/ui_go.ogg | lobby countdown done | marimba major chord + thump |
+| ui_wipe | sfx/ui_wipe.ogg | Showtime wipe in / out | three soft whooshes |
+| ui_card | sfx/ui_card.ogg | Showtime title card | soft swell into a marimba ding |
+| ui_pause | sfx/ui_pause.ogg | pause menu opens | falling chirp into two soft notes |
+| char_swap | sfx/char_swap.ogg | chooser: a player steps to another character | soft puff + rising pop |
 | achoo | sfx/achoo.ogg | Sneeze piece gag (`gag_cue`) | "ah... ah... AH-CHOO!": breathy rising ahs, a soft "choo" |
 | cannon_boom | sfx/cannon_boom.ogg | Cannon Leg piece gag | toy cannon: cork pop, round low boom, smoke puff, falling slide whistle |
 | confetti_pop | sfx/confetti_pop.ogg | Confetti Kick piece gag | party popper "pok!", a quick paper shower, two glock pings |
