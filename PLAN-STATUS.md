@@ -39,6 +39,8 @@ launch-ready-2 audit (2026-11-12, `feature/launch-ready-2` off dev at `930a8d4`;
 - V-22 / PT10-3 `dragon_purr`: still a designed placeholder: the Dragon's `voice/` in openjar-characters v0.5.3 still has only a README. **Listed for Gary** (cue `dragon_purr`).
 - Built row found rough in this audit: **A-01** (sound on every action): 12 of the 14 menu cues (`ui_move`, `ui_back`, `ui_tick`, `ui_toggle`, `player_ready`, `player_unready`, `count_tick`, `ui_go`, `ui_wipe`, `ui_card`, `ui_pause`, `char_swap`) have no file and fall back to the template kit's raw code synth (the countdown is a bare 880 Hz beep), and the kit dropped the caller's pitch whenever a file exists. **Polish now**: render them with `make_cues.py` in the game's marimba / woodblock palette, keep the pitch.
 - Re-check in real frames: the 2026-11-10 playtest rows (U-15..U-19, V-22, PT10-1..3), V-09 / V-10 (gap-close-6) and the whole session flow, on this dev; results in `handoff/REPORT.md`.
+- Ship hygiene found in this pass: the 44 credits rows for the library's voice lines (every character's barks and catchphrase) said "in-house"; the library's own CREDITS.md says they are ElevenLabs TTS. `sync_characters.sh` now writes them as ElevenLabs (Kaden's plan covers release, confirmed 2026-11-10); `tests/test_launch_ready_2.gd::test_every_voice_credit_names_elevenlabs`.
+Totals after launch-ready-2, recounted from the rows: **120 built, 0 partial, 0 missing, 4 superseded, 1 dropped, 2 later (127 rows)**. The 2 `later` rows wait on Kaden (S-05) and the TV box (S-15).
 
 When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 
@@ -216,14 +218,13 @@ When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 
 ## Next up
 
-Re-ranked by launch-ready-1 (2026-11-10): nothing buildable is left. Every row is built, superseded,
+Re-ranked by launch-ready-2 (2026-11-12): nothing buildable is left. Every row is built, superseded,
 dropped, or waits on Kaden or the TV box (`docs/launch-checklist.md`).
 
 | Rank | ID | What | Size | Why this rank |
 | --- | --- | --- | --- | --- |
 | 1 | S-15 | Weekend: run the build on the TV box (60 fps at 1080p on the GTX 1060, pads, sound through the TV), then Hermes promotes `dev` to `main` | - | needs the TV box |
-| 2 | A-06 / P-09 | Jeff's and Chuck's voices and personalities (D37); the bark hook is built and plays them as soon as their `voice/` files sync | - | needs Kaden |
-| 3 | S-05 | Physics ragdoll: still wanted? | - | needs Kaden |
+| 2 | S-05 | Physics ragdoll: still wanted? | - | needs Kaden |
 | - | V-22 | `dragon_purr`: swap the designed placeholder for the library's bark when it is rendered | S | needs the library's audio |
 
 Watch at the next playtest (no row): with PT10-2's odds almost every player gets two curses and a run
