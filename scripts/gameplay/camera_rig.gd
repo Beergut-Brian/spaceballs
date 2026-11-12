@@ -58,6 +58,12 @@ const OCCLUDER_MIN_DIST := 2.5
 const SWINGS: Array[float] = [0.0, 0.3, -0.3, 0.6, -0.6, 0.9, -0.9, 1.2, -1.2]
 const SWING_RATE := 2.5
 var _swing := 0.0
+## The other player roaming the field while this one kicks (P-10). In the run-up shot he counts as
+## one more occluder (a sphere round his body): a bystander who wanders between the lens and the
+## kicker had the kicker's own windup hidden behind him; now the shot swings round him like a tree.
+var bystander: Node3D
+const BYSTANDER_RADIUS := 0.6
+const BYSTANDER_CENTRE := 0.8   # m over his feet: the middle of a Jarling
 
 @onready var camera: Camera3D = $Camera
 
@@ -177,7 +183,18 @@ func swing_clear(look: Vector3, want: Vector3, delta: float) -> Vector3:
 	return clear_view(look, look + arm.rotated(Vector3.UP, _swing))
 
 
-## Frames only this kicker (and his ball on `tee`); the bystander may leave the shot.
+## The bystander's occluder sphere, or none when there is no bystander on the field.
+func bystander_occluder() -> Array[Vector4]:
+	var out: Array[Vector4] = []
+	if is_instance_valid(bystander) and bystander.is_inside_tree() and bystander.visible \
+			and bystander.get(&"roam") == true:
+		var c := bystander.global_position + Vector3.UP * BYSTANDER_CENTRE
+		out.append(Vector4(c.x, c.y, c.z, BYSTANDER_RADIUS))
+	return out
+
+
+## Frames only this kicker (and his ball on `tee`); the bystander may leave the shot, and the shot
+## swings round him when he walks in front of the lens.
 func frame_field(kicker: Node3D, tee: Vector3) -> void:
 	_kicker = kicker
 	_tee = tee
@@ -284,7 +301,10 @@ func _process(delta: float) -> void:
 		Mode.SPLIT:
 			return
 	if mode == Mode.FIELD:
+		var extra := bystander_occluder()
+		occluders.append_array(extra)
 		want_pos = swing_clear(want_look, want_pos, delta)
+		occluders.resize(occluders.size() - extra.size())
 	elif mode == Mode.SPACE:
 		want_pos = clear_view(want_look, want_pos)
 	var k := clampf(delta * smooth, 0.0, 1.0)

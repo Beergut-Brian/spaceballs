@@ -346,6 +346,7 @@ func _begin_kick(p: int) -> void:
 	me.bot = Run.demo
 	me.begin_approach(balls[p].global_position)
 	balls[p].arm(true)
+	rig.bystander = kickers[1 - p]   # counts only while he roams (camera_rig.bystander_occluder)
 	rig.frame_close(frog_round)
 	rig.frame_field(me, tee)
 	_turn.show_for(me, tee, Players.COLOR[p])
