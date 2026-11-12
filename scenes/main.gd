@@ -57,6 +57,8 @@ const BUMP_PUSH := 4.0
 const FENCE_LENGTH := 30.0
 ## The other player's cheer bark comes this long after the kicker's own.
 const BARK_ECHO := 0.7
+## P-09: after the crowd's "awww" on a cursed flop, the kicker laughs it off this many seconds later.
+const LAUGH_OFF := 0.6
 ## A great kick holds the shot this long on the kicker and the cheering crowd before following the ball.
 const CROWD_BEAT := 0.35
 
@@ -185,6 +187,7 @@ func _on_player_joined(player: int, _device: int) -> void:
 		kickers[P2].set_waiting(false)
 		kickers[P2].cheer()
 		Fx.puff(kickers[P2].global_position + Vector3.UP, Players.COLOR[P2], 1.5)
+		bark(P2, "swap_in")   # P-09: "Hey hey! Jeff's here, man." in his own voice
 
 
 ## Solo (playtest): turned on before P1's first kick, restart so both play from round 1.
@@ -212,6 +215,11 @@ func _on_round_started(index: int) -> void:
 		for p in Players.active_players():
 			if not Run.in_run(p):
 				Run.join_next_round(p)
+		# P-09: the first kicker says he's ready, in his own voice ("Ready when you are, man.").
+		for p in [P1, P2]:
+			if Run.in_run(p):
+				bark(p, "ready")
+				break
 
 
 ## Jeff left, Chuck right, each standing just behind his tee and facing the camera, which looks
@@ -553,6 +561,8 @@ func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 		return
 	curse_show.callback(p, balls[p], curse)   # that's why: the curse pops over where it landed
 	_crowd.react(CrowdReactions.Level.AWW)
+	# P-09: he laughs the flop off in his own voice ("Ow! ...that was fun. Again! Again!").
+	get_tree().create_timer(LAUGH_OFF).timeout.connect(bark.bind(p, "lose"))
 	if curse.scene_override == null:
 		return
 	_sfx("frog_bloop", "frog", 0.6)
@@ -742,7 +752,7 @@ func _on_reached_space(p: int) -> void:
 
 ## A-06: the kicker's own voice reacts to his kick ("oops" on a cursed one, "cheer" on a great one)
 ## and the other player's character cheers him on a great one. Only characters the library has
-## voiced; Jeff and Chuck have no voice yet (D37), so the crowd stands in for them.
+## voiced (all 22 since openjar-characters v0.5.3); an unvoiced one stays quiet and the crowd stands in.
 func _kick_barks(p: int, other: int, level: int, cursed: bool) -> void:
 	if cursed:
 		bark(p, "oops")
