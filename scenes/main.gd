@@ -23,6 +23,11 @@ const KICK_CUES := ["kick_1", "kick_2", "kick_3", "kick_4"]
 ## Space moment: the ball circles the planet this long before the next kick (the camera spends it on
 ## the kicker's victory dance).
 const ORBIT_SHOW := 2.0
+## The space float's camera: metres out and up from the ball's orbit centre (it looks at the middle).
+const SPACE_ORBIT_RADIUS := 5.0
+const SPACE_ORBIT_HEIGHT := 1.0
+## The dance shot starts this far (rad) to one side of his front; the orbit sweeps across it.
+const DANCE_SWEEP := 0.35
 ## The alien who drops by to wave at a ball in orbit (the Sky lane's saucer, as scenery).
 const VisitorScene := preload("res://scenes/sky/saucer.tscn")
 ## The end card camera circles the two of them this close (it was 6.5 m: they were small on the TV).
@@ -527,7 +532,10 @@ func _on_ball_returned(p: int) -> void:
 	if Run.in_space(p) and Run.phase == Run.FLIGHT_PHASE[p]:
 		# The space moment, part two: the camera comes down to him dancing with the crowd.
 		_clear_visitor()
-		rig.orbit(kickers[p].global_position + Vector3.UP * 1.0, 4.6, 1.3)
+		# From in front of him (his face, not his back), sweeping across his front as he dances.
+		var facing: Vector3 = -kickers[p].global_basis.z
+		rig.orbit(kickers[p].global_position + Vector3.UP * 1.0, 4.6, 1.3, true,
+				rig.front_angle(facing, -DANCE_SWEEP), 0.0)
 		kickers[p].dance(true)
 		await get_tree().create_timer(ORBIT_SHOW).timeout
 		if Run.phase != Run.FLIGHT_PHASE[p]:
@@ -567,7 +575,8 @@ func _on_tier_reached(p: int, tier: int) -> void:
 ## plops a "bloop" and laughs it off.
 func _on_ball_stopped(p: int, _height: float, _tier: int) -> void:
 	if Run.in_space(p) and balls[p].flight == balls[p].Flight.FLOATING:
-		rig.orbit(balls[p].orbit_center, 4.4, 1.2, false)
+		# Far enough out, looking at the orbit's middle, that the near side of the loop stays in shot.
+		rig.orbit(balls[p].orbit_center, SPACE_ORBIT_RADIUS, SPACE_ORBIT_HEIGHT, false, 0.0, 0.0)
 		_celebrate_orbit()
 		_space_visitor(balls[p].orbit_center)
 		kickers[p].dance(true)   # the victory dance; he keeps it up on his cloud
