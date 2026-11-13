@@ -1,6 +1,7 @@
 ## Pause menu, Showtime style: the game stays visible, softened and tinted, and a dark wedge slides
 ## in from the left edged in the pauser's colour, with a big PAUSED, a "PLAYER 2 PAUSED" tag and
-## slanted bars: Resume, Restart (back to the lobby), Settings, Back to Open Jar (asks first).
+## slanted bars: Resume, Restart (back to the lobby), Settings, then the big door icon (128 px,
+## 140 px focused) with "Back to Open Jar" beneath it: back to the launcher, asks first.
 ## Either pad moves the cursor, A presses, B resumes or backs out of Settings / the question.
 ## Start is Game's (it resumes from anywhere). Shown while Game.state == PAUSED.
 extends Control
@@ -17,12 +18,13 @@ var paused_by := Players.P1:
 
 var _tw: Tween
 
-@onready var _buttons: Array = [$Card/Buttons/Resume, $Card/Buttons/Restart, $Card/Buttons/Settings, $Card/Buttons/Door]
+@onready var _buttons: Array = [$Card/Buttons/Resume, $Card/Buttons/Restart, $Card/Buttons/Settings, $Card/Door/Icon]
 @onready var _card: Control = $Card
 @onready var _wedge: Control = $Wedge
 @onready var _by: Control = $Card/PausedBy
 @onready var _settings: SettingsPanel = $Settings
 @onready var _confirm: ConfirmDialog = $Confirm
+@onready var _door_label: Label = $Card/Door/Label
 
 
 func _ready() -> void:
@@ -112,6 +114,7 @@ func _set_focus(to: Choice, sound := true) -> void:
 	focus = to
 	for i in _buttons.size():
 		_buttons[i].focused = i == focus
+	_style_door_label()
 
 
 func _on_confirm_chosen(leave: bool) -> void:
@@ -136,6 +139,10 @@ func _on_state_changed(_from: int, to: int) -> void:
 	_tw.tween_property(_wedge, "edge", 1010.0, 0.3).from(-300.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_tw.tween_property(_card, "position:x", 0.0, 0.3).from(-500.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	MenuItem.slam_all(_buttons, 0.1, 0.05)
+	# The door's words come in with the door.
+	_door_label.position.x = -500.0
+	_tw.tween_property(_door_label, "position:x", 0.0, 0.34).set_delay(0.25) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 ## UiStyle.use_skin() calls this on every open menu.
@@ -143,7 +150,16 @@ func apply_skin() -> void:
 	var dim := $Dim.material as ShaderMaterial
 	if dim:
 		dim.set_shader_parameter("tint", Color(UiStyle.deep(), 0.4))
+	$Card/Door/Icon.tint = UiStyle.accent
 	_apply_pauser()
+
+
+## Under the door: cream and big when it is focused, softer when not.
+func _style_door_label() -> void:
+	if _door_label == null:
+		return
+	var on := focus == Choice.DOOR
+	UiStyle.style_title(_door_label, 46 if on else 38, UiStyle.CREAM if on else Color(UiStyle.CREAM, 0.75), 420.0)
 
 
 func _apply_pauser() -> void:
