@@ -30,6 +30,14 @@ var bounce := false
 var highlighted := false
 ## A tween owns the scale (the hidden-curse flip).
 var flipping := false
+## PF-3: the highlighted card of a player still choosing shows the A button on its bottom edge,
+## so the pick says which button takes it (it was never on screen).
+var prompt := false:
+	set(v):
+		if v != prompt:
+			prompt = v
+			queue_redraw()
+const PROMPT_SIZE := 58.0
 
 @onready var icon: TextureRect = $Icon
 
@@ -117,6 +125,10 @@ func _draw() -> void:
 				draw_colored_polygon(pts, TWINKLES[i % TWINKLES.size()])
 		_:
 			draw_circle(c, rad * 0.86, Color(1, 1, 1, 0.55))
+	if prompt:
+		var at := Vector2(c.x, size.y - INSET * 0.5)
+		draw_circle(at, PROMPT_SIZE * 0.5 + 5.0, UiStyle.INK)
+		UiStyle.draw_glyph(self, at, PROMPT_SIZE, "a")
 
 
 func _process(delta: float) -> void:

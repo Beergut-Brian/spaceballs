@@ -137,6 +137,7 @@ func _pick(p: int) -> void:
 	_done[p] = true
 	Audio.play("card_pick")
 	var cards := cards_of(p)
+	_refresh_prompts(p)
 	for i in cards.size():
 		if i != _sel[p]:
 			cards[i].modulate = Color(1, 1, 1, 0.25)
@@ -230,6 +231,14 @@ func _refresh(p: int) -> void:
 	var cards := cards_of(p)
 	for i in cards.size():
 		cards[i].set_highlight(i == _sel[p] and not _done[p], Players.COLOR[p])
+	_refresh_prompts(p)
+
+
+## The A button sits on the highlighted card until that player has picked.
+func _refresh_prompts(p: int) -> void:
+	var cards := cards_of(p)
+	for i in cards.size():
+		cards[i].prompt = i == _sel[p] and not _done[p]
 
 
 func _reads_input(p: int) -> bool:

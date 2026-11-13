@@ -28,7 +28,10 @@ func _ready() -> void:
 	lines.material.set_shader_parameter(&"amount", 0.0)
 
 
+## Settings > Screen shake off: no shake at all (the kick, a tier, a gag's own shake).
 func shake(amount: float) -> void:
+	if not SettingsPanel.screen_shake():
+		return
 	_shake = maxf(_shake, amount)
 	_shake_t = 0.0
 

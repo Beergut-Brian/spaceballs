@@ -185,7 +185,7 @@ func _draw() -> void:
 	elif joined and not readied:
 		var tag_text := "[lr] Pick   [a] Ready up" if can_change else "[a] Ready up"
 		_tag(Vector2(plate.end.x - UiStyle.rich_width(tag_text, UiStyle.Role.HINT, 28) - 50, PLATE_Y - 40), tag_text)
-	if readied:
+	if shows_stamp():
 		_draw_stamp(Vector2(plate.end.x - 50, PLATE_Y - 14))
 
 
@@ -193,6 +193,13 @@ func _draw() -> void:
 static func fit_size(text: String, avail: float, base: int) -> int:
 	var w := UiStyle.show_font(800).get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, base).x
 	return base if w <= avail else maxi(28, int(base * avail / w))
+
+
+## PF-6: while A is held on Play to start alone, "STARTING SOLO" takes the READY! stamp's place
+## (holding needs a ready player, so the stamp was always on top of the tag: "STARTING SO...").
+## Higher up, the character's feet covered it instead. Let go and the stamp is back.
+func shows_stamp() -> bool:
+	return readied and hold <= 0.0
 
 
 ## A small dark tag above the plate.
