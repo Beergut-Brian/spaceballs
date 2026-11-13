@@ -12,6 +12,8 @@ signal state_changed(state: State)
 signal kick_contact(run_up_quality: float)
 signal hopped(player: int)
 signal shouted(player: int)
+## B with nothing to do (in the air, mid wind-up or gag): the refusal (Audio "nope").
+signal refused(player: int)
 ## A on the pad of a player who isn't kicking: their own cheer (the crowd joins in; never an action).
 signal cheered(player: int)
 signal gag_started(gag: StringName)
@@ -821,12 +823,14 @@ func _end_follow_through() -> void:
 func _buttons() -> void:
 	if Game.state != Game.State.PLAYING or not _reads_input() or state == State.CHAIR:
 		return
-	if Input.is_action_just_pressed(Players.action(player, "jump")) and state != State.WINDUP and state != State.GAG:
-		if _hop(1.0):
+	if Input.is_action_just_pressed(Players.action(player, "jump")):
+		if state != State.WINDUP and state != State.GAG and _hop(1.0):
 			if state == State.APPROACH:
 				_hopped_t = _time
 			Audio.play("hop")
 			hopped.emit(player)
+		else:
+			refuse()
 	if Input.is_action_just_pressed(Players.action(player, "action")):
 		if state == State.APPROACH or state == State.WINDUP or state == State.GAG:
 			Audio.play("shout")
@@ -836,6 +840,14 @@ func _buttons() -> void:
 		else:
 			cheer()
 			cheered.emit(player)
+
+
+## A press that does nothing (B in the air, mid wind-up or gag) still says so: a dull tak and a
+## small squash, so the button never feels dead.
+func refuse() -> void:
+	Audio.play("nope")
+	Fx.pop(body, 1.08)
+	refused.emit(player)
 
 
 func _hop(strength: float) -> bool:
