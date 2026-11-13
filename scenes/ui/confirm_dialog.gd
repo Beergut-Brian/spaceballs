@@ -10,7 +10,7 @@ enum Choice { CANCEL, CONFIRM }
 ## The line under the question. From the lobby nothing is lost; from the pause menu the run is
 ## (only the best kick and the card collection are saved), so the pause menu says so (PF-2).
 const BODY_LOBBY := "Progress is saved. You'll go back to Open Jar."
-const BODY_IN_RUN := "This run ends. Best kick and cards found are saved."
+const BODY_IN_RUN := "This run ends. Best kick and cards are kept."
 
 var active := false
 var focus := Choice.CANCEL
