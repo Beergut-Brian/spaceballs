@@ -276,12 +276,20 @@ func prompt_target() -> Control:
 	return door if door_focused and door.visible else button_hint
 
 
-func _draw_prompt() -> void:
+## Where the A sits (end card coordinates): a badge on the focused button's bottom edge, inside
+## the TV-safe area (UiStyle.SAFE).
+func prompt_at() -> Vector2:
 	var target := prompt_target()
 	if target == null:
+		return Vector2.INF
+	# Layout rect (the pulse scales the button about its centre; the badge stays put).
+	return target.position + Vector2(target.size.x * 0.5, target.size.y - 14.0)
+
+
+func _draw_prompt() -> void:
+	var at := prompt_at()
+	if at == Vector2.INF:
 		return
-	var r := target.get_global_rect()
-	var at := r.get_center() + Vector2(0, r.size.y * 0.5 + 18.0 + PROMPT_SIZE * 0.5) - _prompt.get_global_rect().position
 	_prompt.draw_circle(at, PROMPT_SIZE * 0.5 + 5.0, UiStyle.INK)
 	UiStyle.draw_glyph(_prompt, at, PROMPT_SIZE, "a")
 

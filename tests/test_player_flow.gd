@@ -73,8 +73,11 @@ func test_end_card_shows_a_under_the_focused_button_and_the_door_asks() -> void:
 	assert_object(card.prompt_target()).is_null()   # before the buttons show
 	card._process(card.ACCEPT_AFTER + 0.1)
 	assert_object(card.prompt_target()).is_same(card.button_hint)
+	var safe_bottom: float = card.size.y - UiStyle.SAFE.y
+	assert_float(card.prompt_at().y + card.PROMPT_SIZE * 0.5 + 5.0).is_less_equal(safe_bottom)
 	card._focus_door(true, false)
 	assert_object(card.prompt_target()).is_same(card.door)
+	assert_float(card.prompt_at().y + card.PROMPT_SIZE * 0.5 + 5.0).is_less_equal(safe_bottom)
 	var quits := [0]
 	Game.quit_exits = false
 	Game.quit_requested.connect(func() -> void: quits[0] += 1)
