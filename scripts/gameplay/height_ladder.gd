@@ -1,10 +1,14 @@
 ## Places each tier's landmark scene at its height from data/tiers.tres (a plain ring of boxes if a
-## tier has none) and steps the sky colour with the camera's height.
+## tier has none) and steps the sky colour with the camera's height. Landmarks stand on the lawn:
+## tiers 2 and 3 are whole houses and trees whose roofs and crowns sit at the tier line (playtest
+## 2026-11-12), and a ball passing a tier fires that landmark's beat (LandmarkBeat).
 extends Node3D
 
 @export var environment: WorldEnvironment
 
 var _tiers: TierSet
+## tier -> its landmark node
+var _landmarks := {}
 
 
 func _ready() -> void:
@@ -20,6 +24,7 @@ func _ready() -> void:
 			var lm := t.landmark.instantiate() as Node3D
 			add_child(lm)
 			lm.position = Vector3(0, y, 0)
+			_landmarks[i + 1] = lm
 			continue
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = t.color
@@ -33,6 +38,19 @@ func _ready() -> void:
 			m.position = Vector3(cos(a) * (6.0 + i * 1.5), y, sin(a) * (6.0 + i * 1.5) - 2.0)
 			m.name = "%s_%d" % [t.id, k]
 			add_child(m)
+	Run.ball_tier_reached.connect(_on_tier)
+
+
+## The landmark standing at this tier's line, or null.
+func landmark(tier: int) -> Node3D:
+	return _landmarks.get(tier)
+
+
+## A ball just passed this tier's line: its landmark reacts (the cat startles, the birds scatter).
+func _on_tier(_player: int, tier: int) -> void:
+	var lm := landmark(tier)
+	if lm and lm.has_method(&"beat"):
+		lm.beat()
 
 
 func _process(_delta: float) -> void:
