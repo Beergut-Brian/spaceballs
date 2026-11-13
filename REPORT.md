@@ -62,4 +62,5 @@ Totals recounted: **134 built, 0 partial, 0 missing, 4 superseded, 1 dropped, 3 
 
 ## Leftovers
 - A fresh `--import` left untracked `assets/characters/*/*_face.png` / `*_pattern.png` (vendored
-  folder); not committed, not deleted.
+  folder) and `assets/landmarks/dragon/*.png`, plus `tests/test_gap_close_{7,8,9}.gd.uid` for
+  existing suites; none committed, none deleted.
