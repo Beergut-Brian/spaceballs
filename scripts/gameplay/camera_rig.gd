@@ -2,7 +2,7 @@
 ## upgrade_pick.tscn; split(true) just stops the main viewport drawing 3D underneath it.
 extends Node3D
 
-enum Mode { FIELD, FOLLOW, PEAK, SPLIT, SPACE }
+enum Mode { FIELD, FOLLOW, PEAK, SPLIT, SPACE, TEE }
 
 signal mode_changed(mode: Mode)
 
@@ -16,6 +16,9 @@ signal mode_changed(mode: Mode)
 ## Extra distance per m/s of ball speed: the zoom-out.
 @export var follow_zoom := 0.45
 @export var smooth := 6.0
+## The comedy drop (C-14): a still shot of the tee, the ball falling into it from the top.
+@export var tee_look_up := 1.3
+@export var tee_shot_scale := 1.15
 @export_group("Long run-up")
 ## Seconds of the runner's velocity the shot looks ahead by.
 @export var lead_time := 0.5
@@ -215,6 +218,15 @@ func follow(ball: Node3D) -> void:
 	_set_mode(Mode.FOLLOW)
 
 
+## Cut to the tee for the comedy drop (C-14). The flight's peak hold looked at empty sky while the
+## ball fell back and bounced on the lawn out of shot: the joke happened where nobody could see it.
+func watch_tee(tee: Vector3) -> void:
+	_tee = tee
+	_swing = 0.0
+	_set_mode(Mode.TEE)
+	_snap()
+
+
 func hold_peak() -> void:
 	_set_mode(Mode.PEAK)
 
@@ -300,7 +312,10 @@ func _process(delta: float) -> void:
 			want_pos = _center + Vector3(sin(_angle) * _orbit_r, _orbit_h, cos(_angle) * _orbit_r)
 		Mode.SPLIT:
 			return
-	if mode == Mode.FIELD:
+		Mode.TEE:
+			want_look = _tee + Vector3.UP * tee_look_up
+			want_pos = want_look + field_offset * tee_shot_scale
+	if mode == Mode.FIELD or mode == Mode.TEE:
 		var extra := bystander_occluder()
 		occluders.append_array(extra)
 		want_pos = swing_clear(want_look, want_pos, delta)
