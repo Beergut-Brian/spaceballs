@@ -112,7 +112,11 @@ func _ready() -> void:
 		kickers[p].slipped.connect(_start_kick.bind(p))
 		kickers[p].cheered.connect(func(_q: int) -> void:
 			if Run.phase_player() >= 0:   # during a kick or a flight, not over the card pick
-				_crowd.echo_cheer())
+				_crowd.echo_cheer()
+				# Off-screen (roaming away or up on his cloud): his arrow jumps and throws stars,
+				# so his button always shows something (rule 7).
+				if _bystander_arrow.target == kickers[p]:
+					_bystander_arrow.pop())
 		hud.track(p, balls[p])
 	pick_ui.picked.connect(_on_picked)
 	end_card.restart_requested.connect(_on_end_accepted)
@@ -319,6 +323,8 @@ func _begin_kick(p: int) -> void:
 		balls[q].arm(false)
 		if Run.in_space(q):
 			_to_cloud(q)
+			# C-19: he is up on his cloud, out of shot; his arrow points at him so his cheer shows.
+			_bystander_arrow.show_for(k, Players.COLOR[q])
 		elif Run.in_run(q) or Players.is_active(q):
 			_place(q, _marker("Sidelines", q), tee)
 			k.set_waiting(false)
