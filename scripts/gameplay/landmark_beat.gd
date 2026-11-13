@@ -59,7 +59,7 @@ func _startle(n: Node3D) -> void:
 		if not n.has_meta(&"rest_hop"):
 			n.set_meta(&"rest_hop", Vector2(n.get(&"amount"), n.get(&"speed")))
 		var hop: Vector2 = n.get_meta(&"rest_hop")
-		n.set(&"amount", hop.x * 4.0)
+		n.set(&"amount", hop.x * 2.5)
 		n.set(&"speed", hop.y * 1.8)
 		tw.tween_callback(func() -> void:
 			n.set(&"amount", hop.x)
