@@ -1,7 +1,9 @@
 ## A big round icon button for menus, drawn in code, no text. The menu that owns it moves the
 ## focus and presses it; this only draws (and pops when pressed).
 ## Art lane: swap `texture` in for the drawn icon, keep the node.
+## It can sit in a MenuItem focus list (MenuItem.step / slam_all): it has `disabled` and slam_in().
 @tool
+class_name IconButton
 extends Control
 
 enum Icon { PLAY, RESTART, DOOR }
@@ -15,16 +17,22 @@ enum Icon { PLAY, RESTART, DOOR }
 		texture = v
 		queue_redraw()
 @export var tint := Color("ffd84d")
+## Focused size over resting size, e.g. 140 / 128 for the pause door.
+@export var focus_scale := 1.15
+## Skipped by MenuItem.step().
+@export var disabled := false
 
 var focused := false:
 	set(v):
 		if v == focused:
 			return
 		focused = v
-		_bounce(1.15 if v else 1.0)
+		_bounce(focus_scale if v else 1.0)
 		queue_redraw()
 
 var _t := 0.0
+var _home_x := NAN   # where slam_in() settles; taken the first time
+var _tw_in: Tween
 
 
 func _ready() -> void:
@@ -41,8 +49,22 @@ func _process(delta: float) -> void:
 func press() -> void:
 	var tw := create_tween()
 	tw.tween_property(self, "scale", Vector2.ONE * 0.85, 0.06)
-	tw.tween_property(self, "scale", Vector2.ONE * (1.15 if focused else 1.0), 0.18) \
+	tw.tween_property(self, "scale", Vector2.ONE * (focus_scale if focused else 1.0), 0.18) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## In from off screen to the left, past its mark, and back (like MenuItem.slam_in).
+func slam_in(delay := 0.0) -> void:
+	if not is_inside_tree():
+		return
+	if is_nan(_home_x):
+		_home_x = position.x
+	if _tw_in:
+		_tw_in.kill()
+	position.x = _home_x - 500.0
+	_tw_in = create_tween()
+	_tw_in.tween_interval(delay)
+	_tw_in.tween_property(self, "position:x", _home_x, 0.34).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _bounce(to: float) -> void:
