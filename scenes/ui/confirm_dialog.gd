@@ -7,6 +7,11 @@ signal chosen(confirmed: bool)
 
 enum Choice { CANCEL, CONFIRM }
 
+## The line under the question. From the lobby nothing is lost; from the pause menu the run is
+## (only the best kick and the card collection are saved), so the pause menu says so (PF-2).
+const BODY_LOBBY := "Progress is saved. You'll go back to Open Jar."
+const BODY_IN_RUN := "This run ends. Best kick and cards found are saved."
+
 var active := false
 var focus := Choice.CANCEL
 
@@ -28,7 +33,8 @@ func _ready() -> void:
 	$Card/Body.add_theme_color_override("font_color", Color(UiStyle.CREAM, 0.8))
 
 
-func open() -> void:
+func open(body: String = BODY_LOBBY) -> void:
+	$Card/Body.text = body
 	active = true
 	visible = true
 	_set_focus(Choice.CANCEL, false)

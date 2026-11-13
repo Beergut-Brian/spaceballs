@@ -87,7 +87,7 @@ func press(choice: Choice = focus) -> void:
 		Choice.SETTINGS:
 			_settings.open()
 		Choice.DOOR:
-			_confirm.open()
+			_confirm.open(ConfirmDialog.BODY_IN_RUN)
 
 
 ## B: out of the question or Settings, else resume.
