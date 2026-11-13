@@ -1,6 +1,7 @@
 ## Settings, small and real: music volume, sound volume, screen shake, solo playtest mode.
 ## Per install, saved through Save.set_setting the moment a value changes. Up/down picks a row,
-## left/right (or A) changes it, B goes back. The lobby and the pause menu each hold one.
+## left/right (or A) changes it, B goes back. Any other button refuses (the honk and a wobble on the
+## row), except Start while paused, which is Game's resume. The lobby and the pause menu each hold one.
 ## Games read screen shake with SettingsPanel.screen_shake() before shaking the camera.
 class_name SettingsPanel
 extends Control
@@ -82,6 +83,8 @@ func handle(input: Dictionary) -> void:
 		adjust(input.move.x)
 	elif input.a != -1:
 		adjust(1, true)
+	elif input.get("other", -1) != -1 and not MenuInput.owned_elsewhere(input):
+		MenuInput.refuse(_rows[focus], input.button)
 
 
 func move_focus(dir: int) -> void:

@@ -38,6 +38,13 @@ var prompt := false:
 			prompt = v
 			queue_redraw()
 const PROMPT_SIZE := 58.0
+## A refused press (MenuInput.refuse()): the card rocks side to side, fading out, like the kit's
+## IconButton.wobble(). Radians at the start.
+const WOBBLE_TURN := 0.14
+## How many times this card wobbled (tests read it).
+var wobbles := 0
+var _wob := 0.0   # 1 just refused .. 0 still
+var _tw_wob: Tween
 
 @onready var icon: TextureRect = $Icon
 
@@ -48,6 +55,34 @@ func _ready() -> void:
 	_back.set_corner_radius_all(16)
 	pivot_offset = size * 0.5
 	resized.connect(func() -> void: pivot_offset = size * 0.5)
+
+
+## The refusal's visual half: rocks three times over MenuItem.WOBBLE_TIME. Not while the curse flip
+## owns the card.
+func wobble() -> void:
+	wobbles += 1
+	if not is_inside_tree() or flipping:
+		return
+	if _tw_wob:
+		_tw_wob.kill()
+	_tw_wob = create_tween()
+	_tw_wob.tween_method(_set_wob, 1.0, 0.0, MenuItem.WOBBLE_TIME)
+
+
+## Screenshots: hold the wobble at `v` (1 just refused .. 0 still).
+func pose_wobble(v: float) -> void:
+	if _tw_wob:
+		_tw_wob.kill()
+	_set_wob(v)
+
+
+func _set_wob(v: float) -> void:
+	_wob = v
+	rotation = sin((1.0 - v) * TAU * 3.0) * WOBBLE_TURN * v
+
+
+func is_wobbling() -> bool:
+	return _wob > 0.0
 
 
 func set_upgrade(u: UpgradeData) -> void:

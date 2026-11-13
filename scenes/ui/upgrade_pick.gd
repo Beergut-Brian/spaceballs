@@ -2,6 +2,9 @@
 ## Stick moves, A picks, waits for both, never times out. Systems owns structure, Art the theme.
 ## Solo (playtest): one pad picks for P1, then P2 (the waiting half is dimmed); B on P2's turn
 ## goes back to P1's choice. Both picks are emitted together when P2 picks.
+## Every press answers (docs/press-answers.md): X, Y, shoulders, triggers, stick clicks and Start, B
+## outside solo P2's turn, and A or B from a player who has already picked, refuse: the honk and a
+## wobble on that player's card (MenuInput.refuse()). Select keeps its job (Game's restart).
 extends Control
 
 signal picked(player: int, upgrade: UpgradeData)
@@ -98,8 +101,16 @@ func solo_turn() -> int:
 
 func _process(delta: float) -> void:
 	_demo_t += delta
+	var input := MenuInput.read()
 	for p in _draws:
-		if _done[p] or (_solo_turn != -1 and p != _solo_turn):
+		if _solo_turn != -1 and p != _solo_turn:
+			continue
+		if _done[p]:
+			if not Run.demo and _solo_turn == -1 and _reads_input(p):
+				if Input.is_action_just_pressed(Players.action(p, "action")):
+					refuse(p, "a")
+				elif Input.is_action_just_pressed(Players.action(p, "jump")):
+					refuse(p, "b")
 			continue
 		if Run.demo and _demo_t > DEMO_PICK_AFTER:
 			_sel[p] = randi() % _draws[p].size()
@@ -115,8 +126,30 @@ func _process(delta: float) -> void:
 			_move(p, 1 if x > 0.0 else -1)
 		if Input.is_action_just_pressed(Players.action(p, "action")):
 			_pick(p)
-		elif _solo_turn == P2 and Input.is_action_just_pressed(Players.action(p, "jump")):
-			solo_back()
+		elif Input.is_action_just_pressed(Players.action(p, "jump")):
+			if _solo_turn == P2:
+				solo_back()
+			elif not Run.demo:
+				refuse(p, "b")
+	if input.other != -1 and not Run.demo and not owned_elsewhere(input.button):
+		var who: int = _solo_turn if _solo_turn != -1 else input.other
+		if _draws.has(who):
+			refuse(who, input.button)
+
+
+## A press that does nothing on the pick: the honk and a wobble on this player's card.
+func refuse(p: int, button := "") -> void:
+	MenuInput.refuse(cards_of(p)[_sel[p]], button)
+
+
+## Buttons another owner answers while the pick is up: Select is Game's restart (arm, then restart).
+## Start is the pause only in PLAYING; the pick runs between rounds, so Start refuses here.
+static func owned_elsewhere(button: String) -> bool:
+	if button == "select":
+		return Game.state in [Game.State.PLAYING, Game.State.ROUND_END]
+	if button == "start":
+		return Game.state in [Game.State.PLAYING, Game.State.PAUSED]
+	return false
 
 
 func _move(p: int, step: int) -> void:
