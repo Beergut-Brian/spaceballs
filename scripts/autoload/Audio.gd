@@ -15,6 +15,8 @@ const ALIASES := {
 	"ui_move": ["card_move", 1.0], "ui_back": ["ui_confirm", 0.75],
 	"player_ready": ["player_join", 1.0], "player_unready": ["player_join", 0.7],
 	"count_tick": ["card_move", 1.5], "solo_on": ["player_join", 1.5], "solo_off": ["player_join", 0.6],
+	# Feel rule: a press that does nothing says so. A dull low tak until the Audio lane makes one.
+	"nope": ["card_move", 0.5],
 }
 
 ## Every cue asked for, as asked (before an alias), even one with no file. Tests listen to it.

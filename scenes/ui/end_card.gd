@@ -198,6 +198,8 @@ func _process(delta: float) -> void:
 	door.visible = button_hint.visible and not Run.demo
 	button_hint.scale = Vector2.ONE * (1.0 + (0.0 if door_focused else 0.1 * sin(_t * 6.0)) + 0.25 * hold)
 	_prompt.queue_redraw()
+	if not Run.demo and not confirm.active and refused_press():
+		refuse()
 	if _t < ACCEPT_AFTER:
 		return
 	if Run.demo and _t > ACCEPT_AFTER + 1.0:
@@ -251,6 +253,25 @@ func _draw_ring() -> void:
 	var r := minf(c.x, c.y) + 16.0
 	_ring.draw_arc(c, r, 0.0, TAU, 48, Color(1, 1, 1, 0.3), 12.0, true)
 	_ring.draw_arc(c, r, -PI * 0.5, -PI * 0.5 + TAU * hold, 48, Color.WHITE, 12.0, true)
+
+
+## This frame's press that does nothing here: B, Start (there is no pause on the end card), or A
+## before the buttons show (ACCEPT_AFTER keeps a kick's late A from skipping the card).
+func refused_press() -> bool:
+	if Input.is_action_just_pressed("pause"):
+		return true
+	for p in [Players.P1, Players.P2]:
+		if Input.is_action_just_pressed(Players.action(p, "jump")):
+			return true
+		if _t < ACCEPT_AFTER and Input.is_action_just_pressed(Players.action(p, "action")):
+			return true
+	return false
+
+
+## Feel rule: a press that does nothing says so (a dull tak and a flash of the big button).
+func refuse() -> void:
+	Audio.play("nope")
+	Fx.flash(button_hint if button_hint.visible else self, Color(1.0, 0.75, 0.75))
 
 
 ## A on whatever is focused: the big button back to the lobby, or the door to the launcher.
