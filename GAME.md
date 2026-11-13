@@ -202,6 +202,20 @@ Notes quoted in `playtests/2026-11-10.md`.
 2. **New curse odds** (supersedes "average two curses per run"; Kaden: "a 40% chance from the start to get curse 1. 20% after that to get curse 2. Then 0% chance after that."). Gary's reading: per player, each picked card has a **40%** chance to flip into a curse until that player's first curse, then **20%** per pick until their second, then **0%**. So curses arrive early (not in the last rounds) and never more than two per player per run. Kept in data (`data/curse_odds.tres` or the tier set) so it can be tuned.
 3. **Dragon cameo** (Kaden: "get the dragon cameo flying in some layer"): The Hill's Dragon (library resident, `openjar-characters` v0.5.1, giant body) glides through the **Clouds** tier (tier 5), big, sleepy and friendly. The ball can bonk her: a happy sleepy roll, a puff of cloud, a rumble-purr, maybe a tiny height boost. Not every run: a tuned chance, so seeing her is a treat. She is not a playable character and never blocks a run.
 
+## Playtest 2026-11-12 changes (Kaden; these supersede the sections above)
+
+Note quoted in `playtests/2026-11-12.md`.
+
+Kaden: "When kicking a ball, sometimes random roofs with birds will appear. Not sure what they are doing there."
+
+What they were: the height-ladder landmarks (tier 2 Rooftops, tier 3 Treetops and birds) and the Sky lane's random `rooftops` set (a roof with a chimney and cat, pigeons on a TV mast) hanging in the sky with nothing under them. A world thing with no visible cause reads to him as a bug.
+
+**Gary's pick (Kaden can veto): make height read as height**, so each landmark is clearly "the ball just passed the rooftops / the treetops":
+1. **Ground them.** Rooftops are the tops of whole houses that rise from the ground at the side of the frame (a row of houses as a skyline, the ball passing their roof line); treetops are the tops of full trees standing on the ground; the birds sit in or circle those trees. Nothing that belongs on the ground may float. Higher tiers (kite/balloon, clouds, plane, space) stay airborne, which is fine.
+2. **Mark the moment.** As the ball passes a tier's landmark: the existing tier sparkle and gag sound, the landmark's picture pops on the height strip, and a short reaction (the cat startles, the birds scatter). One beat, no text.
+3. **No `rooftops` in the random sky-object sets** (`data/sky.tres`); every sky set audited for anything else that only makes sense on the ground (the washing line and the squirrel's branch left too).
+4. Keep the existing landmark art and colours; restaged and extended (more houses, the cat and pigeons on them, birds in the trees) with the existing builder (`art/tools/build_scenes.gd`), no new hand-made art.
+
 ## Decisions made without Kaden
 
 - 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.

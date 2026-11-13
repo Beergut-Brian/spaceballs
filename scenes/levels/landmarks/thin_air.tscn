@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="1_loyqw"]
+[ext_resource type="Script" path="res://scripts/gameplay/landmark_beat.gd" id="1_82ahh"]
+[ext_resource type="Script" path="res://art/scripts/landmark_motion.gd" id="2_q5dxl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23ynb"]
 albedo_color = Color(0.93333334, 0.972549, 1, 1)
@@ -9,13 +10,13 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_82ahh"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_i8d31"]
 radius = 0.3
 height = 3.2
 radial_segments = 24
 rings = 6
 
-[sub_resource type="BoxMesh" id="BoxMesh_q5dxl"]
+[sub_resource type="BoxMesh" id="BoxMesh_uq63y"]
 size = Vector3(3.6, 0.06, 0.7)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_32eqh"]
@@ -25,37 +26,37 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="BoxMesh" id="BoxMesh_i8d31"]
+[sub_resource type="BoxMesh" id="BoxMesh_owsj4"]
 size = Vector3(0.06, 0.8, 0.5)
 
-[sub_resource type="BoxMesh" id="BoxMesh_uq63y"]
+[sub_resource type="BoxMesh" id="BoxMesh_lh13e"]
 size = Vector3(1.3, 0.05, 0.35)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_owsj4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d6rb0"]
 albedo_color = Color(0.23921569, 0.54509807, 1, 1)
 roughness = 0.15
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_lh13e"]
+[sub_resource type="SphereMesh" id="SphereMesh_4sd5s"]
 radius = 0.18
 height = 0.36
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d6rb0"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgnkt"]
 transparency = 1
 shading_mode = 0
 albedo_color = Color(1, 1, 1, 0.55)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_4sd5s"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_lmhbb"]
 radius = 0.12
 height = 14.0
 radial_segments = 24
 rings = 6
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgnkt"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5y45c"]
 albedo_color = Color(1, 0.30980393, 0.84705883, 1)
 roughness = 0.25
 rim_enabled = true
@@ -68,14 +69,14 @@ height = 2.0
 radial_segments = 32
 rings = 16
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lmhbb"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l34e3"]
 albedo_color = Color(1, 0.85, 0.97, 1)
 roughness = 0.1
 rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="SphereMesh" id="SphereMesh_5y45c"]
+[sub_resource type="SphereMesh" id="SphereMesh_m2tyo"]
 radius = 0.3
 height = 0.6
 radial_segments = 32
@@ -88,108 +89,109 @@ rim_enabled = true
 rim = 0.35
 rim_tint = 0.3
 
-[sub_resource type="PrismMesh" id="PrismMesh_l34e3"]
+[sub_resource type="PrismMesh" id="PrismMesh_xsg11"]
 size = Vector3(0.35, 0.3, 0.35)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_m2tyo"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_kn32v"]
 top_radius = 0.025
 bottom_radius = 0.025
 height = 0.7
 radial_segments = 24
 rings = 1
 
-[node name="ThinAir" type="Node3D" unique_id=1911367507]
+[node name="ThinAir" type="Node3D" unique_id=1561247195]
+script = ExtResource("1_82ahh")
 metadata/_art = "Tier landmark thin_air (art/tools/build_scenes.gd)."
 
-[node name="JetPath" type="Node3D" parent="." unique_id=646432335]
+[node name="JetPath" type="Node3D" parent="." unique_id=249229853]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 8, 0)
-script = ExtResource("1_loyqw")
+script = ExtResource("2_q5dxl")
 mode = 3
 amount = 90.0
 speed = 0.05
 axis = Vector3(0, 0, -1)
 
-[node name="Jet" type="Node3D" parent="JetPath" unique_id=512198214]
+[node name="Jet" type="Node3D" parent="JetPath" unique_id=1579098326]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
 
-[node name="Body" type="MeshInstance3D" parent="JetPath/Jet" unique_id=436028615]
+[node name="Body" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1428705407]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CapsuleMesh_82ahh")
+mesh = SubResource("CapsuleMesh_i8d31")
 
-[node name="Wings" type="MeshInstance3D" parent="JetPath/Jet" unique_id=934294366]
+[node name="Wings" type="MeshInstance3D" parent="JetPath/Jet" unique_id=942437104]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.1)
-material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("BoxMesh_q5dxl")
-
-[node name="Fin" type="MeshInstance3D" parent="JetPath/Jet" unique_id=955992547]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -1.3)
-material_override = SubResource("StandardMaterial3D_32eqh")
-mesh = SubResource("BoxMesh_i8d31")
-
-[node name="Tail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=2016411524]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -1.35)
 material_override = SubResource("StandardMaterial3D_23ynb")
 mesh = SubResource("BoxMesh_uq63y")
 
-[node name="Window" type="MeshInstance3D" parent="JetPath/Jet" unique_id=633960503]
+[node name="Fin" type="MeshInstance3D" parent="JetPath/Jet" unique_id=2126617326]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -1.3)
+material_override = SubResource("StandardMaterial3D_32eqh")
+mesh = SubResource("BoxMesh_owsj4")
+
+[node name="Tail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=141198263]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -1.35)
+material_override = SubResource("StandardMaterial3D_23ynb")
+mesh = SubResource("BoxMesh_lh13e")
+
+[node name="Window" type="MeshInstance3D" parent="JetPath/Jet" unique_id=742337654]
 transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 1.4, 0, 0.15, 1.1)
-material_override = SubResource("StandardMaterial3D_owsj4")
-mesh = SubResource("SphereMesh_lh13e")
-
-[node name="Contrail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1476937292]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8.5)
 material_override = SubResource("StandardMaterial3D_d6rb0")
-cast_shadow = 0
-mesh = SubResource("CapsuleMesh_4sd5s")
+mesh = SubResource("SphereMesh_4sd5s")
 
-[node name="PartyBalloon" type="Node3D" parent="." unique_id=642840785]
+[node name="Contrail" type="MeshInstance3D" parent="JetPath/Jet" unique_id=1376370461]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -8.5)
+material_override = SubResource("StandardMaterial3D_dgnkt")
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_lmhbb")
+
+[node name="PartyBalloon" type="Node3D" parent="." unique_id=1081066813]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.5, -5)
-script = ExtResource("1_loyqw")
+script = ExtResource("2_q5dxl")
 amount = 0.8
 speed = 0.2
 
-[node name="Balloon" type="MeshInstance3D" parent="PartyBalloon" unique_id=1225041378]
+[node name="Balloon" type="MeshInstance3D" parent="PartyBalloon" unique_id=1111115938]
 transform = Transform3D(1.6, 0, 0, 0, 1.9, 0, 0, 0, 1.6, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_dgnkt")
+material_override = SubResource("StandardMaterial3D_5y45c")
 mesh = SubResource("SphereMesh_r5v5p")
 
-[node name="Shine" type="MeshInstance3D" parent="PartyBalloon" unique_id=1256695057]
+[node name="Shine" type="MeshInstance3D" parent="PartyBalloon" unique_id=1067478205]
 transform = Transform3D(0.8, 0, 0, 0, 1.2, 0, 0, 0, 0.5, -0.6, 0.7, 0.9)
-material_override = SubResource("StandardMaterial3D_lmhbb")
-mesh = SubResource("SphereMesh_5y45c")
+material_override = SubResource("StandardMaterial3D_l34e3")
+mesh = SubResource("SphereMesh_m2tyo")
 
-[node name="Knot" type="MeshInstance3D" parent="PartyBalloon" unique_id=546116510]
+[node name="Knot" type="MeshInstance3D" parent="PartyBalloon" unique_id=1117900842]
 transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, -1.95, 0)
 material_override = SubResource("StandardMaterial3D_cb86u")
-mesh = SubResource("PrismMesh_l34e3")
+mesh = SubResource("PrismMesh_xsg11")
 
-[node name="String0" type="MeshInstance3D" parent="PartyBalloon" unique_id=45179424]
+[node name="String0" type="MeshInstance3D" parent="PartyBalloon" unique_id=380988919]
 transform = Transform3D(0.97468776, -0.22357053, 0, 0.22357053, 0.97468776, 0, 0, 0, 1, 0, -2.4, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")
 
-[node name="String1" type="MeshInstance3D" parent="PartyBalloon" unique_id=1338932839]
+[node name="String1" type="MeshInstance3D" parent="PartyBalloon" unique_id=1672726595]
 transform = Transform3D(0.95470685, -0.297548, 0, 0.297548, 0.95470685, 0, 0, 0, 1, 0.17738095, -3, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")
 
-[node name="String2" type="MeshInstance3D" parent="PartyBalloon" unique_id=1284210129]
+[node name="String2" type="MeshInstance3D" parent="PartyBalloon" unique_id=244794352]
 transform = Transform3D(0.9924727, 0.12246592, 0, -0.12246592, 0.9924727, 0, 0, 0, 1, 0.060297865, -3.6, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")
 
-[node name="String3" type="MeshInstance3D" parent="PartyBalloon" unique_id=1068208664]
+[node name="String3" type="MeshInstance3D" parent="PartyBalloon" unique_id=1062716595]
 transform = Transform3D(0.9414609, 0.33712214, 0, -0.33712214, 0.9414609, 0, 0, 0, 1, -0.15688364, -4.2, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")
 
-[node name="String4" type="MeshInstance3D" parent="PartyBalloon" unique_id=1698870479]
+[node name="String4" type="MeshInstance3D" parent="PartyBalloon" unique_id=201902684]
 transform = Transform3D(0.99998266, -0.0058848313, 0, 0.0058848313, 0.99998266, 0, 0, 0, 1, -0.11362799, -4.8, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")
 
-[node name="String5" type="MeshInstance3D" parent="PartyBalloon" unique_id=726936253]
+[node name="String5" type="MeshInstance3D" parent="PartyBalloon" unique_id=1676217751]
 transform = Transform3D(0.94078463, -0.3390048, 0, 0.3390048, 0.94078463, 0, 0, 0, 1, 0.11825759, -5.4, 0)
 material_override = SubResource("StandardMaterial3D_23ynb")
-mesh = SubResource("CylinderMesh_m2tyo")
+mesh = SubResource("CylinderMesh_kn32v")

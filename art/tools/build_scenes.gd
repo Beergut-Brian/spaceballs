@@ -5,6 +5,7 @@
 extends SceneTree
 
 const MOTION := preload("res://art/scripts/landmark_motion.gd")
+const BEAT := preload("res://scripts/gameplay/landmark_beat.gd")
 
 # Palette: C Cool Arcade (art/palettes/cool_arcade.json) plus a few naturals for the lawn.
 const INK := Color("0a0a14")
@@ -624,10 +625,16 @@ func _build_frog() -> void:
 # height_ladder places each at (0, visual_y(threshold), 0). The camera follows the ball from the +X
 # side, so the landmarks sit mostly at -X (behind the ball) and off to the sides, scaled up with height
 # because the camera zooms out with speed.
+# Playtest 2026-11-12 ("random roofs with birds"): what belongs on the ground stands on it. Rooftops is
+# a row of whole houses on the lawn (walls down to local y = -threshold, i.e. world y 0) whose roof
+# line is the tier line; treetops are whole trees; the cat and the birds live on them. Every direct
+# child of a tier 2-3 landmark reaches the ground (tests/test_landmarks.gd). Critters carry meta
+# `react` for the tier beat (scripts/gameplay/landmark_beat.gd).
 
 func _landmark(id: String) -> Node3D:
 	var r := Node3D.new()
 	r.name = id.capitalize().replace(" ", "")
+	r.set_script(BEAT)
 	r.set_meta(&"_art", "Tier landmark %s (art/tools/build_scenes.gd)." % id)
 	return r
 
@@ -644,9 +651,10 @@ func _build_landmarks() -> void:
 
 
 func house(parent: Node, n: String, pos: Vector3, w: float, wall: Color, roof: Color, rot_y := 0.0) -> Node3D:
-	# Ridge at local y = 1.5 (just above the rooftops threshold); walls reach the lawn at y = -4.
+	# Ridge at local y = 1.4 (the rooftops threshold is the middle of the roof); walls stand on the lawn
+	# (local y = -4, the threshold below) and go a little into it so no gap shows on a slope.
 	var h := node(parent, n, pos, Vector3(0, rot_y, 0))
-	box(h, "Walls", Vector3(0, -2.5, 0), Vector3(w, 3.0, 4.0), wall)
+	box(h, "Walls", Vector3(0, -2.6, 0), Vector3(w, 3.2, 4.0), wall)
 	mi(h, "Roof", _mesh("prism", w + 0.6, 2.4, 4.6), mat(roof, 0.75), Vector3(0, 0.2, 0), Vector3(0, PI / 2, 0), Vector3(4.6 / (w + 0.6), 1, (w + 0.6) / 4.6))
 	box(h, "Chimney", Vector3(w * 0.25, 1.1, 0.8), Vector3(0.6, 1.6, 0.6), PEACH.darkened(0.25))
 	box(h, "ChimneyTop", Vector3(w * 0.25, 1.95, 0.8), Vector3(0.75, 0.15, 0.75), SLATE)
@@ -679,12 +687,42 @@ func cat(parent: Node, n: String, pos: Vector3, rot_y: float) -> Node3D:
 	return c
 
 
+## A bird that sits still (no orbit), ready to scatter on the tier beat.
+func perched(parent: Node, n: String, pos: Vector3, c: Color, phase: float, s := 1.0) -> Node3D:
+	var pivot := bird(parent, n, pos, c, phase)
+	pivot.set_script(null)   # no orbit: it sits
+	var b := pivot.get_node(n) as Node3D
+	b.scale = Vector3.ONE * 1.6 * s
+	b.set_meta(&"react", &"scatter")
+	for w in b.get_children():
+		if String(w.name).begins_with("Wing"):
+			w.set("amount", 0.2 * signf(w.get("amount")))   # folded, a lazy flutter
+			w.set("speed", 1.2)
+	return pivot
+
+
+## A TV mast on a roof (local to the house: ridge at y 1.4) with pigeons on its crossbar.
+func roof_mast(h: Node3D, x: float, z: float) -> void:
+	box(h, "Mast", Vector3(x, 2.1, z), Vector3(0.14, 1.6, 0.14), SLATE)
+	box(h, "Crossbar", Vector3(x, 2.8, z), Vector3(0.12, 0.1, 2.4), SLATE)
+	var cols := [SLATE.lightened(0.25), ICE.darkened(0.2), SLATE.lightened(0.1)]
+	for i in 3:
+		perched(h, "Pigeon%d" % i, Vector3(x, 3.1, z - 0.8 + i * 0.8), cols[i], i * 0.3, 0.9)
+
+
 func _lm_rooftops() -> void:
 	var r := _landmark("rooftops")
-	house(r, "HouseA", Vector3(-17, 0, -7.5), 6.0, PEACH, SLATE)
-	house(r, "HouseB", Vector3(-19, -0.8, 6.0), 5.0, ICE, PLUM)
+	# A street of whole houses behind the lawn: their roof line is the tier line the ball passes.
+	var a := house(r, "HouseA", Vector3(-17, 0, -7.5), 6.0, PEACH, SLATE)
+	house(r, "HouseD", Vector3(-18.5, -0.4, -15.0), 4.5, Color("ffe6a8"), SKY3)
+	var b := house(r, "HouseB", Vector3(-19, -0.8, 6.0), 5.0, ICE, PLUM)
+	house(r, "HouseE", Vector3(-18.0, -0.2, 13.5), 5.5, PEACH.lightened(0.3), SKY3.darkened(0.15))
 	house(r, "HouseC", Vector3(-6, -1.2, -21.0), 5.0, Color("ffe6a8"), SKY3, PI / 2)
-	cat(r, "StartledCat", Vector3(-15.0, 1.35, -6.2), PI / 2 - 0.4).scale = Vector3.ONE * 2.2
+	# The cat sits on HouseA's chimney; on the beat it startles. Pigeons on HouseB's mast scatter.
+	var c := cat(a, "StartledCat", Vector3(1.5, 2.03, 0.8), PI / 2 - 0.4)
+	c.scale = Vector3.ONE * 2.2
+	c.set_meta(&"react", &"startle")
+	roof_mast(b, -0.9, -0.6)
 	save(r, "res://scenes/levels/landmarks/rooftops.tscn")
 
 
@@ -705,15 +743,26 @@ func bird(parent: Node, n: String, pos: Vector3, c: Color, phase: float) -> Node
 
 func _lm_treetops() -> void:
 	var r := _landmark("treetops")
+	# Whole trees on the lawn (trunks from local y = -14, world 0); their crowns are the tier line.
 	var spots := [[Vector3(-22, -14, -10), 17.0, LEAF_A], [Vector3(-26, -14, 6), 18.0, LEAF_C],
 		[Vector3(-12, -14, 18), 15.0, LEAF_B]]
+	var trees: Array[Node3D] = []
 	for i in spots.size():
-		tree(r, "TallTree%d" % i, spots[i][0], spots[i][1], spots[i][2], 100 + i)
+		trees.append(tree(r, "TallTree%d" % i, spots[i][0], spots[i][1], spots[i][2], 100 + i))
+	# Birds live in those trees: two circle each of the first two crowns, two sit on the top of the
+	# third. All scatter on the tier beat.
 	var cols := [SKY2, YELLOW, PINK, SKY1]
-	for i in 4:
-		var a := TAU * i / 4.0
-		var b := bird(r, "Bird%d" % i, Vector3(cos(a) * 4.5, 1.0 + (i % 2) * 1.2, sin(a) * 6.0), cols[i], i * 0.25)
-		b.position = Vector3(-11, 0, 0)
+	for t in 2:
+		var h: float = spots[t][1]
+		var nest := node(trees[t], "Nest", Vector3(0, h * 0.86, 0))
+		for k in 2:
+			var i := t * 2 + k
+			var a := TAU * k / 2.0 + t
+			var pv := bird(nest, "Bird%d" % i, Vector3(cos(a) * h * 0.45, (k % 2) * 1.2, sin(a) * h * 0.45), cols[i], i * 0.25)
+			(pv.get_node("Bird%d" % i) as Node3D).set_meta(&"react", &"scatter")
+	var h2: float = spots[2][1]
+	for k in 2:
+		perched(trees[2], "Perch%d" % k, Vector3(-0.8 + k * 1.6, h2 * 0.98 + h2 * 0.32 * 0.6 * 0.85, 0.3), [ORANGE, SKY2][k], k * 0.4)
 	save(r, "res://scenes/levels/landmarks/treetops.tscn")
 
 

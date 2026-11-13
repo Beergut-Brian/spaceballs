@@ -5,7 +5,9 @@ class_name TestSky
 extends GdUnitTestSuite
 
 const BALL := preload("res://scenes/ball.tscn")
-const TIER_IDS := [&"backyard", &"rooftops", &"treetops", &"kites", &"clouds", &"thin_air", &"edge", &"space"]
+## Rooftops has no random set since playtest 2026-11-12: its grounded skyline landmark is the tier's dressing
+## (tests/test_landmarks.gd checks it stays out).
+const TIER_IDS := [&"backyard", &"treetops", &"kites", &"clouds", &"thin_air", &"edge", &"space"]
 
 var _sky: SkySet
 var _nodes: Array[Node] = []
