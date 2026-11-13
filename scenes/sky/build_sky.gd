@@ -593,10 +593,14 @@ func _comet() -> void:
 # --- data/sky.tres -------------------------------------------------------------
 
 ## Per tier: [id, count_min, count_max, scale, spread, [[scene, weight, on_path], ...]].
+## Only things that really fly (playtest 2026-11-12: "random roofs with birds"). Anything that belongs
+## on the ground (a roof and chimney, a TV mast, a washing line, a branch) reads as a floating bug in
+## the sky, so the rooftops tier has no random set at all: its grounded skyline landmark
+## (art/tools/build_scenes.gd, scenes/levels/landmarks/rooftops.tscn) carries the cat and the pigeons.
+## cat_chimney, pigeons, laundry and squirrel stay built but are in no set (tests/test_landmarks.gd).
 const TIERS := [
-	[&"backyard", 3, 4, 0.7, Vector2(2.2, 5.0), [["kite", 1.0, true], ["bird", 1.2, true], ["laundry", 0.8, true]]],
-	[&"rooftops", 3, 5, 1.2, Vector2(2.0, 5.0), [["cat_chimney", 1.0, false], ["pigeons", 1.2, true], ["bird", 0.6, true]]],
-	[&"treetops", 3, 6, 2.6, Vector2(1.8, 4.5), [["flock", 1.2, true], ["squirrel", 0.8, true], ["bird", 0.5, true], ["kite", 0.4, true]]],
+	[&"backyard", 3, 4, 0.7, Vector2(2.2, 5.0), [["kite", 1.0, true], ["bird", 1.2, true]]],
+	[&"treetops", 3, 6, 2.6, Vector2(1.8, 4.5), [["flock", 1.2, true], ["bird", 0.5, true], ["kite", 0.4, true]]],
 	[&"kites", 4, 6, 4.5, Vector2(1.6, 4.0), [["party_balloons", 1.2, true], ["hot_air_balloon", 1.0, true], ["blimp", 0.6, true], ["kite", 0.6, true]]],
 	[&"clouds", 4, 6, 5.5, Vector2(1.6, 4.0), [["prop_plane", 1.2, true], ["bounce_cloud", 1.2, true], ["party_balloons", 0.3, true]]],
 	[&"thin_air", 3, 5, 8.0, Vector2(1.6, 4.0), [["jet", 1.2, true], ["balloon_bunch", 1.0, true], ["bounce_cloud", 0.4, true]]],
