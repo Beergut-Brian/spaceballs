@@ -5,6 +5,8 @@ extends RigidBody3D
 
 signal kick_zone_entered(body: Node3D)
 signal returned()
+## The comedy drop starts: the ball is back over its tee, about to fall onto it.
+signal dropping()
 ## Each touch-down of the comedy drop onto the tee (1.0 the first, smaller after; 0.3 the last).
 signal bounced(strength: float)
 ## Sky hook (docs/contracts.md, Ball): a real flight started (not the frog dribble).
@@ -315,6 +317,7 @@ func _drop() -> void:
 	freeze = true
 	global_position = _tee + Vector3.UP * (TEE_HEIGHT + DROP_HEIGHT)
 	height = 0.0
+	dropping.emit()
 	_kill_tween()
 	_tween = create_tween()
 	var rest := _tee + Vector3.UP * TEE_HEIGHT

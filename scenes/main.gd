@@ -107,6 +107,7 @@ func _ready() -> void:
 	for p in [P1, P2]:
 		balls[p].kick_zone_entered.connect(_on_kick_zone.bind(p))
 		balls[p].returned.connect(_on_ball_returned.bind(p))
+		balls[p].dropping.connect(_on_ball_dropping.bind(p))
 		kickers[p].kick_contact.connect(_on_kick_contact.bind(p))
 		kickers[p].slipped.connect(_start_kick.bind(p))
 		kickers[p].cheered.connect(func(_q: int) -> void:
@@ -505,6 +506,15 @@ func _kick_cue(p: int, tier: int) -> String:
 		if ups[i].kick_sfx != &"":
 			return String(ups[i].kick_sfx)
 	return KICK_CUES[clampi((tier - 1) / 2, 0, 3)]
+
+
+## C-14: the comedy drop on camera. The peak hold looks at empty sky; when the ball falls back the
+## shot cuts to the tee so the fall, the two bounces and the thuds are seen. A cursed flight keeps
+## its shot: the "that's why" pop over the landing spot (U-17) is still up.
+func _on_ball_dropping(p: int) -> void:
+	if Run.phase != Run.FLIGHT_PHASE[p] or Run.curse_of(p) != null:
+		return
+	rig.watch_tee(_marker("Tees", p))
 
 
 func _on_ball_returned(p: int) -> void:
