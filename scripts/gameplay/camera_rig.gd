@@ -41,6 +41,8 @@ var _look := Vector3.ZERO
 var _close := false
 var _orbit_r := 7.0
 var _orbit_h := 2.5
+## SPACE: how far over the orbit's centre the camera looks (1 m for a character's chest).
+var _orbit_look := 1.0
 var _lead := Vector3.ZERO
 var _lift := 0.0
 ## A curse's camera beat (CurseShow): for a moment the lens moves in on the cause, whatever the mode.
@@ -239,19 +241,32 @@ func split(on: bool) -> void:
 		_set_mode(Mode.FIELD)
 
 
-func orbit(center: Vector3, radius: float = 7.0, height: float = 2.5, snap: bool = true) -> void:
+## `start` (snap only) is the orbit angle to begin at: the camera sits at
+## center + (sin(start), _, cos(start)) * radius. `look_up` lifts the look point over `center`.
+func orbit(center: Vector3, radius: float = 7.0, height: float = 2.5, snap: bool = true,
+		start: float = 0.0, look_up: float = 1.0) -> void:
 	_center = center
 	_orbit_r = radius
 	_orbit_h = height
+	_orbit_look = look_up
 	get_viewport().disable_3d = false
 	_set_mode(Mode.SPACE)
 	if snap:
-		_angle = 0.0
+		_angle = start
 		_snap()
 	else:
 		# Glide in from wherever the camera is now.
 		var d := camera.global_position - center
 		_angle = atan2(d.x, d.z)
+
+
+## The orbit angle that puts the camera in front of someone facing `facing` (flat), `off` radians
+## round to one side so the orbit then sweeps across his front.
+static func front_angle(facing: Vector3, off: float = 0.0) -> float:
+	var f := Vector3(facing.x, 0.0, facing.z)
+	if f.length() < 0.01:
+		return off
+	return atan2(f.x, f.z) + off
 
 
 ## A beat on `target` (the butterflies on the ball, the peel under his foot): `seconds` of close-up,
@@ -308,7 +323,7 @@ func _process(delta: float) -> void:
 			return
 		Mode.SPACE:
 			_angle += minf(delta, 0.1) * 0.35   # _snap() passes a huge delta
-			want_look = _center + Vector3.UP * 1.0
+			want_look = _center + Vector3.UP * _orbit_look
 			want_pos = _center + Vector3(sin(_angle) * _orbit_r, _orbit_h, cos(_angle) * _orbit_r)
 		Mode.SPLIT:
 			return

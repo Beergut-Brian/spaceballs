@@ -22,6 +22,8 @@ const ARC_TIME_MIN := 1.2
 const ARC_TIME_MAX := 6.0
 const PEAK_HOLD := 0.8
 const SPACE_HOLD := 2.0
+## Seconds the ball circles in space before the shot goes down to him dancing (the big moment).
+const SPACE_ORBIT_SHOW := 3.0
 const DROP_HEIGHT := 12.0
 ## The fall onto the tee, then the bounce heights (metres) after it.
 const DROP_TIME := 0.36
@@ -302,12 +304,16 @@ func _reach_peak() -> void:
 	if has_effect(&"confetti"):
 		_confetti_pop()
 	Audio.play("land")
-	Fx.puff(global_position, Color(1, 1, 0.7), 1.5)
 	if Run.in_space(player):
-		# Settle into orbit: the ball swings round a point beside its peak, smiling.
+		# Settle into orbit: the ball swings round a point beside its peak, smiling. Only a small
+		# puff, at the loop's middle: the camera arrives right on the ball and a full puff on it
+		# whited out the whole shot.
+		Fx.puff(global_position + Vector3(-ORBIT_RADIUS, 0.0, 0.0), Color(1, 1, 0.7), 0.5)
 		orbit_around(global_position + Vector3(-ORBIT_RADIUS, 0.0, 0.0), ORBIT_RADIUS, 0.3, 0.0)
-		_return_in = SPACE_HOLD
+		_return_in = SPACE_ORBIT_SHOW
 		Audio.play("orbit_chime")
+	else:
+		Fx.puff(global_position, Color(1, 1, 0.7), 1.5)
 	Run.notify_stopped(player, peak_height)
 
 
