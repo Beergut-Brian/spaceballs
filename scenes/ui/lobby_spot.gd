@@ -181,7 +181,7 @@ func _draw() -> void:
 			_arrow(Vector2(nx + 12, cy), -1, _kick[-1])
 			_arrow(Vector2(minf(name_x + w + 30, plate.end.x - 30), cy), 1, _kick[1])
 	if hold > 0.0:
-		_tag(Vector2(plate.position.x + 130, PLATE_Y - 40), "STARTING SOLO")
+		_tag(solo_tag_at(), "STARTING SOLO")
 	elif joined and not readied:
 		var tag_text := "[lr] Pick   [a] Ready up" if can_change else "[a] Ready up"
 		_tag(Vector2(plate.end.x - UiStyle.rich_width(tag_text, UiStyle.Role.HINT, 28) - 50, PLATE_Y - 40), tag_text)
@@ -193,6 +193,16 @@ func _draw() -> void:
 static func fit_size(text: String, avail: float, base: int) -> int:
 	var w := UiStyle.show_font(800).get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, base).x
 	return base if w <= avail else maxi(28, int(base * avail / w))
+
+
+## PF-6: the "STARTING SOLO" tag while A is held on Play. Hold-to-start needs a ready player, so
+## the READY! stamp is always there too; at the plate's height the stamp hid the tag's second word.
+## It sits one tag higher, clear of the stamp (which reaches about 46 px above the plate).
+const SOLO_TAG_LIFT := 56.0
+
+
+func solo_tag_at() -> Vector2:
+	return Vector2(130.0 + 10.0, PLATE_Y - 40.0 - (SOLO_TAG_LIFT if readied else 0.0))
 
 
 ## A small dark tag above the plate.

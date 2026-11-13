@@ -90,3 +90,15 @@ func test_end_card_shows_a_under_the_focused_button_and_the_door_asks() -> void:
 	assert_int(quits[0]).is_equal(1)
 	Game.quit_exits = true
 	card.close()
+
+
+## PF-6: holding A on Play to start alone showed "STARTING SOLO" right where the READY! stamp sits
+## (holding needs a ready player, so the stamp is always there): "STARTING SO..." under the stamp.
+## The tag now sits above the stamp: its bottom edge clears the stamp's top (plate - 14 - 32, plus
+## the stamp's 9 degree tilt).
+func test_starting_solo_tag_clears_the_ready_stamp() -> void:
+	var spot: Control = auto_free(load("res://scenes/ui/lobby_spot.gd").new())
+	spot.readied = true
+	var tag_bottom: float = spot.solo_tag_at().y + 24.0
+	var stamp_top: float = spot.PLATE_Y - 14.0 - 32.0 - 16.0
+	assert_float(tag_bottom).is_less_equal(stamp_top)
