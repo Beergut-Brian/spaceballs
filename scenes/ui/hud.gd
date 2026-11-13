@@ -206,6 +206,23 @@ func _on_tier(player: int, tier: int) -> void:
 	var b := blocks.get_child(_tiers.tiers.size() - tier) as CanvasItem
 	Fx.flash(b)
 	Fx.flash(markers[player])
+	_pop_block(b as Control)
+
+
+## The passed landmark's picture pops on the strip, in step with the landmark's beat in the world.
+func _pop_block(b: Control) -> void:
+	if b == null:
+		return
+	b.pivot_offset = b.size * 0.5
+	b.z_index = 1
+	var old: Tween = b.get_meta(&"pop_tween") if b.has_meta(&"pop_tween") else null
+	if old and old.is_valid():
+		old.kill()
+	var tw := b.create_tween()
+	b.set_meta(&"pop_tween", tw)
+	tw.tween_property(b, "scale", Vector2.ONE * 1.4, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(b, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(func() -> void: b.z_index = 0)
 
 
 func _on_ball_stopped(player: int, h: float, tier: int) -> void:
