@@ -510,7 +510,7 @@ func test_round_one_waits_for_the_run_up() -> void:
 	assert_int(Run.phase).is_equal(Run.Phase.KICK_P1)
 	assert_int(_main.kickers[P1].state).is_equal(Kicker.State.APPROACH)
 
-func test_end_card_a_goes_to_lobby_and_door_quits() -> void:
+func test_end_card_a_goes_to_lobby_and_door_asks_then_quits() -> void:
 	_play_two()
 	var card: Control = _main.get_node("UI/EndCard")
 	card.open()
@@ -522,6 +522,9 @@ func test_end_card_a_goes_to_lobby_and_door_quits() -> void:
 	card.open()
 	card._focus_door(true)
 	card.press()
+	assert_int(_quits).is_equal(0)   # PF-5: the door asks first
+	assert_bool(card.confirm.active).is_true()
+	card.confirm.choose(true)
 	assert_int(_quits).is_equal(1)
 
 

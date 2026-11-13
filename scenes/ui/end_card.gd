@@ -2,7 +2,9 @@
 ## (restart_requested); stick right onto the door and A goes back to the launcher (Game.quit()).
 ## Stick only works too (PLAN-STATUS K-07): hold the stick left or up onto the big button and a white
 ## ring fills round it with rising ticks; full ring = back to the lobby. Letting go drains the ring.
-## The door still needs A, so a stick alone never leaves the game.
+## The door still needs A, so a stick alone never leaves the game, and it asks "Leave the game?"
+## first like the lobby's and the pause menu's doors (PF-5). An A button sits under whichever of
+## the two is focused, so the card says which button presses it (PF-4).
 ## The characters are the 3D kickers, framed by the camera's space orbit. Each player's shelf (P1
 ## top-left, P2 top-right, a tile per upgrade picked this run in the player's colour, no text) pops
 ## in one item at a time: the run's collection. Across the top, the profile's whole collection: every
@@ -40,6 +42,10 @@ var _collection_panel: PanelContainer
 ## 0..1: how full the stick-hold ring on the big button is.
 var hold := 0.0
 var _ring: Control
+## PF-4: the A button drawn under the focused button. PF-5: the door's "Leave the game?".
+var _prompt: Control
+var confirm: ConfirmDialog
+const PROMPT_SIZE := 56.0
 
 @onready var confetti: CPUParticles2D = $Confetti
 @onready var button_hint: Control = $ButtonHint
@@ -55,6 +61,16 @@ func _ready() -> void:
 	_ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_ring.draw.connect(_draw_ring)
 	button_hint.add_child(_ring)
+	_prompt = Control.new()
+	_prompt.name = "Prompt"
+	_prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_prompt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_prompt.draw.connect(_draw_prompt)
+	add_child(_prompt)
+	confirm = load("res://scenes/ui/confirm_dialog.tscn").instantiate()
+	confirm.name = "Confirm"
+	add_child(confirm)
+	confirm.chosen.connect(_on_confirm_chosen)
 
 
 func open() -> void:
@@ -170,6 +186,7 @@ func _tile(u: UpgradeData, color: Color, i: int) -> Control:
 
 
 func close() -> void:
+	confirm.dismiss()
 	visible = false
 	confetti.emitting = false
 	set_process(false)
@@ -180,10 +197,14 @@ func _process(delta: float) -> void:
 	button_hint.visible = _t > ACCEPT_AFTER
 	door.visible = button_hint.visible and not Run.demo
 	button_hint.scale = Vector2.ONE * (1.0 + (0.0 if door_focused else 0.1 * sin(_t * 6.0)) + 0.25 * hold)
+	_prompt.queue_redraw()
 	if _t < ACCEPT_AFTER:
 		return
 	if Run.demo and _t > ACCEPT_AFTER + 1.0:
 		_accept()
+		return
+	if confirm.active:
+		confirm.handle(MenuInput.read())
 		return
 	var held := false
 	for p in [Players.P1, Players.P2]:
@@ -234,12 +255,35 @@ func _draw_ring() -> void:
 
 ## A on whatever is focused: the big button back to the lobby, or the door to the launcher.
 func press() -> void:
+	if confirm.active:
+		return
 	if door_focused:
 		door.press()
-		Audio.play("ui_back")
-		Game.quit()
+		confirm.open()
 	else:
 		_accept()
+
+
+func _on_confirm_chosen(leave: bool) -> void:
+	if leave:
+		Game.quit()
+
+
+## The control the A prompt sits under: the focused button once the buttons show, else null.
+func prompt_target() -> Control:
+	if not visible or _t <= ACCEPT_AFTER or not button_hint.visible or confirm.active:
+		return null
+	return door if door_focused and door.visible else button_hint
+
+
+func _draw_prompt() -> void:
+	var target := prompt_target()
+	if target == null:
+		return
+	var r := target.get_global_rect()
+	var at := r.get_center() + Vector2(0, r.size.y * 0.5 + 18.0 + PROMPT_SIZE * 0.5) - _prompt.get_global_rect().position
+	_prompt.draw_circle(at, PROMPT_SIZE * 0.5 + 5.0, UiStyle.INK)
+	UiStyle.draw_glyph(_prompt, at, PROMPT_SIZE, "a")
 
 
 func _focus_door(on: bool, sound := true) -> void:
