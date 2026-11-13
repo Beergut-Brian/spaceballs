@@ -6,8 +6,10 @@ extends GdUnitTestSuite
 const CODE_DIRS := ["res://scenes", "res://scripts"]
 const CUES_DOC := "res://assets/audio/CUES.md"
 ## Files made ahead of the code that will play them (see CUES.md): an upgrade kick_sfx the
-## Upgrades lane has not written yet, and gags the Gameplay lane asked for.
-const PENDING_DATA := ["opera"]
+## Upgrades lane has not written yet, and gags the Gameplay lane asked for. `sky_flap` is parked:
+## only the flying laundry played it, and that left the random sky (playtest 2026-11-12, PT1112-1);
+## it comes back if the lawn's washing line gets a reaction.
+const PENDING_DATA := ["opera", "sky_flap"]
 
 
 func test_every_cue_resolves_to_a_stream() -> void:
