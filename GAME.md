@@ -216,6 +216,12 @@ What they were: the height-ladder landmarks (tier 2 Rooftops, tier 3 Treetops an
 3. **No `rooftops` in the random sky-object sets** (`data/sky.tres`); every sky set audited for anything else that only makes sense on the ground (the washing line and the squirrel's branch left too).
 4. Keep the existing landmark art and colours; restaged and extended (more houses, the cat and pigeons on them, birds in the trees) with the existing builder (`art/tools/build_scenes.gd`), no new hand-made art.
 
+## TV box: Intel HD 530 (Gary, producer note 2026-11-14)
+
+Gary's sb-igpu-1 brief, quoted: "The TV box is now known (Gary logged in 2026-11-14): Bazzite Linux, Intel i5-6400, **Intel HD Graphics 530 only** (Skylake GT2, Mesa/Vulkan via ANV, 16 GB shared RAM), 1080p TV, two players split screen. A GTX 1060 may go in later; until then Spaceballs must be **playable at a steady 30 fps minimum, 60 where it can**, on the HD 530. Kaden's bar for the four first games: \"launch ready state besides testing on 1060 device\" now applies to the box he actually has."
+
+What that means here: two graphics tiers in `data/graphics.json`. `high` is the look as built (for the 1060; nothing changes). `low` (the HD 530, picked automatically for Intel integrated and unknown GPUs, `-- --graphics=low|high` overrides) drops MSAA for FXAA, renders 3D at 0.75 scale with FSR 1, keeps one short sun-shadow cascade, turns glow and the screen-space effects off, raises the LOD bias, pulls the far plane in to 2 km with a little more fog, halves particle counts, and caps at 60 fps with vsync. `-- --bench` plays a fixed 60 s two-player route and prints `BENCH avg=… low1=… tier=…`; Gary runs it on the box. Dev builds show the tier next to the version in the lobby.
+
 ## Decisions made without Kaden
 
 - 2026-11-09: each player draws their own three cards (the plan's proposal), not a shared draw. It keeps the split screen independent and lets catch-up apply per player.
