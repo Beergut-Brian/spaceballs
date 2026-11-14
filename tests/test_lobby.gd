@@ -18,12 +18,17 @@ var _readies: Array = []
 
 var _real_settings := ""
 var _real_picks := ""
+var _real_data := ""
+## A fixture roster (Jeff, Chuck, Pip; the real Jeff and Chuck bodies), not the vendored one.
+const THREE := "res://tests/fixtures/roster_three.json"
 
 
 func before() -> void:
 	_real_settings = Save.settings_path
 	Save.settings_path = "user://test_settings.json"
 	_real_picks = Roster.picks_path
+	_real_data = Roster.data_path
+	Roster.data_path = THREE
 	Roster.picks_path = "user://test_lobby_players.json"
 	DirAccess.remove_absolute(Roster.picks_path)
 	Save.reload_settings()
@@ -42,6 +47,7 @@ func after() -> void:
 	Save.reload_settings()
 	DirAccess.remove_absolute(Roster.picks_path)
 	Roster.picks_path = _real_picks
+	Roster.data_path = _real_data
 	Roster.reload()
 
 

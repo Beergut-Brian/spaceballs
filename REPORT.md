@@ -1,86 +1,117 @@
-# press-answers-adopt-1 report (Spaceballs)
+# launch-ready-3 report (Spaceballs)
 
-Branch `feature/press-answers-adopt-1` off `origin/dev` at `96f99ca` (`git merge origin/dev`: already up to date).
-Not pushed (Gary ships). Kaden's rule 5: every press answers; a menu press that does nothing says so.
+Branch `feature/sb-launch-ready-3` off `origin/dev` at `6ed52cf` (merge of #54). Not pushed (Gary ships).
+Goal: launch-ready apart from the TV-hardware checks, re-checked against the dev head after the
+2026-11-13 merges (#52 rules audit, #53 pause door, #54 press answers).
 
 ## What changed
 
-**Template kit adopted** (template `feature/template-press-answers-1` at `9d99f29`, cherry-picked from the
-`template` remote and merged by hand):
+- `docs/launch-checklist.md` rewritten against `6ed52cf`. It has each standing rule with yes / no / n/a and
+  its proof, every TV-box check written as the exact thing to do, the build load steps, and the
+  dev head it was checked against.
+- `scenes/ui/lobby.gd`: the `--ui=` preview hook is now deferred through a lobby method
+  (`_preview`). Before, a static `UiPreview.run.call_deferred(self)` fired after a test had freed the
+  lobby and printed `ERROR: Error calling deferred method: 'GDScript::run'` twice per full run
+  (test_chooser, test_build_info). Behaviour for players: none.
+- `tests/test_lobby.gd`, `tests/test_picks_isolation.gd` use the roster fixture
+  (`tests/fixtures/roster_three.json`) instead of the vendored `data/roster.json` (brief step 7).
+  Every roster or chooser suite now does, except two that check the real roster on purpose:
+  `test_roster.gd::test_real_roster_is_jeff_and_chuck` and `test_character_spawn.gd::test_defaults_are_jeff_and_chuck`
+  (the CLAUDE.md default rule), plus `test_launch_ready*.gd` (the shipped voices).
+- `PLAN-STATUS.md`: a launch-ready-3 audit paragraph; Next up notes the re-check.
 
-- `scenes/ui/kit/menu_input.gd`: `read()` now also reports `other` (the player) and `button` ("x", "lt",
-  "select", ...) for buttons the menus don't use. Adds `MenuInput.refuse(item, button)` (the `honk` + a wobble
-  on `item`) and `owned_elsewhere()` (Start while paused is Game's resume). **Kept the game's own d-pad path**:
-  Spaceballs puts the d-pad in the input map at boot (`Players.add_dpad()`, FR-01), so the template's d-pad
-  reader was left out. A second `read()` in the same frame gets the same `other` answer.
-- `menu_item.gd` (`wobble()`, a 16 px side-to-side shake), `icon_button.gd` (`wobble()`, a rock),
-  `ui_sound.gd` (`honk` cue; this game has `assets/audio/sfx/honk.ogg`, so the real file plays, never the synth),
-  `lobby.gd`, `pause_menu.gd` (left / right step the list, refusing at the ends), `settings_panel.gd`,
-  `confirm_dialog.gd`: taken as the template has them. The game's own edits in these files are unchanged
-  (the in-run leave body text, the door glyph size, the pitch-through-Audio line, the lobby preview binding).
-- `ui_preview.gd` + `scripts/tools/shots.sh`: `--ui=lobby-refuse`, `--ui=pause-door`, `--ui=pause-refuse`.
-- `docs/ui.md` ("Every press answers"), `docs/press-answers.md` (the template's table, plus a "Spaceballs
-  screens" section).
+## Rows
 
-**This game's own screens** (customised in their own scripts, no `.tscn` edits):
+- **Moved: none.** On dev, no row is partial or missing (140 built, 0 partial, 0 missing,
+  4 superseded, 1 dropped, 3 later, 1 n/a; 149 rows, recounted by script).
+- **Skipped, and why:**
+  - S-05 ragdoll (later): needs Kaden's pick.
+  - PF-7 pause Restart goes to the lobby (later): needs Kaden's pick.
+  - S-15 v1.0.0 on the TV main tile (later): needs the TV box.
+  - V-22 `dragon_purr` placeholder: waits on the library's Dragon voice.
+  - FR-02 Continue / New (n/a): no run is saved.
+  - Art rows, per the brief (Art Director process): V-01, V-02, V-03, V-04, V-15, V-16, V-17, V-18, V-20,
+    V-21, V-24, U-13. Store art, logo, palette and `store/jar.glb` were not re-checked either.
 
-- `scenes/ui/upgrade_pick.gd` + `upgrade_card.gd`: refusals on the pick; the card gets `wobble()` (a rock, skipped
-  while the curse flip owns the card).
-- `scenes/ui/end_card.gd`: unused buttons refuse; the existing B / Start / early-A refusal now uses the menus'
-  `honk` (was `nope`) plus a wobble, keeping the pink flash. The big button is round, so it **shakes sideways**
-  (a rock didn't show in the first frame); the door rocks.
-- `tests/test_feel_rules.gd::test_end_card_b_and_start_refuse`: now expects `MenuInput.REFUSE_CUE` instead of
-  `nope` (the end card is a menu now). The in-play `nope` (B in the air) is gameplay and unchanged.
+## Placeholder text, debug prints, dev switches
 
-Not touched: gameplay code, art, audio files, the save format, `project.godot`, any `.tscn`, the template repo.
+- Title, lobby, pause and leave text read as finished in frames (`main_01`, `main_06`, `quit_02`).
+  The `.tscn` defaults "v0.0.1" and "Open Jar Game" are replaced at runtime (version tag, title).
+- No dev switch can be reached from a pad. `--demo`, `--solo`, `--gear=`, `--dragon`, `--ui=`,
+  `--roster=` and `--timescale=` are command-line only. F3 and F12 are keyboard-only template debug keys.
+- The one stdout print in play, `Chooser voice: ...`, was left in: `docs/ui.md` documents it as the log
+  for the chooser voice, and a player never sees it.
 
-## Screen by screen
+## Session flow frames (godot-render, editor build, software GPU)
 
-| Screen | Silent before | Now | Kept their job |
-| --- | --- | --- | --- |
-| Lobby (start menu) | X, Y, LB/RB, LT/RT, L3/R3, Start, Select (not solo), B on Play when not ready, left/right on a ready podium | honk + focused bar shakes | join press, solo Select, Select + Start hold, A, B un-ready |
-| Pause | X, Y, shoulders, triggers, stick clicks, Select, left/right | unused: honk + wobble; left/right step the list, refuse past the ends | Start resumes, B resumes, A |
-| Settings | X, Y, shoulders, triggers, stick clicks, Select, Start in the lobby | honk + the row shakes, no value changes | Start in pause resumes |
-| Leave the game? | same set | honk + the focused button shakes | Start in pause resumes |
-| Upgrade pick (game) | X, Y, shoulders, triggers, stick clicks, Start, B (not solo P2's turn), A after picking | honk + the presser's card rocks | Select = Game's restart arm, solo B, A picks, left/right |
-| End card (game) | X, Y, shoulders, triggers, stick clicks (B, Start, early A already said `nope`) | all: honk + the big button shakes / the door rocks + pink flash | Select = Game's restart arm, A, left/right/hold ring |
+Driver: `handoff/drivers/flow3.gd` (`--mode=main|quit|solo`). Logs: `handoff/flow_*.log`.
+Every frame is in `handoff/frames/` (contact sheets `sheet_*.png`), and I looked at each one.
 
-Left quiet on purpose (in `docs/press-answers.md`): up / down on the pick (the stick drifts up / down while
-choosing, it would honk); presses from a player who is in space during a pick (no cards in their half).
+| Frame | What it shows |
+| --- | --- |
+| main_01_boot_lobby_nobody | Main menu: SPACEBALLS title, Play / Settings / Back to Open Jar, both podiums "A JOIN", "WHO'S PLAYING? Press A on a controller to join", footer "dev" |
+| main_02_p1_joined_ready | P1 joined (the join press readies): Jeff on a green podium |
+| main_03_p1_holding_a_alone | P1 holds A alone: "STARTING SOLO" stamp, "PLAYER 1 READY / Hold A on Play to start solo", 1P chip |
+| main_04_p1_alone_countdown | The hold finished: countdown "3", "Starting in 3, B Cancel" |
+| main_05_solo_player_kick | 1-player round: Jeff and the green ring, the height ladder on the right, round dot |
+| main_06_pause_open | PAUSED, "PLAYER 1 PAUSED", Resume / Restart / Settings, the big door icon with "BACK TO OPEN JAR" beneath it |
+| main_07_pause_door_focused | After three downs the door is focused (bigger and brighter); hints Move / Select / Resume |
+| main_08_pause_door_asks | "LEAVE THE GAME? This run ends. Best kick and cards are kept." Stay focused first |
+| main_09_p2_drop_in | P2 joins mid-run (pad assigned): a second round dot. P2 plays from the next round (in_run false) |
+| main_10_p2_kicks | Next round: Chuck on the red ring kicks |
+| main_11_p2_drop_out | P2's pad unplugged during his kick: play goes on with Jeff's kick |
+| main_12_end_card | Space end card: both on the planet, the A button and the door |
+| main_13_lobby_again | Back in the lobby, P1 still joined, P2 "A JOIN" |
+| main_14_both_joined_not_ready | Both joined and un-readied: "PRESS A ON PLAY", 2P chip |
+| main_15_p1_ready_waiting_p2 | P1 ready: "WAITING FOR PLAYER 2, or hold A to start solo" |
+| main_16_both_ready_countdown | Both pressed A: "BOTH PLAYERS READY 3" |
+| main_17_two_player_kick | 2-player round: Jeff kicks, P2's red marker at the edge |
+| main_18_select_start_solo_on | Select + Start held 2.01 s: the solo icon top left, both ready and the countdown "2" (see Needs Kaden) |
+| quit_01_lobby_door_focused | Lobby, Back to Open Jar focused |
+| quit_02_lobby_door_asks | "LEAVE THE GAME? Progress is saved. You'll go back to Open Jar." Stay focused |
+| quit_03_lobby_leave_focused | Leave focused, then A: **the process exits by itself, exit 0, no leak lines** |
+| solo_01_boot_solo_flag | Booted with `--solo`: the solo icon top left and "ROUND 1 / JEFF KICKS FIRST". The run started about 2 s after boot with no press |
+| solo_02..04 | Solo round 1: Jeff kicks, the icon stays |
+| solo_05_solo_pause_door_asks | Pause door asks under solo; Leave: **exit 0, no leak lines** |
+
+Driver notes: Select + Start is fed into `Players.hold_step` each frame, because synthetic pads don't count as
+"connected" so `Players._process` doesn't poll them. This is the same rule `tests/test_lobby.gd::test_select_start_hold_toggles_solo` checks.
+The first main run's lobby-door step was lost: solo had launched a round. It was re-shot as `--mode=quit`.
+
+## Soak
+
+`handoff/soak/soak30.log` (launch-ready-2's driver, real lobby, end card and pause; bots kick and pick):
+`--soak-secs=1830`, headless, 6 sessions, 61 rounds, 5 runs ended through the end card.
+**Script errors: 0.** Orphans 0 at every sample. Objects at round 1 per session: 4521, 4886, 5164, 5225,
+5276, 5276 (flat; the same warm-up as earlier soaks). The run ended through the pause door → Leave
+with exit 0. Two godot-render runs shared the box for part of it, so the process-time numbers are inflated;
+the error count is not affected.
 
 ## Tests
 
-- New: `tests/test_press_answers.gd` (template suite, 10 tests: lobby x5, pause x3, settings, leave question),
-  adapted to this game's `SettingsSandbox` (`user://test_press_answers_settings.json`, asserted).
-  `tests/test_press_answers_game.gd` (5 tests: pick x3, end card x2; `user://test_press_answers_game_settings.json`,
-  asserted). Every screen has a silent-press test that checks the refusal fired and nothing else changed.
-- Checked the new suite bites: with the pick's refusal stubbed out, `test_pick_unused_buttons_refuse_and_change_nothing` fails (7 failures); restored.
-- Full suite on a clean import (`rm -rf .godot`, `--import`, then
-  `godot --headless --path . -s addons/gdUnit4/bin/GdUnitCmdTool.gd --ignoreHeadlessMode -a tests`):
-  **361 / 361 passed, 53 suites, 0 orphans, exit 0** (346 before + 15 new). Log: `handoff/test-output.log`.
+On dev before any change: 361/361 passed (`--ignoreHeadlessMode --continue`), 0 orphans.
+After this lane's changes, a clean import (`.godot/` removed, `--import`), then the full suite:
+**361 test cases, 0 errors, 0 failures, 0 flaky, 0 orphans, exit 0** in 55 suites (`handoff/test-output.txt`).
+The two `GDScript::run` deferred-call ERROR lines from the baseline run are gone.
 
-## Frames (godot-render, 1920x1080; looked at each)
+Physics-outcome tests: Spaceballs has no piles. The kick and flight suites pin 60 Hz, the seed and Run
+through `tests/physics_pin.gd` (18 suites). The sky-hit test seeds the field and counts objects on the
+ball's path, so geometry decides the result.
 
-- `handoff/frames/press_01_lobby_x_refused_play_wobbles.png`: `--ui=lobby-refuse`, X refused, PLAY held mid-shake.
-- `handoff/frames/press_03_lobby_play_still_vs_refused_crop.png`: PLAY bar still (top) vs refused (bottom):
-  15 px shift at the held pose (a still frame can't show the motion otherwise).
-- `handoff/frames/press_02_pause_right_on_door_refused.png`: `--ui=pause-refuse`, right on the door refused, door mid-rock.
-- `handoff/frames/press_04_pick_x_refused_p1_card_rocks.png`: the pick on its own (no 3D views behind), P1's card rocked.
-- `handoff/frames/press_05_endcard_y_refused_button_shakes.png`: the end card on its own, the big button shifted
-  ~22 px mid-shake (subtle in a still; the motion is three quick shakes over 0.32 s).
-  Pick / end card driver: `.scratch/press_drive.gd` + `.tscn` (git-excluded).
+## Needs Kaden
 
-## PLAN-STATUS
-
-Added and moved to built in the same commit (`42e613c`): **FR-05.1, FR-05.2, FR-05.3, FR-05.4, FR-05.5, FR-05.6**.
-New source S13. FR-05 stays built. Totals, recounted: 140 built, 0 partial, 0 missing, 4 superseded,
-1 dropped, 3 later, 1 n/a (149 rows).
+- **Screen shake setting:** it is saved and comes back at boot, but the rule says saved toggles never
+  restore. Reset it every boot, or keep it as a comfort setting?
+- **Solo starts by itself:** turning solo on readies both podiums, and the countdown starts with no press
+  (contract: "solo mode readies both"). A `--solo` boot is in round 1 about 2 s later, so the chooser is skipped.
+  Keep this, or wait for A on Play?
+- PF-7 (Restart → lobby: rename or restart in place), S-05 (ragdoll still wanted?), FR-02 (offer
+  "clear my records"?): unchanged.
 
 ## For Gary
 
-- The clean `--import` leaves ~45 untracked `assets/characters/*/*_face.png` / `*_pattern.png` and two
-  `assets/landmarks/dragon/*.png` (textures pulled from the vendored models). Not committed, not deleted.
-- `tests/test_gap_close_7.gd.uid`, `_8`, `_9` are untracked on dev (Godot writes them on import); I left them out
-  of this lane's commit.
-- Kid-design check: every refusal is a sound and a visual, no text, nothing changes state; the honk is the
-  game's own soft "can't do that" sound.
+- The newest release tag, `v0.1.5`, is on `d3d3ef2`. It predates the d-pad, the pause door and the refused-press
+  honks. Tag the dev head after this merge (`v0.1.6`) so the TV tile gets them for the weekend.
+- After the clean `--import`, the vendored characters' extracted textures appear as untracked files under
+  `assets/characters/*/` and `assets/landmarks/dragon/`. They were not committed. Commit 2 adds the three
+  `tests/test_gap_close_{7,8,9}.gd.uid` files that the import generated.

@@ -60,6 +60,8 @@ sb-pause-door-1 (2026-11-13, `feature/sb-pause-door-1` off dev at `773604c`): FR
 
 press-answers-adopt-1 (2026-11-13, `feature/press-answers-adopt-1` off dev at `96f99ca`): FR-05 was built for play and the end card's B / Start / early A only; the menus' silent presses (S13) had no rows here. Added the menu rows FR-05.1..FR-05.6 (lobby, pause, settings, leave question, upgrade pick, end card), each moved to built in this lane with a test that a silent press refuses and nothing else changes. FR-05 stays built. Totals, recounted from the rows: **140 built, 0 partial, 0 missing, 4 superseded, 1 dropped, 3 later, 1 n/a (149 rows)**.
 
+launch-ready-3 (2026-11-14, `feature/sb-launch-ready-3` off dev at `6ed52cf`, after #52 rules audit, #53 pause door, #54 press answers). Full suite on dev first: 361/361. No row was partial or missing, so nothing to build. Not built, and why: S-05 (ragdoll) and PF-7 (pause Restart) need Kaden; S-15 needs the TV box; V-22 `dragon_purr` needs the library's Dragon voice; FR-02 is n/a (no run is saved). Art rows skipped by brief (Art Director process): V-01, V-02, V-03, V-04, V-15, V-16, V-17, V-18, V-20, V-21, V-24, U-13. Re-checked in real frames against the standing rules (handoff/frames/main_*, quit_*, solo_*): hold A alone, both press A, pause door, drop-in and drop-out, `--solo` and Select + Start, and quit from the lobby and the pause both exit 0. Found for Kaden, no row changed: the Screen shake toggle is saved and restored at boot; solo readies both and starts the countdown with no press. Test hygiene: tests/test_lobby.gd and tests/test_picks_isolation.gd now use the roster fixture; the lobby's deferred UiPreview call no longer errors when a test frees the lobby. Totals unchanged, recounted from the rows: **140 built, 0 partial, 0 missing, 4 superseded, 1 dropped, 3 later, 1 n/a (149 rows)**.
+
 When S1 and S2 say the same thing it is one row, sourced "S1/S2".
 
 ## C: core loop
@@ -278,7 +280,7 @@ Frames: `handoff/frames/` (git-excluded; driver `.scratch/fr_drive.gd`, godot-re
 
 ## Next up
 
-Re-ranked by launch-ready-2 (2026-11-12) and re-checked by gap-close-7 and gap-close-8 (same day): nothing buildable is left. Every row is built, superseded,
+Re-ranked by launch-ready-2 (2026-11-12), re-checked by gap-close-7 and gap-close-8 (same day) and launch-ready-3 (2026-11-14): nothing buildable is left. Every row is built, superseded,
 dropped, or waits on Kaden or the TV box (`docs/launch-checklist.md`).
 
 | Rank | ID | What | Size | Why this rank |

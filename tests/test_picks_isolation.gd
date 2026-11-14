@@ -9,13 +9,17 @@ const DIR := "user://test_picks_isolation"
 ## Stands in for a real picks file left on the build machine by a chooser run.
 const REAL := DIR + "/real_players.json"
 const OWN := DIR + "/own_players.json"
+## A fixture roster (Jeff, Chuck, Pip), not the vendored one, so a roster sync can't move this.
+const THREE := "res://tests/fixtures/roster_three.json"
 
 var _saved := {}
 var _real_mtime := 0
 
 
 func before() -> void:
-	_saved = { "picks": Roster.picks_path, "settings": Save.settings_path }
+	_saved = { "picks": Roster.picks_path, "settings": Save.settings_path, "data": Roster.data_path }
+	Roster.data_path = THREE
+	Roster.reload()
 	DirAccess.make_dir_recursive_absolute(DIR)
 	# Only the file's time is looked at, never its contents: this run must not write it.
 	if FileAccess.file_exists(Roster.shared_path()):
@@ -27,6 +31,7 @@ func after() -> void:
 		DirAccess.remove_absolute(f)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(DIR))
 	Roster.picks_path = _saved.picks
+	Roster.data_path = _saved.data
 	Save.settings_path = _saved.settings
 	Save.reload_settings()
 	Roster.reload()

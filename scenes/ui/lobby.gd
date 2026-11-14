@@ -98,7 +98,12 @@ func _ready() -> void:
 	visible = Game.state == Game.State.LOBBY
 	# Solo is playtest-only and never on at boot (the designer's rule), so a saved solo is not restored.
 	open()
-	UiPreview.run.call_deferred(self)
+	_preview.call_deferred()   # a method on self: a lobby freed first (tests) drops the call quietly
+
+
+## The --ui=<state> dev preview (UiPreview), a frame after the lobby is ready.
+func _preview() -> void:
+	UiPreview.run(self)
 
 
 ## Fresh lobby: nobody ready, Play focused. Joined pads keep their panels; solo readies both.
