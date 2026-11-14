@@ -129,7 +129,8 @@ func test_end_card_b_and_start_refuse() -> void:
 	assert_bool(card.refused_press()).is_true()
 	_cues.clear()
 	card.refuse()
-	assert_array(_cues).contains(["nope"])
+	# press-answers-adopt-1: the end card is a menu, so it refuses with the menus' honk (was nope).
+	assert_array(_cues).contains([MenuInput.REFUSE_CUE])
 
 
 func test_end_card_a_refuses_only_before_the_buttons_show() -> void:

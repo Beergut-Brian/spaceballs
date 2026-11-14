@@ -4,7 +4,9 @@
 ## ring fills round it with rising ticks; full ring = back to the lobby. Letting go drains the ring.
 ## The door still needs A, so a stick alone never leaves the game, and it asks "Leave the game?"
 ## first like the lobby's and the pause menu's doors (PF-5). An A button sits under whichever of
-## the two is focused, so the card says which button presses it (PF-4).
+## the two is focused, so the card says which button presses it (PF-4). Every press answers: B,
+## Start, an early A, X, Y, shoulders, triggers and stick clicks refuse (the honk, a wobble and a
+## flash on the focused button; docs/press-answers.md).
 ## The characters are the 3D kickers, framed by the camera's space orbit. Each player's shelf (P1
 ## top-left, P2 top-right, a tile per upgrade picked this run in the player's colour, no text) pops
 ## in one item at a time: the run's collection. Across the top, the profile's whole collection: every
@@ -46,6 +48,10 @@ var _ring: Control
 var _prompt: Control
 var confirm: ConfirmDialog
 const PROMPT_SIZE := 56.0
+## How many times the big button wobbled for a refusal (tests read it).
+var hint_wobbles := 0
+var _tw_wob: Tween
+var _hint_home_x := NAN
 
 @onready var confetti: CPUParticles2D = $Confetti
 @onready var button_hint: Control = $ButtonHint
@@ -198,8 +204,12 @@ func _process(delta: float) -> void:
 	door.visible = button_hint.visible and not Run.demo
 	button_hint.scale = Vector2.ONE * (1.0 + (0.0 if door_focused else 0.1 * sin(_t * 6.0)) + 0.25 * hold)
 	_prompt.queue_redraw()
-	if not Run.demo and not confirm.active and refused_press():
-		refuse()
+	var input := MenuInput.read()
+	if not Run.demo and not confirm.active:
+		if refused_press():
+			refuse()
+		elif input.other != -1 and not owned_elsewhere(input.button):
+			refuse(input.button)
 	if _t < ACCEPT_AFTER:
 		return
 	if Run.demo and _t > ACCEPT_AFTER + 1.0:
@@ -268,10 +278,46 @@ func refused_press() -> bool:
 	return false
 
 
-## Feel rule: a press that does nothing says so (a dull tak and a flash of the big button).
-func refuse() -> void:
-	Audio.play("nope")
+## Buttons someone else answers here: Start is refused_press()'s (no pause on the end card), Select
+## between rounds is Game's restart.
+static func owned_elsewhere(button: String) -> bool:
+	if button == "start":
+		return true
+	if button == "select":
+		return Game.state in [Game.State.PLAYING, Game.State.ROUND_END]
+	return false
+
+
+## Feel rule: a press that does nothing says so. The menus' refusal (MenuInput.refuse(): the honk)
+## plus a wobble and a pink flash of the focused button (the big one, or the door).
+func refuse(button := "") -> void:
+	var on_door := door_focused and door.visible
+	MenuInput.refuse(door if on_door else null, button)
+	if not on_door:
+		wobble_hint()
 	Fx.flash(button_hint if button_hint.visible else self, Color(1.0, 0.75, 0.75))
+
+
+## The big button's half of a refusal: it shakes side to side, fading out (as MenuItem.wobble(); it
+## is round, so a rock would not show).
+func wobble_hint() -> void:
+	hint_wobbles += 1
+	if not is_inside_tree():
+		return
+	if _tw_wob:
+		_tw_wob.kill()
+	else:
+		_hint_home_x = button_hint.position.x
+	_tw_wob = create_tween()
+	_tw_wob.tween_method(pose_hint_wobble, 1.0, 0.0, MenuItem.WOBBLE_TIME)
+	_tw_wob.tween_callback(func() -> void: _tw_wob = null)
+
+
+## The big button held mid-shake (`v` 1 just refused .. 0 still); screenshots kill the tween first.
+func pose_hint_wobble(v: float) -> void:
+	if is_nan(_hint_home_x):
+		_hint_home_x = button_hint.position.x
+	button_hint.position.x = _hint_home_x + sin((1.0 - v) * TAU * 3.0) * MenuItem.WOBBLE_PX * 1.5 * v
 
 
 ## A on whatever is focused: the big button back to the lobby, or the door to the launcher.
