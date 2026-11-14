@@ -206,6 +206,20 @@ func test_bench_prints_windows_then_the_summary_and_quits() -> void:
 	assert_str(b.lines[2]).contains("avg=62.5")
 
 
+func test_a_frame_that_starts_in_the_warmup_is_not_counted() -> void:
+	var b := Bench.new()
+	_nodes.append(b)
+	b.secs = 5.0
+	b.warmup = 3.0
+	b.quit_fn = func() -> void: pass
+	b.step(2000.0)
+	b.step(12000.0)   # the boot hitch, ending past the warm-up
+	for i in 400:
+		b.step(20.0)
+	assert_bool(b.done).is_true()
+	assert_str(b.lines[b.lines.size() - 1]).contains("ft_max=20.00ms")
+
+
 func test_bench_is_a_sandboxed_run() -> void:
 	assert_bool(RunSandbox.active(PackedStringArray(["--bench"]))).is_true()
 

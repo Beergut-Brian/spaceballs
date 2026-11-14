@@ -58,13 +58,14 @@ func _process(_delta: float) -> void:
 func step(ms: float) -> void:
 	if done:
 		return
+	var started := _clock
 	_clock += ms / 1000.0
-	if _clock < warmup:
-		return
+	if started < warmup:
+		return   # a frame that began in the warm-up (boot, the first shader compiles) is not counted
 	_all.append(ms)
 	_win.append(ms)
 	var t := _clock - warmup
-	if t >= _next_window:
+	while t >= _next_window and _next_window <= secs:
 		_say("BENCH t=%d %s" % [roundi(_next_window), stats(_win)])
 		_win.clear()
 		_next_window += WINDOW
