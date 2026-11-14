@@ -3,7 +3,7 @@
 ## user://settings.json. Save and Roster ask this at boot and point their paths at
 ## user://sandbox/ instead. Not an autoload: static helpers.
 ## A sandboxed run: the gdUnit4 runner, or any scripted / screenshot flag (--demo, --shots=,
-## --shot-dir=, --screenshot-after=, --ui=, --timescale=, --log-phases), or --sandbox.
+## --shot-dir=, --screenshot-after=, --ui=, --timescale=, --log-phases, --bench), or --sandbox.
 class_name RunSandbox
 extends RefCounted
 
@@ -11,7 +11,7 @@ const DIR := "user://sandbox"
 const PICKS := DIR + "/players.json"
 const SETTINGS := DIR + "/settings.json"
 const FLAGS := ["--sandbox", "--demo", "--shots=", "--shot-dir=", "--screenshot-after=", "--ui=",
-		"--timescale=", "--log-phases"]
+		"--timescale=", "--log-phases", "--bench"]
 
 
 ## True when `args` (default: the real command line) are a test or scripted run.

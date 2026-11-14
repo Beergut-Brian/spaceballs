@@ -86,7 +86,7 @@ func _ready() -> void:
 	add_to_group("openjar_skinned")
 	UiStyle.skin()
 	_apply_title()
-	$Footer/Version.text = BuildInfo.label()   # the release tag CI stamped, or "dev"
+	$Footer/Version.text = Graphics.version_label(BuildInfo.label())   # the CI tag, or "dev  gfx low"
 	_countdown.draw.connect(_draw_countdown)
 	Players.player_joined.connect(_on_player_joined)
 	Players.player_left.connect(_on_player_left)
