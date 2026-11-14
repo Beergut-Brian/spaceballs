@@ -96,10 +96,7 @@ func _ready() -> void:
 	else:
 		adapter = RenderingServer.get_video_adapter_name()
 		vendor = RenderingServer.get_video_adapter_vendor()
-		var dtype := -1
-		var rd := RenderingServer.get_rendering_device()
-		if rd:
-			dtype = rd.get_device_type()
+		var dtype := int(RenderingServer.get_video_adapter_type())
 		tier = pick_tier(adapter, vendor, dtype, args)
 		reason = "flag" if forced != "" else "gpu type %d" % dtype
 	print("graphics: tier=%s (%s) adapter=\"%s\" vendor=\"%s\"" % [tier, reason, adapter, vendor])
