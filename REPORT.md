@@ -113,4 +113,5 @@ ball's path, so geometry decides the result.
 - The newest release tag, `v0.1.5`, is on `d3d3ef2`. It predates the d-pad, the pause door and the refused-press
   honks. Tag the dev head after this merge (`v0.1.6`) so the TV tile gets them for the weekend.
 - After the clean `--import`, the vendored characters' extracted textures appear as untracked files under
-  `assets/characters/*/`. They were not committed.
+  `assets/characters/*/` and `assets/landmarks/dragon/`. They were not committed. Commit 2 adds the three
+  `tests/test_gap_close_{7,8,9}.gd.uid` files that the import generated.
