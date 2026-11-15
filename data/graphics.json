@@ -1,0 +1,27 @@
+{
+	"_doc": "Graphics tiers (scripts/autoload/Graphics.gd). high = the look as built (GTX 1060): Graphics changes nothing. low = Intel HD 530 class (the TV box until a 1060 goes in). Every key is optional; a missing key leaves that setting as the scene made it.",
+	"high": {},
+	"low": {
+		"msaa_3d": 0,
+		"fxaa": true,
+		"render_scale": 0.75,
+		"fsr": true,
+		"mesh_lod_threshold": 4.0,
+		"max_fps": 60,
+		"vsync": true,
+		"shadows": true,
+		"shadow_max_distance": 22.0,
+		"shadow_blur": 1.0,
+		"shadow_atlas": 2048,
+		"shadow_soft_quality": 1,
+		"glow": false,
+		"ssao": false,
+		"ssil": false,
+		"ssr": false,
+		"sdfgi": false,
+		"volumetric_fog": false,
+		"fog_density_scale": 1.6,
+		"camera_far_max": 2000.0,
+		"particle_scale": 0.5
+	}
+}

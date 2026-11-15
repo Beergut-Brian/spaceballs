@@ -28,6 +28,7 @@ Debug="*res://scripts/autoload/Debug.gd"
 Roster="*res://scripts/autoload/Roster.gd"
 Fx="*res://scripts/autoload/Fx.gd"
 Run="*res://scripts/autoload/Run.gd"
+Graphics="*res://scripts/autoload/Graphics.gd"
 
 [display]
 

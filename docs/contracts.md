@@ -692,6 +692,19 @@ plays itself), `--timescale=<x>` (0.1 to 8), `--log-phases` (prints phases, heig
 playtests and screenshots. `--p1-char=<id>` / `--p2-char=<id>`: who plays (Roster, as the launcher
 passes it). Dev only: `--roster=<res path>` reads another roster file before the kickers spawn
 (`tests/fixtures/roster_standin.json`: Jeff, Chuck and a generic stand-in; `tests/` never ships).
+`--graphics=low|high` overrides the GPU's tier pick (Graphics autoload, `data/graphics.json`; a real
+play flag, not sandboxed). `--bench [--bench-secs=60] [--bench-warmup=3]`: the built-in benchmark, a seeded
+two-player demo route that prints `BENCH t=…` every 5 s and `BENCH avg=… low1=… … tier=… adapter="…"`, then
+quits (sandboxed like `--demo`).
+
+### Graphics tiers (sb-igpu-1, 2026-11-14)
+
+- `Graphics` autoload (`scripts/autoload/Graphics.gd`, last in the list): `tier` ("high" | "low"), `reason`,
+  `adapter`, `settings` (the tier's dict). `Graphics.pick_tier(adapter, vendor, device_type, args)` is the rule.
+  `high` changes nothing; `low` is applied to the root viewport, every SubViewport, WorldEnvironment (on its
+  own copy of the Environment), lights, cameras (far plane cap) and particles as they enter the tree, once
+  each (meta `_gfx`). A lane adding a 3D effect that is costly on the HD 530 gives it a `low` key in
+  `data/graphics.json` instead of branching on the GPU itself.
 
 ### Curse show and Dragon cameo (sb-curses-1, 2026-11-10)
 
