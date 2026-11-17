@@ -223,7 +223,57 @@ func test_solo_readies_both() -> void:
 	var lobby := _lobby()
 	assert_bool(lobby.readied[P1]).is_true()
 	assert_bool(lobby.readied[P2]).is_true()
+	assert_bool(lobby.counting).is_false()   # D110: only hold A on Play starts it
+
+
+# D110 (Kaden's pick): a solo countdown starts only on hold A on Play, never when solo turns on.
+func test_solo_turning_on_does_not_start_countdown() -> void:
+	_boot()
+	var lobby := _lobby()
+	var started := [0]
+	lobby.countdown_started.connect(func() -> void: started[0] += 1)
+	Players.set_solo(true)
+	for i in 10:
+		await await_idle_frame()
+	lobby.count_step(Lobby.COUNT_STEP * Lobby.COUNT_DOTS + 0.01)
+	assert_bool(Players.solo).is_true()
+	assert_bool(lobby.counting).is_false()
+	assert_int(started[0]).is_equal(0)
+	assert_array(_readies).is_empty()
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
+
+
+func test_solo_hold_a_on_play_starts_countdown() -> void:
+	_boot()
+	var lobby := _lobby()
+	Players.set_solo(true)
+	var p: int = Players.solo_focus
+	lobby.focus_item(Lobby.Choice.SETTINGS)
+	assert_bool(lobby.hold_step(p, true, Lobby.HOLD_TO_START + 0.1)).is_false()   # not on Play
+	lobby.focus_item(Lobby.Choice.PLAY)
+	lobby.press_a(p)   # the press itself does not count down
+	assert_bool(lobby.counting).is_false()
+	assert_bool(lobby.hold_step(p, true, Lobby.HOLD_TO_START * 0.5)).is_false()
+	assert_bool(lobby.counting).is_false()
+	assert_bool(lobby.hold_step(p, true, Lobby.HOLD_TO_START * 0.5 + 0.01)).is_true()
 	assert_bool(lobby.counting).is_true()
+	_finish_countdown()
+	assert_array(_readies).is_equal([[P1, P2]])   # one pad, both players in the run
+	assert_int(Game.state).is_equal(Game.State.PLAYING)
+
+
+func test_remembered_solo_at_boot_does_not_start_countdown() -> void:
+	Save.set_setting(SettingsPanel.SOLO, true)   # saved in this suite's own settings file
+	Players.set_solo(true)                       # and still on in Players when the lobby is built
+	_boot()
+	var lobby := _lobby()
+	for i in 10:
+		await await_idle_frame()
+	lobby.count_step(Lobby.COUNT_STEP * Lobby.COUNT_DOTS + 0.01)
+	assert_bool(lobby.readied[P1] and lobby.readied[P2]).is_true()
+	assert_bool(lobby.counting).is_false()
+	assert_array(_readies).is_empty()
+	assert_int(Game.state).is_equal(Game.State.LOBBY)
 
 
 func test_lobby_door_asks_then_quits() -> void:
@@ -345,9 +395,10 @@ func test_settings_solo_toggle_saves_and_readies_on_close() -> void:
 	settings.adjust(1, true)
 	assert_bool(Players.solo).is_true()
 	assert_bool(Save.get_setting(SettingsPanel.SOLO)).is_true()
-	assert_bool(lobby.counting).is_false()    # not behind the open panel
+	assert_bool(lobby.readied[P2]).is_false()   # not behind the open panel
 	settings.close()
-	assert_bool(lobby.counting).is_true()
+	assert_bool(lobby.readied[P1] and lobby.readied[P2]).is_true()
+	assert_bool(lobby.counting).is_false()   # D110: hold A on Play starts it
 
 
 func test_saved_solo_stays_off_at_boot() -> void:
