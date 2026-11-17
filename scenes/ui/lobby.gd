@@ -4,7 +4,8 @@
 ## A on any pad joins and readies that player, B un-readies. Both ready: a 3-step countdown; on its
 ## last beat the stamps flip to GO!, both characters jump, and the three-stripe wipe covers the
 ## screen as Game.finish_lobby() starts round 1 (with the skin's "ROUND 1" card). A ready player
-## holding A on Play for HOLD_TO_START s starts alone. Back to Open Jar asks "Leave the game?" first.
+## holding A on Play for HOLD_TO_START s starts alone. Solo readies both podiums but never counts
+## down by itself: the pad holds A on Play to start (D110). Back to Open Jar asks "Leave the game?" first.
 ## The character chooser: joined and not ready, left / right (stick or D-pad) cycles your Roster
 ## pick on your podium (swap sound, poof); taken characters are skipped. Ready locks it; B unlocks.
 ## Chooser voice (docs/ui.md): SAY_SETTLE s after the last step (or a join), the character now on
@@ -379,7 +380,8 @@ func set_ready(player: int, on: bool, quiet := false) -> void:
 	_update_chip()
 	_update_choosers()
 	player_readied.emit(player, on)
-	if on and readied[P1] and readied[P2]:
+	# Solo (D110): solo readies both podiums, but only the pad's hold of A on Play starts the count.
+	if on and readied[P1] and readied[P2] and not Players.solo:
 		start_countdown()
 	elif not on and counting:
 		cancel_countdown()
@@ -482,6 +484,8 @@ func status_headline() -> String:
 		if Players.is_active(other):
 			return "WAITING FOR %s" % UiStyle.player_name(other).to_upper()
 		return "%s READY" % UiStyle.player_name(ready[0]).to_upper()
+	if Players.solo and ready.size() == 2:
+		return "HOLD [a] ON PLAY"
 	return "PRESS [a] ON PLAY"
 
 
@@ -496,6 +500,8 @@ func status_text() -> String:
 		if Players.is_active(other):
 			return "Waiting for %s, or hold [a] to start solo" % UiStyle.player_name(other)
 		return "Hold [a] on Play to start solo"
+	if Players.solo and ready.size() == 2:
+		return "Hold [a] on Play to start"
 	return "Press [a] on Play when you're ready"
 
 
